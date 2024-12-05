@@ -34,9 +34,6 @@ storage = MemoryStorage()
 router = Router()
 dp = Dispatcher(storage=storage)
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
-TRACKER_BOT_TOKEN = "7046656911:AAHzhDbppOgA4e6dbdVURANHPASwX25bGnw"
-tracker_bot = Bot(token=TRACKER_BOT_TOKEN, default=DefaultBotProperties(
-    parse_mode=ParseMode.HTML))
 
 async def fetch_product_details(product_id):
     url = f"https://avocado-production.up.railway.app/api/TypesCRUD/GetElementInfo?Id={product_id}"
