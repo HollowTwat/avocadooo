@@ -9,6 +9,7 @@ COPY . /app
 
 # Install the application dependencies.
 WORKDIR /app
-RUN uv sync --frozen --no-dev --compile-bytecode
+# RUN uv sync --frozen --no-dev --compile-bytecode
+RUN sync --frozen --no-dev --compile-bytecode
 
 EXPOSE 8443
