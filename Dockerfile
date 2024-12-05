@@ -1,15 +1,29 @@
+# Use the official Python image as the base image
 FROM python:3.12-slim-bookworm
-COPY --from=ghcr.io/astral-sh/uv:0.4.0 /uv /bin/uv
 
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV UV_HTTP_TIMEOUT=120
 
-# Copy the application into the container.
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the application into the container
 COPY . /app
 
-# Install the application dependencies.
-WORKDIR /app
-# RUN uv sync --frozen --no-dev --compile-bytecode
-RUN sync --frozen --no-dev --compile-bytecode
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
+# Expose the port the app runs on (if applicable, adjust as needed)
 EXPOSE 8443
+
+# Set the default command to run your bot
+CMD ["python", "main.py"]
