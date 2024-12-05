@@ -8,7 +8,7 @@ import aiogram
 from aiogram import Bot, Dispatcher, types
 import openai
 import base64
-from auth import OPENAI_KEY, ASSISTANT_ID, BOT_TOKEN
+# from auth import OPENAI_KEY, ASSISTANT_ID, BOT_TOKEN
 import requests
 from aiogram import Bot, Dispatcher, html, Router, BaseMiddleware
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -22,6 +22,12 @@ from aiogram.types import Message, FSInputFile, InlineKeyboardButton, InlineKeyb
 from openai import AsyncOpenAI, OpenAI
 import shelve
 
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+OPENAI_KEY = os.getenv("OPENAI_KEY")
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
+ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
+ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
 
 TOKEN = BOT_TOKEN
 OPENAI_API_KEY = OPENAI_KEY

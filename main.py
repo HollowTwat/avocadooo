@@ -4,7 +4,7 @@ import os
 import logging
 from aiogram import Bot, Dispatcher, types
 import openai
-from auth import BOT_TOKEN, ASSISTANT_ID, ASSISTANT_ID_2, ANALYSIS_ASS
+# from auth import BOT_TOKEN, ASSISTANT_ID, ASSISTANT_ID_2, ANALYSIS_ASS
 import asyncio
 import logging
 import sys
@@ -22,6 +22,11 @@ import shelve
 import json
 
 from functions import *
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+OPENAI_KEY = os.getenv("OPENAI_KEY")
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
+ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
+ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
 TOKEN = BOT_TOKEN
 # OPENAI_API_KEY = OPENAI_KEY
 # openai.api_key = OPENAI_API_KEY
@@ -138,6 +143,7 @@ async def default_handler(message: Message, state: FSMContext, current_state: st
 
 
 async def main() -> None:
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     dp.include_router(router)
     dp.message.middleware(StateMiddleware())
     bot = Bot(token=TOKEN, default=DefaultBotProperties(
@@ -145,5 +151,5 @@ async def main() -> None:
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    # logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
