@@ -30,7 +30,6 @@ ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
 TOKEN = BOT_TOKEN
 # OPENAI_API_KEY = OPENAI_KEY
 # openai.api_key = OPENAI_API_KEY
-error_chat = -1002200108684
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(
     parse_mode=ParseMode.HTML))
@@ -115,12 +114,20 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
+            buttons = []
             for product in extracted_list:
                 await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                
+                # buttons += [InlineKeyboardButton(text=f"{product.get('FullName')}", callback_data=f"item_{product.get('Identifier')}")]
+                buttons.append(
+                    InlineKeyboardButton(
+                        text=product.get('FullName'),
+                        callback_data=f"item_{product.get('Identifier')}"  # Correct callback_data usage
+                    )
+        )
             await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+            await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
             db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
-            print(db_info)
             analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
             await message.answer(analysys)
     else:
@@ -135,6 +142,18 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     await bot.send_message(us_id, text)
     await callback_query.answer()
 
+@router.callback_query(lambda c: c.data == 'item_')
+async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
+    buttons = [
+        InlineKeyboardButton(text="yep", callback_data='yep'),
+        InlineKeyboardButton(text="nope", callback_data='nope')
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+    item_id = callback_query.data.split('_')[1]                                    #RECHECK THIS ONE
+    db_info = await fetch_product_details(item_id)
+    us_id = callback_query.from_user.id
+    await bot.send_message(us_id, db_info, reply_markup=keyboard)
+    await callback_query.answer()
 
 @router.message()
 async def default_handler(message: Message, state: FSMContext, current_state: str) -> None:
@@ -151,5 +170,4 @@ async def main() -> None:
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    # logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
