@@ -159,7 +159,7 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
 @router.message()
 async def default_handler(message: Message, state: FSMContext, current_state: str) -> None:
     if current_state is not ['redact', 'new_food', 'out_of_uses']:
-        await message.answer('В пробной версии свободное общение с нутри ограниченно')
+        await message.answer('Нету стейта')
 
 
 async def main() -> None:
