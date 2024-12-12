@@ -28,15 +28,12 @@ ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
 ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
 TOKEN = BOT_TOKEN
-# OPENAI_API_KEY = OPENAI_KEY
-# openai.api_key = OPENAI_API_KEY
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(
     parse_mode=ParseMode.HTML))
 storage = MemoryStorage()
 router = Router()
 dp = Dispatcher(storage=storage)
-# client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
 class StateMiddleware(BaseMiddleware):
@@ -68,13 +65,13 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         response = await remove_json_block(response1)
 
-        await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
             buttons = []
+            product_messages = []
             for product in extracted_list:
-                await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+                product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
                 buttons.append(
                     [
                 InlineKeyboardButton(
@@ -83,8 +80,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
+            combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
+            await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
@@ -98,8 +96,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         print(extracted_list)
         if extracted_list:
             buttons = []
+            product_messages = []
             for product in extracted_list:
-                await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+                product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
                 buttons.append(
                     [
                 InlineKeyboardButton(
@@ -108,8 +107,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
+            combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
+            await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
     elif message.photo:
 
         file = await bot.get_file(message.photo[-1].file_id)
@@ -125,8 +125,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         print(extracted_list)
         if extracted_list:
             buttons = []
+            product_messages = []
             for product in extracted_list:
-                await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+                product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
                 buttons.append(
                     [
                 InlineKeyboardButton(
@@ -136,9 +137,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             ]
         )
             # await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
+            combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            # await message.answer("Тест того были ли вообще перемены")
-            await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
+            await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
             # db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
             # analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
             # await message.answer(analysys)
