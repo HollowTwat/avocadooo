@@ -117,7 +117,6 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             buttons = []
             for product in extracted_list:
                 await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                # buttons += [InlineKeyboardButton(text=f"{product.get('FullName')}", callback_data=f"item_{product.get('Identifier')}")]
                 buttons.append(
                     [
                 InlineKeyboardButton(
@@ -127,7 +126,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             ]
         )
             await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
-            keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer("Тест того были ли вообще перемены")
             await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
             db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
