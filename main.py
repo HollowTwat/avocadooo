@@ -259,7 +259,7 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     await bot.send_message(us_id, text)
     await callback_query.answer()
 
-@router.callback_query(lambda c: c.data == 'analysis')
+@router.callback_query(lambda c: c.data == 'questionaire')
 async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     text = "Привет! Давайте начнем наш опрос. Сколько вам лет?"
