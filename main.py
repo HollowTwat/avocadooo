@@ -72,14 +72,19 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
+            buttons = []
             for product in extracted_list:
                 await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                
-            await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
-            db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
-            print(db_info)
-            analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
-            await message.answer(analysys)
+                buttons.append(
+                    [
+                InlineKeyboardButton(
+                    text=product.get('FullName'),
+                    callback_data=f"item_{product.get('Identifier')}"
+                )
+            ]
+        )
+            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+            await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
@@ -92,14 +97,19 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
+            buttons = []
             for product in extracted_list:
                 await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                
-            await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
-            db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
-            print(db_info)
-            analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
-            await message.answer(analysys)
+                buttons.append(
+                    [
+                InlineKeyboardButton(
+                    text=product.get('FullName'),
+                    callback_data=f"item_{product.get('Identifier')}"
+                )
+            ]
+        )
+            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+            await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
     elif message.photo:
 
         file = await bot.get_file(message.photo[-1].file_id)
@@ -125,13 +135,13 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
-            await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
+            # await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            await message.answer("Тест того были ли вообще перемены")
+            # await message.answer("Тест того были ли вообще перемены")
             await message.answer("Выбери один из товаров (тестовая для проверки создания мульти-левела кнопок)", reply_markup=keyboard)
-            db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
-            analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
-            await message.answer(analysys)
+            # db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
+            # analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
+            # await message.answer(analysys)
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
@@ -153,8 +163,9 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
     item_id = callback_query.data.split('_')[1]                                    #RECHECK THIS ONE
     db_info = await fetch_product_details(item_id)
+    analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
     us_id = callback_query.from_user.id
-    await bot.send_message(us_id, db_info, reply_markup=keyboard)
+    await bot.send_message(us_id, analysys, reply_markup=keyboard)
     await callback_query.answer()
 
 @router.message()
