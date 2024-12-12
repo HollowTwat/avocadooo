@@ -69,28 +69,28 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
 
-@dp.message_handler(state=Questionnaire.age)
+@router.message(Questionnaire.age)
 async def process_age(message: types.Message, state: FSMContext):
     await state.update_data(age=message.text)
     await message.answer("Какой у вас пол? (мужской/женский)")
     await Questionnaire.next()
 
 # Step 2: Gender
-@dp.message_handler(state=Questionnaire.gender)
+@router.message(Questionnaire.gender)
 async def process_gender(message: types.Message, state: FSMContext):
     await state.update_data(gender=message.text)
     await message.answer("Укажите вашу страну и город проживания:")
     await Questionnaire.next()
 
 # Step 3: Location
-@dp.message_handler(state=Questionnaire.location)
+@router.message(Questionnaire.location)
 async def process_location(message: types.Message, state: FSMContext):
     await state.update_data(location=message.text)
     await message.answer("Есть ли у вас склонность к аллергии? (да/нет)")
     await Questionnaire.next()
 
 # Step 4: Allergy
-@dp.message_handler(state=Questionnaire.allergy)
+@router.message(Questionnaire.allergy)
 async def process_allergy(message: types.Message, state: FSMContext):
     await state.update_data(allergy=message.text)
     await message.answer(
@@ -103,42 +103,42 @@ async def process_allergy(message: types.Message, state: FSMContext):
     await Questionnaire.next()
 
 # Step 5: Lifestyle
-@dp.message_handler(state=Questionnaire.lifestyle)
+@router.message(Questionnaire.lifestyle)
 async def process_lifestyle(message: types.Message, state: FSMContext):
     await state.update_data(lifestyle=message.text)
     await message.answer("Какой у вас фототип от 1 до 6?")
     await Questionnaire.next()
 
 # Step 6: Phototype
-@dp.message_handler(state=Questionnaire.phototype)
+@router.message(Questionnaire.phototype)
 async def process_phototype(message: types.Message, state: FSMContext):
     await state.update_data(phototype=message.text)
     await message.answer("Каков ваш уровень физической активности?")
     await Questionnaire.next()
 
 # Step 7: Physical Activity
-@dp.message_handler(state=Questionnaire.activity)
+@router.message(Questionnaire.activity)
 async def process_activity(message: types.Message, state: FSMContext):
     await state.update_data(activity=message.text)
     await message.answer("Опишите ваш питьевой режим:")
     await Questionnaire.next()
 
 # Step 8: Water Intake
-@dp.message_handler(state=Questionnaire.water_intake)
+@router.message(Questionnaire.water_intake)
 async def process_water_intake(message: types.Message, state: FSMContext):
     await state.update_data(water_intake=message.text)
     await message.answer("Каков уровень вашего стресса? (низкий/средний/высокий)")
     await Questionnaire.next()
 
 # Step 9: Stress
-@dp.message_handler(state=Questionnaire.stress)
+@router.message(Questionnaire.stress)
 async def process_stress(message: types.Message, state: FSMContext):
     await state.update_data(stress=message.text)
     await message.answer("Есть ли у вас вредные привычки? Опишите:")
     await Questionnaire.next()
 
 # Step 10: Habits
-@dp.message_handler(state=Questionnaire.habits)
+@router.message(Questionnaire.habits)
 async def process_habits(message: types.Message, state: FSMContext):
     await state.update_data(habits=message.text)
 
