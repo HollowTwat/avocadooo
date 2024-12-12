@@ -48,13 +48,117 @@ class UserState(StatesGroup):
     info_coll = State()
     recognition = State()
 
+class Questionnaire(StatesGroup):
+    age = State()
+    gender = State()
+    location = State()
+    allergy = State()
+    lifestyle = State()
+    phototype = State()
+    activity = State()
+    water_intake = State()
+    stress = State()
+    habits = State()
+
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
-    buttons = [InlineKeyboardButton(
-        text="Анализ состава 🔍", callback_data="analysis")]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+    buttons = [[InlineKeyboardButton(
+        text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
+        text="Опросник", callback_data="questionaire")]]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
+
+@dp.message_handler(state=Questionnaire.age)
+async def process_age(message: types.Message, state: FSMContext):
+    await state.update_data(age=message.text)
+    await message.answer("Какой у вас пол? (мужской/женский)")
+    await Questionnaire.next()
+
+# Step 2: Gender
+@dp.message_handler(state=Questionnaire.gender)
+async def process_gender(message: types.Message, state: FSMContext):
+    await state.update_data(gender=message.text)
+    await message.answer("Укажите вашу страну и город проживания:")
+    await Questionnaire.next()
+
+# Step 3: Location
+@dp.message_handler(state=Questionnaire.location)
+async def process_location(message: types.Message, state: FSMContext):
+    await state.update_data(location=message.text)
+    await message.answer("Есть ли у вас склонность к аллергии? (да/нет)")
+    await Questionnaire.next()
+
+# Step 4: Allergy
+@dp.message_handler(state=Questionnaire.allergy)
+async def process_allergy(message: types.Message, state: FSMContext):
+    await state.update_data(allergy=message.text)
+    await message.answer(
+        "Особенности образа жизни:\n"
+        "1. Частое пребывание на солнце\n"
+        "2. Работа в сухом помещении\n"
+        "3. Частые физические нагрузки\n"
+        "Укажите через запятую все, что применимо (например, 1, 2):"
+    )
+    await Questionnaire.next()
+
+# Step 5: Lifestyle
+@dp.message_handler(state=Questionnaire.lifestyle)
+async def process_lifestyle(message: types.Message, state: FSMContext):
+    await state.update_data(lifestyle=message.text)
+    await message.answer("Какой у вас фототип от 1 до 6?")
+    await Questionnaire.next()
+
+# Step 6: Phototype
+@dp.message_handler(state=Questionnaire.phototype)
+async def process_phototype(message: types.Message, state: FSMContext):
+    await state.update_data(phototype=message.text)
+    await message.answer("Каков ваш уровень физической активности?")
+    await Questionnaire.next()
+
+# Step 7: Physical Activity
+@dp.message_handler(state=Questionnaire.activity)
+async def process_activity(message: types.Message, state: FSMContext):
+    await state.update_data(activity=message.text)
+    await message.answer("Опишите ваш питьевой режим:")
+    await Questionnaire.next()
+
+# Step 8: Water Intake
+@dp.message_handler(state=Questionnaire.water_intake)
+async def process_water_intake(message: types.Message, state: FSMContext):
+    await state.update_data(water_intake=message.text)
+    await message.answer("Каков уровень вашего стресса? (низкий/средний/высокий)")
+    await Questionnaire.next()
+
+# Step 9: Stress
+@dp.message_handler(state=Questionnaire.stress)
+async def process_stress(message: types.Message, state: FSMContext):
+    await state.update_data(stress=message.text)
+    await message.answer("Есть ли у вас вредные привычки? Опишите:")
+    await Questionnaire.next()
+
+# Step 10: Habits
+@dp.message_handler(state=Questionnaire.habits)
+async def process_habits(message: types.Message, state: FSMContext):
+    await state.update_data(habits=message.text)
+
+    user_data = await state.get_data()
+
+    await message.answer(
+        "Спасибо за участие в опросе! Вот ваши данные:\n"
+        f"Возраст: {user_data['age']}\n"
+        f"Пол: {user_data['gender']}\n"
+        f"Место проживания: {user_data['location']}\n"
+        f"Склонность к аллергии: {user_data['allergy']}\n"
+        f"Особенности образа жизни: {user_data['lifestyle']}\n"
+        f"Фототип: {user_data['phototype']}\n"
+        f"Уровень физической активности: {user_data['activity']}\n"
+        f"Питьевой режим: {user_data['water_intake']}\n"
+        f"Уровень стресса: {user_data['stress']}\n"
+        f"Вредные привычки: {user_data['habits']}"
+    )
+
+    await state.finish()
 
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
@@ -153,6 +257,14 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     text = "Скинь мне фото или ссылку твоего средства и я проанализирую? \nИли напиши или надиктуй название"
     await state.set_state(UserState.recognition)
     await bot.send_message(us_id, text)
+    await callback_query.answer()
+
+@router.callback_query(lambda c: c.data == 'analysis')
+async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
+    us_id = callback_query.from_user.id
+    text = "Привет! Давайте начнем наш опрос. Сколько вам лет?"
+    await bot.send_message(us_id, text)
+    await Questionnaire.age.set()
     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
