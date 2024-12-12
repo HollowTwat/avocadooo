@@ -119,10 +119,12 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 await message.answer(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
                 # buttons += [InlineKeyboardButton(text=f"{product.get('FullName')}", callback_data=f"item_{product.get('Identifier')}")]
                 buttons.append(
-                    [InlineKeyboardButton(
-                        text=product.get('FullName'),
-                        callback_data=f"item_{product.get('Identifier')}"
-                    )]
+                    [
+                InlineKeyboardButton(
+                    text=product.get('FullName'),
+                    callback_data=f"item_{product.get('Identifier')}"
+                )
+            ]
         )
             await message.answer(f"Прогоним первый из продуктов по анализу. Имя продукта: {extracted_list[0].get('FullName')}")
             keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
