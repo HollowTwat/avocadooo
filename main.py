@@ -69,7 +69,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
 
-@router.message(Questionnaire.age)
+@router.message(StateFilter(Questionnaire.age))
 async def process_age(message: types.Message, state: FSMContext):
     await state.update_data(age=message.text)
     keyboard = InlineKeyboardMarkup(
@@ -82,7 +82,7 @@ async def process_age(message: types.Message, state: FSMContext):
     await message.answer("Какой у вас пол?", reply_markup=keyboard)
 
 # Step 2: Gender
-@router.callback_query(lambda c: c.data.startswith("gender_"), state=Questionnaire.gender)
+@router.callback_query(StateFilter(Questionnaire.gender), lambda c: c.data.startswith("gender_"))
 async def process_gender(callback_query: types.CallbackQuery, state: FSMContext):
     gender = "Мужской" if callback_query.data == "gender_male" else "Женский"
     await state.update_data(gender=gender)
@@ -91,7 +91,7 @@ async def process_gender(callback_query: types.CallbackQuery, state: FSMContext)
     await callback_query.answer()
 
 # Step 3: Location
-@router.message(Questionnaire.location)
+@router.message(StateFilter(Questionnaire.location))
 async def process_location(message: types.Message, state: FSMContext):
     await state.update_data(location=message.text)
     keyboard = InlineKeyboardMarkup(
@@ -104,7 +104,7 @@ async def process_location(message: types.Message, state: FSMContext):
     await message.answer("Есть ли у вас склонность к аллергии?", reply_markup=keyboard)
 
 # Step 4: Allergy
-@router.callback_query(lambda c: c.data.startswith("allergy_"), state=Questionnaire.allergy)
+@router.callback_query(StateFilter(Questionnaire.allergy), lambda c: c.data.startswith("allergy_"))
 async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext):
     allergy = "Да" if callback_query.data == "allergy_yes" else "Нет"
     await state.update_data(allergy=allergy)
@@ -119,7 +119,7 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await callback_query.answer()
 
 # Step 5: Lifestyle
-@router.message(Questionnaire.lifestyle)
+@router.message(StateFilter(Questionnaire.lifestyle))
 async def process_lifestyle(message: types.Message, state: FSMContext):
     await state.update_data(lifestyle=message.text)
     keyboard = InlineKeyboardMarkup(
@@ -131,7 +131,7 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
     await message.answer("Какой у вас фототип от 1 до 6?", reply_markup=keyboard)
 
 # Step 6: Phototype
-@router.callback_query(lambda c: c.data.startswith("phototype_"), state=Questionnaire.phototype)
+@router.callback_query(StateFilter(Questionnaire.phototype), lambda c: c.data.startswith("phototype_"))
 async def process_phototype(callback_query: types.CallbackQuery, state: FSMContext):
     phototype = callback_query.data.split("_")[1]
     await state.update_data(phototype=phototype)
@@ -140,14 +140,14 @@ async def process_phototype(callback_query: types.CallbackQuery, state: FSMConte
     await callback_query.answer()
 
 # Step 7: Physical Activity
-@router.message(Questionnaire.activity)
+@router.message(StateFilter(Questionnaire.activity))
 async def process_activity(message: types.Message, state: FSMContext):
     await state.update_data(activity=message.text)
     await state.set_state(Questionnaire.water_intake)
     await message.answer("Опишите ваш питьевой режим:")
 
 # Step 8: Water Intake
-@router.message(Questionnaire.water_intake)
+@router.message(StateFilter(Questionnaire.water_intake))
 async def process_water_intake(message: types.Message, state: FSMContext):
     await state.update_data(water_intake=message.text)
     keyboard = InlineKeyboardMarkup(
@@ -161,7 +161,7 @@ async def process_water_intake(message: types.Message, state: FSMContext):
     await message.answer("Каков уровень вашего стресса?", reply_markup=keyboard)
 
 # Step 9: Stress
-@router.callback_query(lambda c: c.data.startswith("stress_"), state=Questionnaire.stress)
+@router.callback_query(StateFilter(Questionnaire.stress), lambda c: c.data.startswith("stress_"))
 async def process_stress(callback_query: types.CallbackQuery, state: FSMContext):
     stress = {
         "stress_low": "Низкий",
@@ -174,7 +174,7 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
     await callback_query.answer()
 
 # Step 10: Habits
-@router.message(Questionnaire.habits)
+@router.message(StateFilter(Questionnaire.habits))
 async def process_habits(message: types.Message, state: FSMContext):
     await state.update_data(habits=message.text)
     user_data = await state.get_data()
