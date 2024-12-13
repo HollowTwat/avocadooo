@@ -207,7 +207,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
-            buttons = []
+            buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
             product_messages = []
             for product in extracted_list:
                 product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
@@ -319,8 +319,12 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
 @router.message()
 async def default_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
+    buttons = [[InlineKeyboardButton(
+        text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
+        text="Опросник", callback_data="questionaire")]]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
-        await message.answer("Состояние не установлено. Используйте /start, чтобы начать.")
+        await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
     else:
         await message.answer(f"Текущее состояние: {current_state}")
 
