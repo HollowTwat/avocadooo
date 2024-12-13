@@ -178,6 +178,10 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
 async def process_habits(message: types.Message, state: FSMContext):
     await state.update_data(habits=message.text)
     user_data = await state.get_data()
+    buttons = [[InlineKeyboardButton(
+        text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
+        text="Опросник", callback_data="questionaire")]]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     await message.answer(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
@@ -190,7 +194,8 @@ async def process_habits(message: types.Message, state: FSMContext):
         f"Уровень физической активности: {user_data['activity']}\n"
         f"Питьевой режим: {user_data['water_intake']}\n"
         f"Уровень стресса: {user_data['stress']}\n"
-        f"Вредные привычки: {user_data['habits']}"
+        f"Вредные привычки: {user_data['habits']}",
+        reply_markup=keyboard
     )
     await state.clear()
 
