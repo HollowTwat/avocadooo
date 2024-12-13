@@ -72,76 +72,111 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 @router.message(Questionnaire.age)
 async def process_age(message: types.Message, state: FSMContext):
     await state.update_data(age=message.text)
-    await message.answer("Какой у вас пол? (мужской/женский)")
-    await Questionnaire.next()
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="Мужской", callback_data="gender_male")],
+            [InlineKeyboardButton(text="Женский", callback_data="gender_female")]
+        ]
+    )
+    await state.set_state(Questionnaire.gender)
+    await message.answer("Какой у вас пол?", reply_markup=keyboard)
 
 # Step 2: Gender
-@router.message(Questionnaire.gender)
-async def process_gender(message: types.Message, state: FSMContext):
-    await state.update_data(gender=message.text)
-    await message.answer("Укажите вашу страну и город проживания:")
-    await Questionnaire.next()
+@router.callback_query(lambda c: c.data.startswith("gender_"), state=Questionnaire.gender)
+async def process_gender(callback_query: types.CallbackQuery, state: FSMContext):
+    gender = "Мужской" if callback_query.data == "gender_male" else "Женский"
+    await state.update_data(gender=gender)
+    await state.set_state(Questionnaire.location)
+    await callback_query.message.answer("Укажите вашу страну и город проживания:")
+    await callback_query.answer()
 
 # Step 3: Location
 @router.message(Questionnaire.location)
 async def process_location(message: types.Message, state: FSMContext):
     await state.update_data(location=message.text)
-    await message.answer("Есть ли у вас склонность к аллергии? (да/нет)")
-    await Questionnaire.next()
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="Да", callback_data="allergy_yes")],
+            [InlineKeyboardButton(text="Нет", callback_data="allergy_no")]
+        ]
+    )
+    await state.set_state(Questionnaire.allergy)
+    await message.answer("Есть ли у вас склонность к аллергии?", reply_markup=keyboard)
 
 # Step 4: Allergy
-@router.message(Questionnaire.allergy)
-async def process_allergy(message: types.Message, state: FSMContext):
-    await state.update_data(allergy=message.text)
-    await message.answer(
+@router.callback_query(lambda c: c.data.startswith("allergy_"), state=Questionnaire.allergy)
+async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext):
+    allergy = "Да" if callback_query.data == "allergy_yes" else "Нет"
+    await state.update_data(allergy=allergy)
+    await state.set_state(Questionnaire.lifestyle)
+    await callback_query.message.answer(
         "Особенности образа жизни:\n"
         "1. Частое пребывание на солнце\n"
         "2. Работа в сухом помещении\n"
         "3. Частые физические нагрузки\n"
         "Укажите через запятую все, что применимо (например, 1, 2):"
     )
-    await Questionnaire.next()
+    await callback_query.answer()
 
 # Step 5: Lifestyle
 @router.message(Questionnaire.lifestyle)
 async def process_lifestyle(message: types.Message, state: FSMContext):
     await state.update_data(lifestyle=message.text)
-    await message.answer("Какой у вас фототип от 1 до 6?")
-    await Questionnaire.next()
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)]
+        ]
+    )
+    await state.set_state(Questionnaire.phototype)
+    await message.answer("Какой у вас фототип от 1 до 6?", reply_markup=keyboard)
 
 # Step 6: Phototype
-@router.message(Questionnaire.phototype)
-async def process_phototype(message: types.Message, state: FSMContext):
-    await state.update_data(phototype=message.text)
-    await message.answer("Каков ваш уровень физической активности?")
-    await Questionnaire.next()
+@router.callback_query(lambda c: c.data.startswith("phototype_"), state=Questionnaire.phototype)
+async def process_phototype(callback_query: types.CallbackQuery, state: FSMContext):
+    phototype = callback_query.data.split("_")[1]
+    await state.update_data(phototype=phototype)
+    await state.set_state(Questionnaire.activity)
+    await callback_query.message.answer("Каков ваш уровень физической активности?")
+    await callback_query.answer()
 
 # Step 7: Physical Activity
 @router.message(Questionnaire.activity)
 async def process_activity(message: types.Message, state: FSMContext):
     await state.update_data(activity=message.text)
+    await state.set_state(Questionnaire.water_intake)
     await message.answer("Опишите ваш питьевой режим:")
-    await Questionnaire.next()
 
 # Step 8: Water Intake
 @router.message(Questionnaire.water_intake)
 async def process_water_intake(message: types.Message, state: FSMContext):
     await state.update_data(water_intake=message.text)
-    await message.answer("Каков уровень вашего стресса? (низкий/средний/высокий)")
-    await Questionnaire.next()
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="Низкий", callback_data="stress_low")],
+            [InlineKeyboardButton(text="Средний", callback_data="stress_medium")],
+            [InlineKeyboardButton(text="Высокий", callback_data="stress_high")]
+        ]
+    )
+    await state.set_state(Questionnaire.stress)
+    await message.answer("Каков уровень вашего стресса?", reply_markup=keyboard)
 
 # Step 9: Stress
-@router.message(Questionnaire.stress)
-async def process_stress(message: types.Message, state: FSMContext):
-    await state.update_data(stress=message.text)
-    await message.answer("Есть ли у вас вредные привычки? Опишите:")
-    await Questionnaire.next()
+@router.callback_query(lambda c: c.data.startswith("stress_"), state=Questionnaire.stress)
+async def process_stress(callback_query: types.CallbackQuery, state: FSMContext):
+    stress = {
+        "stress_low": "Низкий",
+        "stress_medium": "Средний",
+        "stress_high": "Высокий"
+    }[callback_query.data]
+    await state.update_data(stress=stress)
+    await state.set_state(Questionnaire.habits)
+    await callback_query.message.answer("Есть ли у вас вредные привычки? Опишите:")
+    await callback_query.answer()
 
 # Step 10: Habits
 @router.message(Questionnaire.habits)
 async def process_habits(message: types.Message, state: FSMContext):
     await state.update_data(habits=message.text)
-
     user_data = await state.get_data()
 
     await message.answer(
@@ -157,8 +192,8 @@ async def process_habits(message: types.Message, state: FSMContext):
         f"Уровень стресса: {user_data['stress']}\n"
         f"Вредные привычки: {user_data['habits']}"
     )
+    await state.clear()
 
-    await state.finish()
 
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
@@ -282,9 +317,12 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
 
 @router.message()
-async def default_handler(message: Message, state: FSMContext, current_state: str) -> None:
-    if current_state is not ['redact', 'new_food', 'out_of_uses']:
-        await message.answer('Нету стейта')
+async def default_handler(message: Message, state: FSMContext) -> None:
+    current_state = await state.get_state()
+    if not current_state:
+        await message.answer("Состояние не установлено. Используйте /start, чтобы начать.")
+    else:
+        await message.answer(f"Текущее состояние: {current_state}")
 
 
 async def main() -> None:
