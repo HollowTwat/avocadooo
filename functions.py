@@ -57,6 +57,43 @@ async def fetch_product_details(product_id):
                 print(f"Failed to fetch product {product_id}. Status: {response.status}")
                 return None
             
+async def send_user_data(tg_id, data_json):
+    url = '/api/TypesCRUD/SetUserData'
+
+    payload = {
+        "tg_id": tg_id,
+        "user_data": data_json
+    }
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post(url, json=payload) as response:
+                if response.status != 200:
+                    raise Exception(f"HTTP error! status: {response.status}")
+
+                response_data = await response.json()
+                print('Response:', response_data)
+                return response_data
+        except Exception as e:
+            print('Error sending data:', e)
+            raise
+
+async def get_user_data(tg_id):
+    url = f'/api/TypesCRUD/GetUserData?tg_id={tg_id}'
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    raise Exception(f"HTTP error! status: {response.status}")
+
+                response_data = await response.json()
+                print('Retrieved Data:', response_data)
+                return response_data
+        except Exception as e:
+            print('Error retrieving data:', e)
+            raise
+            
 
 async def process_photo(photo_data, user_id, assistant):
     thread_id = await check_if_thread_exists(user_id)

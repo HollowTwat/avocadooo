@@ -27,6 +27,7 @@ OPENAI_KEY = os.getenv("OPENAI_KEY")
 ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
 ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
+PERSONAL_ANALYSIS_ASS = os.getenv("PERSONAL_ANALYSIS_ASS")
 TOKEN = BOT_TOKEN
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(
@@ -182,6 +183,7 @@ async def process_habits(message: types.Message, state: FSMContext):
         text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
         text="Опросник", callback_data="questionaire")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    us_id = message.from_user.id
 
     await message.answer(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
@@ -197,6 +199,20 @@ async def process_habits(message: types.Message, state: FSMContext):
         f"Вредные привычки: {user_data['habits']}",
         reply_markup=keyboard
     )
+
+    user_data = {
+                "age": f"{user_data['age']}",
+                "gender": f"{user_data['gender']}",
+                "location": f"{user_data['location']}",
+                "allergy": f"{user_data['allergy']}",
+                "lifestyle": f"{user_data['lifestyle']}",
+                "activity": f"{user_data['activity']}",
+                "water_intake": f"{user_data['water_intake']}",
+                "stress": f"{user_data['stress']}",
+                "habits": f"{user_data['habits']}"
+            }
+    response = await send_user_data(us_id, user_data)
+    await message.answer(str(response))
     await state.clear()
 
 
@@ -309,16 +325,28 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
+    item_id = callback_query.data.split('_')[1]
+    us_id = callback_query.from_user.id
     buttons = [
-        InlineKeyboardButton(text="yep", callback_data='yep'),
-        InlineKeyboardButton(text="nope", callback_data='nope')
+        InlineKeyboardButton(text="yep", callback_data=f'personal_{item_id}'),
+        InlineKeyboardButton(text="nope", callback_data='analysis')
     ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
-    item_id = callback_query.data.split('_')[1]                                    #RECHECK THIS ONE
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])                                  #RECHECK THIS ONE
     db_info = await fetch_product_details(item_id)
     analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
+    await bot.send_message(us_id, analysys)
+    await bot.send_message(us_id, "Хочешь персональный анализ?", reply_markup=keyboard)
+    await callback_query.answer()
+
+@router.callback_query(lambda c: c.data.startswith('personal_'))
+async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
+    item_id = callback_query.data.split('_')[1]
     us_id = callback_query.from_user.id
-    await bot.send_message(us_id, analysys, reply_markup=keyboard)
+    db_info = await fetch_product_details(item_id)
+    user_info = await get_user_data(us_id)
+    gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info}"
+    pers_analysis = await no_thread_ass(gpt_message, PERSONAL_ANALYSIS_ASS)
+    await bot.send_message(us_id, pers_analysis)
     await callback_query.answer()
 
 @router.message()
