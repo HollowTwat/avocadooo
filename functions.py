@@ -58,7 +58,7 @@ async def fetch_product_details(product_id):
                 return None
             
 async def send_user_data(tg_id, data_json):
-    url = '/api/TypesCRUD/SetUserData'
+    url = 'https://avocado-production.up.railway.app/api/TypesCRUD/SetUserData'
 
     payload = {
         "tg_id": tg_id,
@@ -79,7 +79,7 @@ async def send_user_data(tg_id, data_json):
             raise
 
 async def get_user_data(tg_id):
-    url = f'/api/TypesCRUD/GetUserData?tg_id={tg_id}'
+    url = f'https://avocado-production.up.railway.app/api/TypesCRUD/GetUserData?tg_id={tg_id}'
 
     async with aiohttp.ClientSession() as session:
         try:
