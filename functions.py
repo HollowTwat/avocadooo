@@ -80,7 +80,7 @@ async def send_user_data(tg_id, data_json):
             raise
 
 async def get_user_data(tg_id):
-    url = f'https://avocado-production.up.railway.app/api/TypesCRUD/GetUserData?tg_id={tg_id}'
+    url = f'https://avocado-production.up.railway.app/api/TypesCRUD/GetUserData?userTgId={tg_id}'
 
     async with aiohttp.ClientSession() as session:
         try:
