@@ -64,6 +64,7 @@ async def send_user_data(tg_id, data_json):
         "tg_id": tg_id,
         "user_data": data_json
     }
+    print(payload)
 
     async with aiohttp.ClientSession() as session:
         try:
