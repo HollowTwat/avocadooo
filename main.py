@@ -206,6 +206,7 @@ async def process_habits(message: types.Message, state: FSMContext):
                 "location": f"{user_data['location']}",
                 "allergy": f"{user_data['allergy']}",
                 "lifestyle": f"{user_data['lifestyle']}",
+                "phototype": f"{user_data['phototype']}",
                 "activity": f"{user_data['activity']}",
                 "water_intake": f"{user_data['water_intake']}",
                 "stress": f"{user_data['stress']}",
