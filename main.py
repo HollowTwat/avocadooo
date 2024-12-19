@@ -29,9 +29,11 @@ ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
 
 ANALYSIS_G_FACE_ASS = os.getenv("ANALYSIS_G_FACE_ASS")
 ANALYSIS_G_BODY_ASS = os.getenv("ANALYSIS_G_BODY_ASS")
+ANALYSIS_G_HAIR_ASS = os.getenv("ANALYSIS_G_HAIR_ASS")
 
 ANALYSIS_P_FACE_ASS = os.getenv("ANALYSIS_P_FACE_ASS")
 ANALYSIS_P_BODY_ASS = os.getenv("ANALYSIS_P_BODY_ASS")
+ANALYSIS_P_HAIR_ASS = os.getenv("ANALYSIS_P_HAIR_ASS")
 
 TOKEN = BOT_TOKEN
 
@@ -330,6 +332,7 @@ async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text="Лицо", callback_data="product_type_face")],
         [InlineKeyboardButton(text="Тело", callback_data="product_type_body")],
+        [InlineKeyboardButton(text="Волосы", callback_data="product_type_hair")],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     await bot.send_message(us_id, text, reply_markup=keyboard)
@@ -363,6 +366,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     analysis_matrix = {
         'face': ANALYSIS_G_FACE_ASS,
         'body': ANALYSIS_G_BODY_ASS,
+        'hair': ANALYSIS_G_HAIR_ASS,
     }
 
     analysis_var = analysis_matrix.get(analysis_type)
@@ -414,6 +418,7 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     analysis_matrix = {
         'face': ANALYSIS_P_FACE_ASS,
         'body': ANALYSIS_P_BODY_ASS,
+        'hair': ANALYSIS_P_HAIR_ASS,
     }
 
     analysis_var = analysis_matrix.get(analysis_type)
