@@ -26,8 +26,13 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_KEY = os.getenv("OPENAI_KEY")
 ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
-ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
-PERSONAL_ANALYSIS_ASS = os.getenv("PERSONAL_ANALYSIS_ASS")
+
+ANALYSIS_G_FACE_ASS = os.getenv("ANALYSIS_G_FACE_ASS")
+ANALYSIS_G_BODY_ASS = os.getenv("ANALYSIS_G_BODY_ASS")
+
+ANALYSIS_P_FACE_ASS = os.getenv("ANALYSIS_P_FACE_ASS")
+ANALYSIS_P_BODY_ASS = os.getenv("ANALYSIS_P_BODY_ASS")
+
 TOKEN = BOT_TOKEN
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(
@@ -219,6 +224,8 @@ async def process_habits(message: types.Message, state: FSMContext):
 
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
+    user_data = await state.get_data()
+    product_type = user_data.get("product_type")
     us_id = str(message.from_user.id)
     if message.text:
         med_name = await generate_response(message.text, us_id, ASSISTANT_ID)
@@ -237,7 +244,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [
                 InlineKeyboardButton(
                     text=product.get('FullName'),
-                    callback_data=f"item_{product.get('Identifier')}"
+                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
                 )
             ]
         )
@@ -264,7 +271,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [
                 InlineKeyboardButton(
                     text=product.get('FullName'),
-                    callback_data=f"item_{product.get('Identifier')}"
+                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
                 )
             ]
         )
@@ -293,7 +300,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [
                 InlineKeyboardButton(
                     text=product.get('FullName'),
-                    callback_data=f"item_{product.get('Identifier')}"
+                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
                 )
             ]
         )
@@ -308,8 +315,30 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         await message.answer("Я принимаю только текст голосовое или фото")
 
 
+# @router.callback_query(lambda c: c.data == 'analysis')
+# async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
+#     us_id = callback_query.from_user.id
+#     text = "Скинь мне фото или ссылку твоего средства и я проанализирую? \nИли напиши или надиктуй название"
+#     await state.set_state(UserState.recognition)
+#     await bot.send_message(us_id, text)
+#     await callback_query.answer()
+
 @router.callback_query(lambda c: c.data == 'analysis')
-async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
+async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
+    us_id = callback_query.from_user.id
+    text = "Выберите тип продукта: Лицо или Тело"
+    buttons = [
+        [InlineKeyboardButton(text="Лицо", callback_data="product_type_face")],
+        [InlineKeyboardButton(text="Тело", callback_data="product_type_body")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await bot.send_message(us_id, text, reply_markup=keyboard)
+    await callback_query.answer()
+
+@router.callback_query(lambda c: c.data.startswith('product_type_'))
+async def process_product_type(callback_query: CallbackQuery, state: FSMContext):
+    product_type = callback_query.data.split('_')[2]  # Extracts 'face' or 'body'
+    await state.update_data(product_type=product_type)
     us_id = callback_query.from_user.id
     text = "Скинь мне фото или ссылку твоего средства и я проанализирую? \nИли напиши или надиктуй название"
     await state.set_state(UserState.recognition)
@@ -317,38 +346,85 @@ async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data == 'questionaire')
-async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
+async def process_questionaire(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     text = "Привет! Давайте начнем наш опрос. Сколько вам лет?"
     await bot.send_message(us_id, text)
     await state.set_state(Questionnaire.age)
     await callback_query.answer()
 
+
 @router.callback_query(lambda c: c.data.startswith('item_'))
-async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
-    item_id = callback_query.data.split('_')[1]
+async def process_item(callback_query: CallbackQuery, state: FSMContext):
+    parts = callback_query.data.split('_')
+    analysis_type = parts[1]
+    item_id = parts[2]
+
+    analysis_matrix = {
+        'face': ANALYSIS_G_FACE_ASS,
+        'body': ANALYSIS_G_BODY_ASS,
+    }
+
+    analysis_var = analysis_matrix.get(analysis_type)
+    print(f"analysing using {analysis_var}")
+
+    if not analysis_var:
+        await callback_query.answer("Invalid analysis type.", show_alert=True)
+        return
+
     us_id = callback_query.from_user.id
+
     buttons = [
-        InlineKeyboardButton(text="yep", callback_data=f'personal_{item_id}'),
+        InlineKeyboardButton(text="yep", callback_data=f'personal_{analysis_type}_{item_id}'),
         InlineKeyboardButton(text="nope", callback_data='analysis')
     ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])                                  #RECHECK THIS ONE
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+
     db_info = await fetch_product_details(item_id)
-    analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
-    await bot.send_message(us_id, analysys)
+    analysis_result = await no_thread_ass(str(db_info), analysis_var)
+
+    await bot.send_message(us_id, analysis_result)
     await bot.send_message(us_id, "Хочешь персональный анализ?", reply_markup=keyboard)
+
     await callback_query.answer()
+
+# @router.callback_query(lambda c: c.data.startswith('item_'))
+# async def process_analysis(callback_query: CallbackQuery, state: FSMContext):
+#     item_id = callback_query.data.split('_')[1]
+#     us_id = callback_query.from_user.id
+#     buttons = [
+#         InlineKeyboardButton(text="yep", callback_data=f'personal_{item_id}'),
+#         InlineKeyboardButton(text="nope", callback_data='analysis')
+#     ]
+#     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])                                  #RECHECK THIS ONE
+#     db_info = await fetch_product_details(item_id)
+#     analysys = await no_thread_ass(str(db_info), ANALYSIS_ASS)
+#     await bot.send_message(us_id, analysys)
+#     await bot.send_message(us_id, "Хочешь персональный анализ?", reply_markup=keyboard)
+#     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
 async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
-    item_id = callback_query.data.split('_')[1]
+    # item_id = callback_query.data.split('_')[1]
+    parts = callback_query.data.split('_')
+    analysis_type = parts[1]
+    item_id = parts[2]
     us_id = callback_query.from_user.id
+
+    analysis_matrix = {
+        'face': ANALYSIS_P_FACE_ASS,
+        'body': ANALYSIS_P_BODY_ASS,
+    }
+
+    analysis_var = analysis_matrix.get(analysis_type)
+    
     db_info = await fetch_product_details(item_id)
     user_info = await get_user_data(us_id)
     gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info}"
-    pers_analysis = await no_thread_ass(gpt_message, PERSONAL_ANALYSIS_ASS)
+    pers_analysis = await no_thread_ass(gpt_message, analysis_var)
     await bot.send_message(us_id, pers_analysis)
     await callback_query.answer()
+
 
 @router.message()
 async def default_handler(message: Message, state: FSMContext) -> None:
