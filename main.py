@@ -24,8 +24,8 @@ import json
 from functions import *
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_KEY = os.getenv("OPENAI_KEY")
-ASSISTANT_ID = os.getenv("ASSISTANT_ID")
-ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
+ASSISTANT_ID = os.getenv("RECOGNIZE_MAKEUP_ASS")
+ASSISTANT_ID_2 = os.getenv("FIND_PRODUCT_ASS")
 
 ANALYSIS_G_FACE_ASS = os.getenv("ANALYSIS_G_FACE_ASS")
 ANALYSIS_G_BODY_ASS = os.getenv("ANALYSIS_G_BODY_ASS")
