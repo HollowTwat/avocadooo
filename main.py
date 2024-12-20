@@ -385,7 +385,8 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
 
     db_info = await fetch_product_details(item_id)
-    analysis_result = await no_thread_ass(str(db_info), analysis_var)
+    analysis_result1 = await no_thread_ass(str(db_info), analysis_var)
+    analysis_result = remove_tags(analysis_result1)
 
     await bot.send_message(us_id, analysis_result)
     await bot.send_message(us_id, "Хочешь персональный анализ?", reply_markup=keyboard)

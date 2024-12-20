@@ -41,6 +41,10 @@ router = Router()
 dp = Dispatcher(storage=storage)
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
+def remove_tags(input_string):
+    output = re.sub(r"</?br\s*/?>", "", input_string)
+    return output
+
 async def fetch_product_details(product_id):
     url = f"https://avocado-production.up.railway.app/api/TypesCRUD/GetElementInfo?Id={product_id}"
     async with aiohttp.ClientSession() as session:
