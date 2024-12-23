@@ -509,8 +509,8 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
     # issues = [int(x) for x in message.text.replace(",", " ").split()]
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        1: "Пигментация",
-        2:  "Неровный тон",
+        1 : "Пигментация",
+        2 :  "Неровный тон",
         3 : "Акне, постакне",
         4 : "Рубцы и шрамы",
         5 : "Морщины",
@@ -542,8 +542,8 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
 async def process_face_skin_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        1: "Увлажнённая и гладкая кожа",
-        2:  "Сияющая свежая кожа",
+        1 : "Увлажнённая и гладкая кожа",
+        2 :  "Сияющая свежая кожа",
         3 : "Убрать жирный блеск",
         4 : "Избавиться от расширенных пор",
         5 : "Убрать чёрные точки",
@@ -675,8 +675,8 @@ async def process_body_attention_areas(callback_query: CallbackQuery, state: FSM
 async def process_body_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        1: "Увлажнение",
-        2:  "Питание",
+        1 : "Увлажнение",
+        2 :  "Питание",
         3 : "Смягчение",
         4 : "Тонизирование",
         5 : "Отшелушивание",
@@ -685,7 +685,7 @@ async def process_body_goals(message: types.Message, state: FSMContext):
         8 : "Снятие раздражений",
         9 : "Защита кожи",
         10 : "Массаж",
-        11: "Убрать вросшие волосы",
+        11 : "Убрать вросшие волосы",
         12 : "Убрать акне",
         13 : "Чтобы средство вкусно пахло",
     }
@@ -793,14 +793,14 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
 async def process_hair_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        1: "Увлажнение кожи головы и волос",
-        2: "Восстановление структуры волос",
-        3: "Борьба с перхотью",
-        4: "Укрепление волос",
-        5: "Уменьшение выпадения волос",
-        6: "Стимуляция роста волос",
-        7: "Защита окрашенных волос",
-        8: "Термозащита"
+        1 : "Увлажнение кожи головы и волос",
+        2 : "Восстановление структуры волос",
+        3 : "Борьба с перхотью",
+        4 : "Укрепление волос",
+        5 : "Уменьшение выпадения волос",
+        6 : "Стимуляция роста волос",
+        7 : "Защита окрашенных волос",
+        8 : "Термозащита"
     }
     goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
     await state.update_data(hair_goals=goal_texts)
