@@ -562,7 +562,7 @@ async def process_questionaire(callback_query: CallbackQuery, state: FSMContext)
         "Чтобы не получилось так, что я для тебя одобрила средство, которое абсолютно не подходит тебе по этическим предпочтениям."
     )
     await bot.send_message(us_id, text)
-    await state.set_state(Questionnaire.intro_answer)
+    await state.set_state(Questionnaire2.intro_answer)
     await callback_query.answer()
 
 
@@ -630,7 +630,8 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
     buttons = [[InlineKeyboardButton(
         text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
-        text="Опросник", callback_data="questionaire")]]
+        text="Опросник", callback_data="questionaire")], [InlineKeyboardButton(
+        text="Опросник_2", callback_data="questionaire2")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
         await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
