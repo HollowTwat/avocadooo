@@ -509,16 +509,16 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
     # issues = [int(x) for x in message.text.replace(",", " ").split()]
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        "1": "Пигментация",
-        "2":  "Неровный тон",
-        "3" : "Акне, постакне",
-        "4" : "Рубцы и шрамы",
-        "5" : "Морщины",
-        "6" : "Расширенные поры",
-        "7" : "Открытые и/или закрытые комедоны",
-        "8" : "Сосудистые проявления",
-        "9" : "Сухость, шелушение",
-        "10" : "Нет особых проблем",
+        1: "Пигментация",
+        2:  "Неровный тон",
+        3 : "Акне, постакне",
+        4 : "Рубцы и шрамы",
+        5 : "Морщины",
+        6 : "Расширенные поры",
+        7 : "Открытые и/или закрытые комедоны",
+        8 : "Сосудистые проявления",
+        9 : "Сухость, шелушение",
+        10 : "Нет особых проблем",
     }
     goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
     await state.update_data(face_skin_issues=goal_texts)
@@ -542,16 +542,16 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
 async def process_face_skin_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        "1": "Увлажнённая и гладкая кожа",
-        "2":  "Сияющая свежая кожа",
-        "3" : "Убрать жирный блеск",
-        "4" : "Избавиться от расширенных пор",
-        "5" : "Убрать чёрные точки",
-        "6" : "Убрать воспаления и постакне",
-        "7" : "Убрать морщины",
-        "8" : "Выровнять тон",
-        "9" : "Уменьшить \"мешки\" и тёмные круги под глазами",
-        "10" : "Снять покраснение и раздражение",
+        1: "Увлажнённая и гладкая кожа",
+        2:  "Сияющая свежая кожа",
+        3 : "Убрать жирный блеск",
+        4 : "Избавиться от расширенных пор",
+        5 : "Убрать чёрные точки",
+        6 : "Убрать воспаления и постакне",
+        7 : "Убрать морщины",
+        8 : "Выровнять тон",
+        9 : "Уменьшить \"мешки\" и тёмные круги под глазами",
+        10 : "Снять покраснение и раздражение",
     }
     goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
     await state.update_data(face_skin_goals=goal_texts)
@@ -675,19 +675,19 @@ async def process_body_attention_areas(callback_query: CallbackQuery, state: FSM
 async def process_body_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
     goal_descriptions = {
-        "1": "Увлажнение",
-        "2":  "Питание",
-        "3" : "Смягчение",
-        "4" : "Тонизирование",
-        "5" : "Отшелушивание",
-        "6" : "Антицеллюлитный эффект",
-        "7" : "Осветление кожи",
-        "8" : "Снятие раздражений",
-        "9" : "Защита кожи",
-        "10" : "Массаж",
-        "11": "Убрать вросшие волосы",
-        "12" : "Убрать акне",
-        "13" : "Чтобы средство вкусно пахло",
+        1: "Увлажнение",
+        2:  "Питание",
+        3 : "Смягчение",
+        4 : "Тонизирование",
+        5 : "Отшелушивание",
+        6 : "Антицеллюлитный эффект",
+        7 : "Осветление кожи",
+        8 : "Снятие раздражений",
+        9 : "Защита кожи",
+        10 : "Массаж",
+        11: "Убрать вросшие волосы",
+        12 : "Убрать акне",
+        13 : "Чтобы средство вкусно пахло",
     }
     goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
     await state.update_data(body_goals=goal_texts)
