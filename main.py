@@ -1172,7 +1172,11 @@ async def default_handler(message: Message, state: FSMContext) -> None:
         text="Опросник_Волосы", callback_data="questionnaire_hair")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
-        await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
+        if message.sticker:
+            sticker_id = message.sticker.file_id
+            await message.answer(f"Sticker file ID: {sticker_id}")
+        else: 
+            await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
     else:
         await message.answer(f"Текущее состояние: {current_state}")
 
