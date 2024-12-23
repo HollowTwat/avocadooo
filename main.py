@@ -81,12 +81,43 @@ class Questionnaire2(StatesGroup):
     habits = State()
     ethics = State()
 
+class QuestionnaireFace(StatesGroup):
+    skin_type = State()
+    skin_condition = State()
+    skin_issues = State()
+    skin_goals = State()
+
+class QuestionnaireBody(StatesGroup):
+    body_skin_type = State()
+    body_skin_sensitivity = State()
+    body_skin_condition = State()
+    body_hair_issues = State()
+    body_attention_areas = State()
+    body_goals = State()
+
+class QuestionnaireHair(StatesGroup):
+    scalp_type = State()
+    hair_thickness = State()
+    hair_length = State()
+    hair_structure = State()
+    hair_condition = State()
+    hair_goals = State()
+    washing_frequency = State()
+    current_products = State()
+    product_texture = State()
+    sensitivity = State()
+    styling_tools = State()
+
+
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     buttons = [[InlineKeyboardButton(
         text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
         text="Опросник", callback_data="questionaire")], [InlineKeyboardButton(
-        text="Опросник_2", callback_data="questionaire2")]]
+        text="Опросник_2", callback_data="questionaire2")], [InlineKeyboardButton(
+        text="Опросник_Лицо", callback_data="questionnaire_face")], [InlineKeyboardButton(
+        text="Опросник_Тело", callback_data="questionnaire_body")], [InlineKeyboardButton(
+        text="Опросник_Волосы", callback_data="questionnaire_hair")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
@@ -433,6 +464,364 @@ async def process_habits(message: types.Message, state: FSMContext):
     await state.clear()
 
 
+@router.callback_query(StateFilter(QuestionnaireFace.skin_type), lambda c: True)
+async def process_face_skin_type(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(face_skin_type=callback_query.data)
+    await state.set_state(QuestionnaireFace.skin_condition)
+    await callback_query.message.answer(
+        "13) Как ты оцениваешь текущее состояние кожи своего лица?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Обезвоженная", callback_data="dehydrated")],
+            [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")],
+            [InlineKeyboardButton(text="Нормальная", callback_data="normal")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireFace.skin_condition), lambda c: True)
+async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(face_skin_condition=callback_query.data)
+    await state.set_state(QuestionnaireFace.skin_issues)
+    pre_message_map = {
+        "dehydrated": "Уже сейчас можешь пойти и выпить стаканчик воды, я никуда не убегу 💦",
+        "sensitive": "Хорошо тебя понимаю, муха мимо пролетит, а у меня уже всё краснеет 🦋",
+        "normal": "Не многие могут таким похвастаться ✨🍃"
+    }
+    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.answer(
+        "14) Есть ли у тебя какие-либо осложнения с кожей на лице? Напиши все подходящие варианты\n"
+        "1) Пигментация\n"
+        "2) Неровный тон\n"
+        "3) Акне, постакне\n"
+        "4) Рубцы и шрамы\n"
+        "5) Морщины\n"
+        "6) Расширенные поры\n"
+        "7) Открытые и/или закрытые комедоны\n"
+        "8) Сосудистые проявления\n"
+        "9) Сухость, шелушение\n"
+        "10) Нет особых проблем",
+        reply_markup=None
+    )
+    await callback_query.answer()
+
+@router.message(StateFilter(QuestionnaireFace.skin_issues))
+async def process_face_skin_issues(message: types.Message, state: FSMContext):
+    issues = [int(x) for x in message.text.replace(",", " ").split()]
+    await state.update_data(face_skin_issues=issues)
+    await state.set_state(QuestionnaireFace.skin_goals)
+    await message.answer(
+        "15) Какие задачи ты могла бы себе поставить для улучшения кожи лица? Выбирай несколько вариантов\n"
+        "1) Увлажнённая и гладкая кожа\n"
+        "2) Сияющая свежая кожа\n"
+        "3) Убрать жирный блеск\n"
+        "4) Избавиться от расширенных пор\n"
+        "5) Убрать чёрные точки\n"
+        "6) Убрать воспаления и постакне\n"
+        "7) Убрать морщины\n"
+        "8) Выровнять тон\n"
+        "9) Уменьшить \"мешки\" и тёмные круги под глазами\n"
+        "10) Снять покраснение и раздражение",
+        reply_markup=None
+    )
+
+@router.message(StateFilter(QuestionnaireFace.skin_goals))
+async def process_face_skin_goals(message: types.Message, state: FSMContext):
+    goals = [int(x) for x in message.text.replace(",", " ").split()]
+    await state.update_data(face_skin_goals=goals)
+    user_data = await state.get_data()
+    await message.answer(
+        "Спасибо за участие в опросе! Вот ваши данные:\n"
+        f"Тип кожи: {user_data['face_skin_type']}\n"
+        f"Состояние кожи: {user_data['face_skin_condition']}\n"
+        f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}\n"
+        f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}"
+    )
+    await state.clear()
+
+
+@router.callback_query(StateFilter(QuestionnaireBody.body_skin_type), lambda c: True)
+async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(body_skin_type=callback_query.data)
+    await state.set_state(QuestionnaireBody.body_skin_sensitivity)
+    await callback_query.message.answer(
+        "17) Укажи степень чувствительности кожи тела:",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")],
+            [InlineKeyboardButton(text="Нормальная чувствительность", callback_data="normal")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireBody.body_skin_sensitivity), lambda c: True)
+async def process_body_skin_sensitivity(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(body_skin_sensitivity=callback_query.data)
+    await state.set_state(QuestionnaireBody.body_skin_condition)
+    pre_message_map = {
+        "sensitive": "Я тоже чувствительна и к погоде, и к прикосновениям, и даже к плотной одежде 💔",
+        "normal": "А ты счастливый человек, я вот довольно чувствительна и к погоде, и к прикосновениям, и даже к плотной одежде 💔"
+    }
+    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.answer(
+        "18) Как ты оцениваешь текущее состояние кожи на теле:",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Сухость и шелушение", callback_data="dryness")],
+            [InlineKeyboardButton(text="Потеря упругости", callback_data="loss_of_elasticity")],
+            [InlineKeyboardButton(text="Целлюлит", callback_data="cellulite")],
+            [InlineKeyboardButton(text="Акне/прыщи на теле", callback_data="acne")],
+            [InlineKeyboardButton(text="Пигментация", callback_data="pigmentation")],
+            [InlineKeyboardButton(text="Покраснения и раздражения", callback_data="redness")],
+            [InlineKeyboardButton(text="Трещины на коже", callback_data="cracks")],
+            [InlineKeyboardButton(text="Морщины", callback_data="wrinkles")],
+            [InlineKeyboardButton(text="Нет особых проблем", callback_data="no_problems")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireBody.body_skin_condition), lambda c: True)
+async def process_body_skin_condition(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(body_skin_condition=callback_query.data)
+    await state.set_state(QuestionnaireBody.body_hair_issues)
+    await callback_query.message.answer(
+        "19) Есть ли у тебя проблемы, связанные с волосами на теле?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Вросшие волосы", callback_data="ingrown_hairs")],
+            [InlineKeyboardButton(text="Раздражение после депиляции", callback_data="irritation")],
+            [InlineKeyboardButton(text="Нет проблем", callback_data="no_problems")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireBody.body_hair_issues), lambda c: True)
+async def process_body_hair_issues(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(body_hair_issues=callback_query.data)
+    await state.set_state(QuestionnaireBody.body_attention_areas)
+    pre_message_map = {
+        "ingrown_hairs": "Сочувствую от всей души, но мы поработаем над этим🥺",
+        "irritation": "Сочувствую от всей души, но мы поработаем над этим🥺",
+        "no_problems": "Везунчик! Самый настоящий😜"
+    }
+    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.answer(
+        "20) Есть ли у тебя участки, которым нужно особое внимание (бо́льшее увлажнение или серьезные трещины)?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Локти", callback_data="elbows")],
+            [InlineKeyboardButton(text="Колени", callback_data="knees")],
+            [InlineKeyboardButton(text="Спина", callback_data="back")],
+            [InlineKeyboardButton(text="Пятки", callback_data="heels")],
+            [InlineKeyboardButton(text="Нет проблем", callback_data="no_problems")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireBody.body_attention_areas), lambda c: True)
+async def process_body_attention_areas(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(body_attention_areas=callback_query.data)
+    await state.set_state(QuestionnaireBody.body_goals)
+    await callback_query.message.answer(
+        "21) Какие задачи ты могла бы себе поставить для улучшения кожи тела? Выбирай несколько вариантов\n"
+        "1 - Увлажнение\n"
+        "2 - Питание\n"
+        "3 - Смягчение\n"
+        "4 - Тонизирование\n"
+        "5 - Отшелушивание\n"
+        "6 - Антицеллюлитный эффект\n"
+        "7 - Осветление кожи\n"
+        "8 - Снятие раздражений\n"
+        "9 - Защита кожи\n"
+        "10 - Массаж\n"
+        "11 - Убрать вросшие волосы\n"
+        "12 - Убрать акне\n"
+        "13 - Чтобы средство вкусно пахло",
+        reply_markup=None
+    )
+
+@router.message(StateFilter(QuestionnaireBody.body_goals))
+async def process_body_goals(message: types.Message, state: FSMContext):
+    goals = [int(x) for x in message.text.replace(",", " ").split()]
+    await state.update_data(body_goals=goals)
+    user_data = await state.get_data()
+    await message.answer(
+        "Спасибо за участие в опросе! Вот ваши данные:\n"
+        f"Тип кожи тела: {user_data['body_skin_type']}\n"
+        f"Чувствительность кожи: {user_data['body_skin_sensitivity']}\n"
+        f"Состояние кожи: {user_data['body_skin_condition']}\n"
+        f"Проблемы с волосами: {user_data['body_hair_issues']}\n"
+        f"Участки с особыми потребностями: {user_data['body_attention_areas']}\n"
+        f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}"
+    )
+    await state.clear()
+
+@router.callback_query(StateFilter(QuestionnaireHair.scalp_type), lambda c: True)
+async def process_hair_scalp_type(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(hair_scalp_type=callback_query.data)
+    await state.set_state(QuestionnaireHair.hair_thickness)
+    await callback_query.message.answer(
+        "23.1) Какой у тебя тип волос: толщина?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Тонкие", callback_data="thin"),
+             InlineKeyboardButton(text="Средние", callback_data="medium"),
+             InlineKeyboardButton(text="Густые", callback_data="thick")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.hair_thickness), lambda c: True)
+async def process_hair_thickness(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(hair_thickness=callback_query.data)
+    await state.set_state(QuestionnaireHair.hair_length)
+    await callback_query.message.answer(
+        "23.2) Какой у тебя тип волос: длина?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Короткие", callback_data="short"),
+             InlineKeyboardButton(text="Средние", callback_data="medium"),
+             InlineKeyboardButton(text="Длинные", callback_data="long")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.hair_length), lambda c: True)
+async def process_hair_length(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(hair_length=callback_query.data)
+    await state.set_state(QuestionnaireHair.hair_structure)
+    await callback_query.message.answer(
+        "23.3) Какой у тебя тип волос: структура?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Прямые", callback_data="straight"),
+             InlineKeyboardButton(text="Вьющиеся", callback_data="wavy"),
+             InlineKeyboardButton(text="Кудрявые", callback_data="curly")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.hair_structure), lambda c: True)
+async def process_hair_structure(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(hair_structure=callback_query.data)
+    await state.set_state(QuestionnaireHair.hair_condition)
+    await callback_query.message.answer(
+        "23.4) Какой у тебя тип волос: состояние?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Поврежденные", callback_data="damaged"),
+             InlineKeyboardButton(text="Ломкие", callback_data="brittle")],
+            [InlineKeyboardButton(text="Секущиеся кончики", callback_data="split_ends"),
+             InlineKeyboardButton(text="Здоровые", callback_data="healthy")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.hair_condition), lambda c: True)
+async def process_hair_condition(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(hair_condition=callback_query.data)
+    await state.set_state(QuestionnaireHair.hair_goals)
+    await callback_query.message.answer(
+        "24) Какие цели ухода для тебя важны? Выбери один или несколько пунктов\n"
+        "1. Увлажнение кожи головы и волос\n"
+        "2. Восстановление структуры волос\n"
+        "3. Борьба с перхотью\n"
+        "4. Укрепление волос\n"
+        "5. Уменьшение выпадения волос\n"
+        "6. Стимуляция роста волос\n"
+        "7. Защита окрашенных волос\n"
+        "8. Термозащита",
+        reply_markup=None
+    )
+
+@router.message(StateFilter(QuestionnaireHair.hair_goals))
+async def process_hair_goals(message: types.Message, state: FSMContext):
+    goals = [int(x) for x in message.text.replace(",", " ").split()]
+    await state.update_data(hair_goals=goals)
+    await state.set_state(QuestionnaireHair.washing_frequency)
+    await message.answer(
+        "25) Как часто ты моешь голову?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Каждый день", callback_data="daily"),
+             InlineKeyboardButton(text="Каждые 2 дня", callback_data="every_2_days")],
+            [InlineKeyboardButton(text="2 раза в неделю", callback_data="twice_weekly"),
+             InlineKeyboardButton(text="1 раз в неделю", callback_data="once_weekly")]
+        ])
+    )
+
+@router.callback_query(StateFilter(QuestionnaireHair.washing_frequency), lambda c: True)
+async def process_washing_frequency(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(washing_frequency=callback_query.data)
+    await state.set_state(QuestionnaireHair.current_products)
+    await callback_query.message.answer(
+        "26) Какие средства ты используешь сейчас? Можно выбрать несколько",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Шампунь", callback_data="shampoo"),
+             InlineKeyboardButton(text="Кондиционер", callback_data="conditioner")],
+            [InlineKeyboardButton(text="Маска", callback_data="mask"),
+             InlineKeyboardButton(text="Несмываемый уход", callback_data="leave_in_care")],
+            [InlineKeyboardButton(text="Скраб или пилинг для кожи головы", callback_data="scrub")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.current_products), lambda c: True)
+async def process_current_products(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(current_products=callback_query.data)
+    await state.set_state(QuestionnaireHair.product_texture)
+    await callback_query.message.answer(
+        "27) Какую текстуру средства ты предпочитаешь?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Легкую", callback_data="light"),
+             InlineKeyboardButton(text="Плотную", callback_data="dense")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.product_texture), lambda c: True)
+async def process_product_texture(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(product_texture=callback_query.data)
+    await state.set_state(QuestionnaireHair.sensitivity)
+    pre_message_map = {
+        "light": "Понимаю, тоже не люблю жирные средства и ощущение липкости 🙏",
+        "dense": "Согласна, по плотной структуре будто больше кажется, что средство \"работает\" 😂"
+    }
+    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.answer(
+        "28) Есть ли у тебя аллергия или чувствительность к каким-либо компонентам на коже головы (например, сульфатам, эфирным маслам, ароматизаторам)?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Да", callback_data="yes"),
+             InlineKeyboardButton(text="Нет", callback_data="no")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.sensitivity), lambda c: True)
+async def process_sensitivity(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(sensitivity=callback_query.data)
+    await state.set_state(QuestionnaireHair.styling_tools)
+    await callback_query.message.answer(
+        "29) Используешь ли ты термоукладочные приборы (фен, утюжок)?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Да, часто", callback_data="often"),
+             InlineKeyboardButton(text="Иногда", callback_data="sometimes"),
+             InlineKeyboardButton(text="Нет", callback_data="never")]
+        ])
+    )
+    await callback_query.answer()
+
+@router.callback_query(StateFilter(QuestionnaireHair.styling_tools), lambda c: True)
+async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(styling_tools=callback_query.data)
+    user_data = await state.get_data()
+    await callback_query.message.answer(
+        "Спасибо за участие в опросе! Вот ваши данные:\n"
+        f"Тип кожи головы: {user_data['hair_scalp_type']}\n"
+        f"Толщина волос: {user_data['hair_thickness']}\n"
+        f"Длина волос: {user_data['hair_length']}\n"
+        f"Структура волос: {user_data['hair_structure']}\n"
+        f"Состояние волос: {user_data['hair_condition']}\n"
+        f"Цели ухода: {', '.join(map(str, user_data['hair_goals']))}\n"
+        f"Частота мытья головы: {user_data['washing_frequency']}\n"
+        f"Используемые средства: {user_data['current_products']}\n"
+        f"Предпочитаемая текстура: {user_data['product_texture']}\n"
+        f"Чувствительность: {user_data['sensitivity']}\n"
+        f"Термоукладочные приборы: {user_data['styling_tools']}"
+    )
+    await state.clear()
+
+
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
     user_data = await state.get_data()
@@ -556,8 +945,8 @@ async def process_questionaire(callback_query: CallbackQuery, state: FSMContext)
 async def process_questionaire(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     text = (
-        "Часть 1/4 🟢⚪️⚪️⚪️\n"
-        "11 вопросов о тебе\n\n"
+        "<b>Часть 1/4</b> 🟢⚪️⚪️⚪️\n"
+        "<b>11 вопросов о тебе </b>\n\n"
         "Имя, при составлении твоей индивидуальной рекомендации того или иного средства – я должна знать всё о твоем стиле жизни, фототипе и предпочтениях. "
         "Чтобы не получилось так, что я для тебя одобрила средство, которое абсолютно не подходит тебе по этическим предпочтениям."
     )
@@ -565,6 +954,60 @@ async def process_questionaire(callback_query: CallbackQuery, state: FSMContext)
     await state.set_state(Questionnaire2.intro_answer)
     await callback_query.answer()
 
+
+@router.callback_query(lambda c: c.data == 'questionnaire_face')
+async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(QuestionnaireFace.skin_type)
+    await callback_query.message.answer(
+        "<b> Часть 2/4 🟢🟢⚪️⚪️\n"
+        "4 вопроса о твоём чудесном лице </b>\n"
+        "Спасибо за честные ответы, перейдем к “знакомству” с твоей кожей 🙌\n\n"
+        "12) Какой у тебя тип кожи на лице?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
+             InlineKeyboardButton(text="Сухая", callback_data="dry")],
+            [InlineKeyboardButton(text="Жирная", callback_data="oily"),
+             InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
+        ])
+    )
+    await callback_query.answer()
+
+
+@router.callback_query(lambda c: c.data == 'questionnaire_body')
+async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(QuestionnaireBody.body_skin_type)
+    await callback_query.message.answer(
+        "<b> Часть 3/4 🟢🟢🟢⚪️\n"
+        "6 вопросов о твоем теле </b>\n"
+        "С лицом закончили, это была самая сложная часть, теперь к самой “основной” части твоего прекрасного тела!\n\n"
+        "16) Какой у тебя тип кожи тела?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
+             InlineKeyboardButton(text="Сухая", callback_data="dry")],
+            [InlineKeyboardButton(text="Жирная", callback_data="oily"),
+             InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
+        ])
+    )
+    await callback_query.answer()
+
+
+@router.callback_query(lambda c: c.data == 'questionnaire_hair')
+async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(QuestionnaireHair.scalp_type)
+    await callback_query.message.answer(
+        "<b>Часть 4/4 🟢🟢🟢🟢\n"
+        "8 вопросов о волосах и коже головы </b> 💆‍♀️\n"
+        "Ну, и немного осталось узнать про “спусти свои косы, Рапунцель” твои волосы)\n\n"
+        "22) Какой у тебя тип кожи головы?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
+             InlineKeyboardButton(text="Сухая", callback_data="dry")],
+            [InlineKeyboardButton(text="Жирная", callback_data="oily"),
+             InlineKeyboardButton(text="Комбинированная", callback_data="combination")],
+            [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")]
+        ])
+    )
+    await callback_query.answer()
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
@@ -631,7 +1074,10 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     buttons = [[InlineKeyboardButton(
         text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
         text="Опросник", callback_data="questionaire")], [InlineKeyboardButton(
-        text="Опросник_2", callback_data="questionaire2")]]
+        text="Опросник_2", callback_data="questionaire2")], [InlineKeyboardButton(
+        text="Опросник_Лицо", callback_data="questionnaire_face")], [InlineKeyboardButton(
+        text="Опросник_Тело", callback_data="questionnaire_body")], [InlineKeyboardButton(
+        text="Опросник_Волосы", callback_data="questionnaire_hair")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
         await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
