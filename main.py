@@ -506,8 +506,22 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
 
 @router.message(StateFilter(QuestionnaireFace.skin_issues))
 async def process_face_skin_issues(message: types.Message, state: FSMContext):
-    issues = [int(x) for x in message.text.replace(",", " ").split()]
-    await state.update_data(face_skin_issues=issues)
+    # issues = [int(x) for x in message.text.replace(",", " ").split()]
+    goals = [int(x) for x in message.text.replace(",", " ").split()]
+    goal_descriptions = {
+        "1": "Пигментация",
+        "2":  "Неровный тон",
+        "3" : "Акне, постакне",
+        "4" : "Рубцы и шрамы",
+        "5" : "Морщины",
+        "6" : "Расширенные поры",
+        "7" : "Открытые и/или закрытые комедоны",
+        "8" : "Сосудистые проявления",
+        "9" : "Сухость, шелушение",
+        "10" : "Нет особых проблем",
+    }
+    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+    await state.update_data(face_skin_issues=goal_texts)
     await state.set_state(QuestionnaireFace.skin_goals)
     await message.answer(
         "15) Какие задачи ты могла бы себе поставить для улучшения кожи лица? Выбирай несколько вариантов\n"
@@ -527,7 +541,20 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
 @router.message(StateFilter(QuestionnaireFace.skin_goals))
 async def process_face_skin_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
-    await state.update_data(face_skin_goals=goals)
+    goal_descriptions = {
+        "1": "Увлажнённая и гладкая кожа",
+        "2":  "Сияющая свежая кожа",
+        "3" : "Убрать жирный блеск",
+        "4" : "Избавиться от расширенных пор",
+        "5" : "Убрать чёрные точки",
+        "6" : "Убрать воспаления и постакне",
+        "7" : "Убрать морщины",
+        "8" : "Выровнять тон",
+        "9" : "Уменьшить \"мешки\" и тёмные круги под глазами",
+        "10" : "Снять покраснение и раздражение",
+    }
+    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+    await state.update_data(face_skin_goals=goal_texts)
     user_data = await state.get_data()
     await message.answer(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
@@ -536,6 +563,15 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
         f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}\n"
         f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}"
     )
+    us_id = message.from_user.id
+
+    user_data = {
+                "face_skin_type": f"Тип кожи: {user_data['face_skin_type']}",
+                "face_skin_condition": f"Состояние кожи: {user_data['face_skin_condition']}",
+                "face_skin_issues": f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}",
+                "face_skin_goals": f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}",
+            }
+    # response = await send_user_data(us_id, user_data)
     await state.clear()
 
 
@@ -638,7 +674,23 @@ async def process_body_attention_areas(callback_query: CallbackQuery, state: FSM
 @router.message(StateFilter(QuestionnaireBody.body_goals))
 async def process_body_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
-    await state.update_data(body_goals=goals)
+    goal_descriptions = {
+        "1": "Увлажнение",
+        "2":  "Питание",
+        "3" : "Смягчение",
+        "4" : "Тонизирование",
+        "5" : "Отшелушивание",
+        "6" : "Антицеллюлитный эффект",
+        "7" : "Осветление кожи",
+        "8" : "Снятие раздражений",
+        "9" : "Защита кожи",
+        "10" : "Массаж",
+        "11": "Убрать вросшие волосы",
+        "12" : "Убрать акне",
+        "13" : "Чтобы средство вкусно пахло",
+    }
+    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+    await state.update_data(body_goals=goal_texts)
     user_data = await state.get_data()
     await message.answer(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
@@ -649,6 +701,18 @@ async def process_body_goals(message: types.Message, state: FSMContext):
         f"Участки с особыми потребностями: {user_data['body_attention_areas']}\n"
         f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}"
     )
+
+    us_id = message.from_user.id
+
+    user_data = {
+                "body_skin_type": f"Тип кожи тела: {user_data['body_skin_type']}",
+                "body_skin_sensitivity": f"Чувствительность кожи: {user_data['body_skin_sensitivity']}",
+                "body_skin_condition": f"Состояние кожи: {user_data['body_skin_condition']}",
+                "body_hair_issues": f"Проблемы с волосами: {user_data['body_hair_issues']}",
+                "body_attention_areas": f"Участки с особыми потребностями: {user_data['body_attention_areas']}",
+                "body_goals": f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}",
+            }
+    # response = await send_user_data(us_id, user_data)
     await state.clear()
 
 @router.callback_query(StateFilter(QuestionnaireHair.scalp_type), lambda c: True)
@@ -728,7 +792,18 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
 @router.message(StateFilter(QuestionnaireHair.hair_goals))
 async def process_hair_goals(message: types.Message, state: FSMContext):
     goals = [int(x) for x in message.text.replace(",", " ").split()]
-    await state.update_data(hair_goals=goals)
+    goal_descriptions = {
+        1: "Увлажнение кожи головы и волос",
+        2: "Восстановление структуры волос",
+        3: "Борьба с перхотью",
+        4: "Укрепление волос",
+        5: "Уменьшение выпадения волос",
+        6: "Стимуляция роста волос",
+        7: "Защита окрашенных волос",
+        8: "Термозащита"
+    }
+    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+    await state.update_data(hair_goals=goal_texts)
     await state.set_state(QuestionnaireHair.washing_frequency)
     await message.answer(
         "25) Как часто ты моешь голову?",
@@ -819,6 +894,23 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
         f"Чувствительность: {user_data['sensitivity']}\n"
         f"Термоукладочные приборы: {user_data['styling_tools']}"
     )
+
+    us_id = callback_query.from_user.id
+
+    user_data = {
+                "hair_scalp_type": f"Тип кожи головы: {user_data['hair_scalp_type']}",
+                "hair_thickness": f"Толщина волос: {user_data['hair_thickness']}",
+                "hair_length": f"Длина волос: {user_data['hair_length']}",
+                "hair_structure": f"Структура волос: {user_data['hair_structure']}",
+                "hair_condition": f"Состояние волос: {user_data['hair_condition']}",
+                "hair_goals": f"Цели ухода: {', '.join(map(str, user_data['hair_goals']))}",
+                "washing_frequency": f"Частота мытья головы: {user_data['washing_frequency']}",
+                "current_products": f"Используемые средства: {user_data['current_products']}",
+                "product_texture": f"Предпочитаемая текстура: {user_data['product_texture']}",
+                "sensitivity": f"Чувствительность: {user_data['sensitivity']}",
+                "styling_tools": f"Термоукладочные приборы: {user_data['styling_tools']}",
+            }
+    # response = await send_user_data(us_id, user_data)
     await state.clear()
 
 
