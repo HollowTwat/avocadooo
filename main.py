@@ -348,11 +348,11 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
+        await state.clear()
         await process_questionnaire_face(callback_query, state)
     else:
         await state.clear()
         await callback_query.answer("Опрос завершен. Спасибо за участие!")
-    await state.clear()
 
 @router.message(StateFilter(Questionnaire.age))
 async def process_age(message: types.Message, state: FSMContext):
@@ -605,11 +605,11 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
     # response = await send_user_data(us_id, user_data)
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
+        await state.clear()
         await start_body_questionnaire(message.from_user.id, state)
     else:
         await state.clear()
         await message.answer("Опрос завершен. Спасибо за участие!")
-    await state.clear()
 
 @router.callback_query(StateFilter(QuestionnaireBody.body_skin_type), lambda c: True)
 async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContext):
@@ -753,11 +753,11 @@ async def process_body_goals(message: types.Message, state: FSMContext):
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
+        await state.clear()
         await start_hair_questionnaire(message.from_user.id, state)
     else:
         await state.clear()
         await message.answer("Опрос завершен. Спасибо за участие!")
-    await state.clear() 
 
 @router.callback_query(StateFilter(QuestionnaireHair.scalp_type), lambda c: True)
 async def process_hair_scalp_type(callback_query: CallbackQuery, state: FSMContext):
