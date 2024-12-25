@@ -113,13 +113,15 @@ class QuestionnaireHair(StatesGroup):
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
-    buttons = [[InlineKeyboardButton(
-        text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
-        text="Опросник", callback_data="questionaire")], [InlineKeyboardButton(
-        text="Опросник_2", callback_data="questionaire2")], [InlineKeyboardButton(
-        text="Опросник_Лицо", callback_data="questionnaire_face")], [InlineKeyboardButton(
-        text="Опросник_Тело", callback_data="questionnaire_body")], [InlineKeyboardButton(
-        text="Опросник_Волосы", callback_data="questionnaire_hair")]]
+    await state.update_data(full_sequence=False)
+    buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+        [InlineKeyboardButton(text="Опросник", callback_data="questionaire")],
+        [InlineKeyboardButton(text="Опросник_2", callback_data="questionaire2")],
+        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
+        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
+        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
+        [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
@@ -324,6 +326,13 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
         f"Вредные привычки: {user_data['habits']}\n"
         f"Этические предпочтения: {user_data['ethics']}"
     )
+
+    full_sequence = user_data.get("full_sequence", False)
+    if full_sequence:
+        await process_questionnaire_face(callback_query, state)
+    else:
+        await state.clear()
+        await callback_query.answer("Опрос завершен. Спасибо за участие!")
     await state.clear()
 
 @router.message(StateFilter(Questionnaire.age))
@@ -465,7 +474,6 @@ async def process_habits(message: types.Message, state: FSMContext):
     await message.answer(str(response))
     await state.clear()
 
-
 @router.callback_query(StateFilter(QuestionnaireFace.skin_type), lambda c: True)
 async def process_face_skin_type(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(face_skin_type=callback_query.data)
@@ -574,8 +582,13 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
                 "face_skin_goals": f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}",
             }
     # response = await send_user_data(us_id, user_data)
+    full_sequence = user_data.get("full_sequence", False)
+    if full_sequence:
+        await start_body_questionnaire(message.from_user.id, state)
+    else:
+        await state.clear()
+        await message.answer("Опрос завершен. Спасибо за участие!")
     await state.clear()
-
 
 @router.callback_query(StateFilter(QuestionnaireBody.body_skin_type), lambda c: True)
 async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContext):
@@ -715,6 +728,13 @@ async def process_body_goals(message: types.Message, state: FSMContext):
                 "body_goals": f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}",
             }
     # response = await send_user_data(us_id, user_data)
+
+    full_sequence = user_data.get("full_sequence", False)
+    if full_sequence:
+        await start_hair_questionnaire(message.from_user.id, state)
+    else:
+        await state.clear()
+        await message.answer("Опрос завершен. Спасибо за участие!")
     await state.clear()
 
 @router.callback_query(StateFilter(QuestionnaireHair.scalp_type), lambda c: True)
@@ -913,6 +933,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
                 "styling_tools": f"Термоукладочные приборы: {user_data['styling_tools']}",
             }
     # response = await send_user_data(us_id, user_data)
+    await bot.send_message(us_id, "Опрос завершен, /start для возврата в меню")
     await state.clear()
 
 
@@ -1057,7 +1078,10 @@ async def process_questionaire(callback_query: CallbackQuery, state: FSMContext)
     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data == 'questionaire2')
-async def process_questionaire(callback_query: CallbackQuery, state: FSMContext):
+async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext):
+    current_data = await state.get_data()
+    if not current_data.get("full_sequence", True):
+        await state.update_data(full_sequence=False)
     us_id = callback_query.from_user.id
     text = (
         "<b>Часть 1/4</b> 🟢⚪️⚪️⚪️\n"
@@ -1072,6 +1096,9 @@ async def process_questionaire(callback_query: CallbackQuery, state: FSMContext)
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+    current_data = await state.get_data()
+    if not current_data.get("full_sequence", True):
+        await state.update_data(full_sequence=False)
     await state.set_state(QuestionnaireFace.skin_type)
     await callback_query.message.answer(
         "<b> Часть 2/4 🟢🟢⚪️⚪️\n"
@@ -1088,10 +1115,14 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
     await callback_query.answer()
 
 
-@router.callback_query(lambda c: c.data == 'questionnaire_body')
-async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMContext):
+
+async def start_body_questionnaire(user_id: int, state: FSMContext):
+    current_data = await state.get_data()
+    if not current_data.get("full_sequence", True):
+        await state.update_data(full_sequence=False)
     await state.set_state(QuestionnaireBody.body_skin_type)
-    await callback_query.message.answer(
+    await bot.send_message(
+        user_id,
         "<b> Часть 3/4 🟢🟢🟢⚪️\n"
         "6 вопросов о твоем теле </b>\n"
         "С лицом закончили, это была самая сложная часть, теперь к самой “основной” части твоего прекрасного тела!\n\n"
@@ -1103,13 +1134,21 @@ async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMCo
              InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
         ])
     )
+
+@router.callback_query(lambda c: c.data == 'questionnaire_body')
+async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(full_sequence=False)
+    await start_body_questionnaire(callback_query.from_user.id, state)
     await callback_query.answer()
 
 
-@router.callback_query(lambda c: c.data == 'questionnaire_hair')
-async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMContext):
+async def start_hair_questionnaire(user_id: int, state: FSMContext):
+    current_data = await state.get_data()
+    if not current_data.get("full_sequence", True):
+        await state.update_data(full_sequence=False)
     await state.set_state(QuestionnaireHair.scalp_type)
-    await callback_query.message.answer(
+    await bot.send_message(
+        user_id,
         "<b>Часть 4/4 🟢🟢🟢🟢\n"
         "8 вопросов о волосах и коже головы </b> 💆‍♀️\n"
         "Ну, и немного осталось узнать про “спусти свои косы, Рапунцель” твои волосы)\n\n"
@@ -1122,7 +1161,18 @@ async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMCo
             [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")]
         ])
     )
+
+
+@router.callback_query(lambda c: c.data == 'questionnaire_hair')
+async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(full_sequence=False)
+    await start_hair_questionnaire(callback_query.from_user.id, state)
     await callback_query.answer()
+
+@router.callback_query(lambda c: c.data == 'all_questionnaires')
+async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(full_sequence=True)
+    await process_questionaire2(callback_query, state)
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
