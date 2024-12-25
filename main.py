@@ -1,5 +1,6 @@
 import asyncio
 import aiogram
+import random
 import os
 import logging
 from aiogram import Bot, Dispatcher, types
@@ -17,6 +18,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, InputMediaPhoto, InputMediaVideo
 from openai import AsyncOpenAI, OpenAI
+from stickerlist import STICKERLIST
 import shelve
 import json
 
@@ -919,11 +921,20 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     user_data = await state.get_data()
     product_type = user_data.get("product_type")
     us_id = str(message.from_user.id)
+    chat_id = message.chat.id
     if message.text:
+
+        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await generate_response(message.text, us_id, ASSISTANT_ID)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+
+
         await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+
+        sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         response = await remove_json_block(response1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
@@ -946,10 +957,16 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
+        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+
         med_name = await generate_response(transcribed_text, us_id, ASSISTANT_ID)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+
+        sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         response = await remove_json_block(response1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
         await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
@@ -975,10 +992,16 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
+
+        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await process_url(file_url, us_id, ASSISTANT_ID)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+
+        sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         response = await remove_json_block(response1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
         await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
@@ -1120,6 +1143,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
         await callback_query.answer("Invalid analysis type.", show_alert=True)
         return
 
+    chat_id = callback_query.message.chat.id
     us_id = callback_query.from_user.id
 
     buttons = [
@@ -1128,9 +1152,12 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
 
+
+    sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
     analysis_result1 = await no_thread_ass(str(db_info), analysis_var)
     analysis_result = remove_tags(analysis_result1)
+    await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
 
     await bot.send_message(us_id, analysis_result)
     await bot.send_message(us_id, "Хочешь персональный анализ?", reply_markup=keyboard)
@@ -1143,6 +1170,7 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     analysis_type = parts[1]
     item_id = parts[2]
     us_id = callback_query.from_user.id
+    chat_id = callback_query.message.chat.id
 
     analysis_matrix = {
         'face': ANALYSIS_P_FACE_ASS,
@@ -1152,10 +1180,13 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
 
     analysis_var = analysis_matrix.get(analysis_type)
     
+    sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
     user_info = await get_user_data(us_id)
     gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info}"
     pers_analysis = await no_thread_ass(gpt_message, analysis_var)
+    await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+
     await bot.send_message(us_id, pers_analysis)
     await callback_query.answer()
 
