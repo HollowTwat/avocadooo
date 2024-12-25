@@ -329,6 +329,7 @@ async def process_habits(callback_query: types.CallbackQuery, state: FSMContext)
 @router.callback_query(StateFilter(Questionnaire2.ethics), lambda c: c.data.startswith("ethics_"))
 async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext):
     ethics = "Натуральный состав, Vegan продукт и Cruelty-free" if callback_query.data == "ethics_cruelty_free" else "Это не имеет значения"
+    us_id = callback_query.from_user.id
     await state.update_data(ethics=ethics)
     user_data = await state.get_data()
     await callback_query.message.answer(
@@ -345,6 +346,21 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
         f"Вредные привычки: {user_data['habits']}\n"
         f"Этические предпочтения: {user_data['ethics']}"
     )
+
+    user_data_gen = {
+                "age": f"{user_data['age']}",
+                "gender": f"{user_data['gender']}",
+                "location": f"{user_data['location']}",
+                "allergy": f"{user_data['allergy']}",
+                "lifestyle": f"{user_data['lifestyle']}",
+                "phototype": f"{user_data['phototype']}",
+                "activity": f"{user_data['activity']}",
+                "water_intake": f"{user_data['water_intake']}",
+                "stress": f"{user_data['stress']}",
+                "habits": f"{user_data['habits']}"
+            }
+    response = await send_user_data(us_id, user_data_gen, "SetUserBaseData", "user_data")
+    await callback_query.message.answer(f"Сохранено в базе: {response}")
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
@@ -596,13 +612,15 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
     )
     us_id = message.from_user.id
 
-    user_data = {
+    user_face_data = {
                 "face_skin_type": f"Тип кожи: {user_data['face_skin_type']}",
                 "face_skin_condition": f"Состояние кожи: {user_data['face_skin_condition']}",
                 "face_skin_issues": f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}",
                 "face_skin_goals": f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}",
             }
-    # response = await send_user_data(us_id, user_data)
+    response = await send_user_data(us_id, user_face_data, "SetUserFaceData", "user_face_data")
+    await message.answer(f"Сохранено в базе: {response}")
+
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
         await state.clear()
@@ -741,7 +759,7 @@ async def process_body_goals(message: types.Message, state: FSMContext):
 
     us_id = message.from_user.id
 
-    user_data = {
+    user_body_data = {
                 "body_skin_type": f"Тип кожи тела: {user_data['body_skin_type']}",
                 "body_skin_sensitivity": f"Чувствительность кожи: {user_data['body_skin_sensitivity']}",
                 "body_skin_condition": f"Состояние кожи: {user_data['body_skin_condition']}",
@@ -749,7 +767,9 @@ async def process_body_goals(message: types.Message, state: FSMContext):
                 "body_attention_areas": f"Участки с особыми потребностями: {user_data['body_attention_areas']}",
                 "body_goals": f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}",
             }
-    # response = await send_user_data(us_id, user_data)
+
+    response = await send_user_data(us_id, user_body_data, "SetUserBodyData", "user_body_data")
+    await message.answer(f"Сохранено в базе: {response}")
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
@@ -941,7 +961,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
 
     us_id = callback_query.from_user.id
 
-    user_data = {
+    user_hair_data = {
                 "hair_scalp_type": f"Тип кожи головы: {user_data['hair_scalp_type']}",
                 "hair_thickness": f"Толщина волос: {user_data['hair_thickness']}",
                 "hair_length": f"Длина волос: {user_data['hair_length']}",
@@ -954,6 +974,8 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
                 "sensitivity": f"Чувствительность: {user_data['sensitivity']}",
                 "styling_tools": f"Термоукладочные приборы: {user_data['styling_tools']}",
             }
+    response = await send_user_data(us_id, user_hair_data, "SetUserHairData", "user_hair_data")
+    await callback_query.message.answer(f"Сохранено в базе: {response}")
     # response = await send_user_data(us_id, user_data)
     await bot.send_message(us_id, "Опрос завершен, /start для возврата в меню")
     await state.clear()

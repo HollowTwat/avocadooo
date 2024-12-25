@@ -61,12 +61,12 @@ async def fetch_product_details(product_id):
                 print(f"Failed to fetch product {product_id}. Status: {response.status}")
                 return None
             
-async def send_user_data(tg_id, data_json):
-    url = 'https://avocado-production.up.railway.app/api/TypesCRUD/SetUserData'
+async def send_user_data(tg_id, data_json, method, data_name):
+    url = f'https://avocado-production.up.railway.app/api/TypesCRUD/{method}'
 
     payload = {
         "tg_id": tg_id,
-        "user_data": data_json
+        f"{data_name}": data_json
     }
     print(payload)
 
