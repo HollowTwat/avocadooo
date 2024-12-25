@@ -747,6 +747,7 @@ async def process_body_goals(message: types.Message, state: FSMContext):
     goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
     await state.update_data(body_goals=goal_texts)
     user_data = await state.get_data()
+    print(f"user: {message.from_user.id}, full_seq: {user_data.get("full_sequence")}")
     await message.answer(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
         f"Тип кожи тела: {user_data['body_skin_type']}\n"
@@ -1142,9 +1143,9 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
     current_data = await state.get_data()
     user_id = callback_query.from_user.id
-    if not current_data.get("full_sequence", True):
+    if not current_data.get("full_sequence", False):
         await state.update_data(full_sequence=False)
-        print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
+    print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
     await state.set_state(QuestionnaireFace.skin_type)
     await callback_query.message.answer(
         "<b> Часть 2/4 🟢🟢⚪️⚪️\n"
@@ -1165,7 +1166,7 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
 async def start_body_questionnaire(user_id: int, state: FSMContext):
     current_data = await state.get_data()
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence", True)}")
-    if not current_data.get("full_sequence", True):
+    if not current_data.get("full_sequence", False):
         await state.update_data(full_sequence=False)
     await state.set_state(QuestionnaireBody.body_skin_type)
     await bot.send_message(
@@ -1191,7 +1192,7 @@ async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMCo
 
 async def start_hair_questionnaire(user_id: int, state: FSMContext):
     current_data = await state.get_data()
-    if not current_data.get("full_sequence", True):
+    if not current_data.get("full_sequence", False):
         await state.update_data(full_sequence=False)
     await state.set_state(QuestionnaireHair.scalp_type)
     await bot.send_message(
