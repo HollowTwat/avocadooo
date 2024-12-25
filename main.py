@@ -175,19 +175,28 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await state.set_state(Questionnaire2.lifestyle)
     await callback_query.message.answer(
         "5) Особенности образа жизни: какой из вариантов больше описывает твою жизнь? <i>Можно выбрать несколько вариантов</i>\n"
-        "1) Часто нахожусь на солнце\n"
-        "2) Работаю в сухом помещении (с кондиционером или отоплением)\n"
-        "3) Сидячая и неактивная работа\n"
-        "4) Часто занимаюсь спортом или физической активностью (высокая потливость)\n"
-        "5) Мой образ жизни не подходит ни под одно из этих описаний\n"
+        "1 - Часто нахожусь на солнце\n"
+        "2 - Работаю в сухом помещении (с кондиционером или отоплением)\n"
+        "3 - Сидячая и неактивная работа\n"
+        "4 - Часто занимаюсь спортом или физической активностью (высокая потливость)\n"
+        "5 - Мой образ жизни не подходит ни под одно из этих описаний\n"
         "Укажи через запятую все, что применимо \n<i>(например: 1, 2)</i>"
     )
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire2.lifestyle))
 async def process_lifestyle(message: types.Message, state: FSMContext):
-    lifestyle = [int(x) for x in message.text.replace(",", " ").split()]
-    await state.update_data(lifestyle=lifestyle)
+    lifestyle_nums = [int(x) for x in message.text.replace(",", " ").split()]
+    lifestyle_descriptions = {
+        1 : "Часто нахожусь на солнце",
+        2 :  "Работаю в сухом помещении (с кондиционером или отоплением)",
+        3 : "Сидячая и неактивная работа",
+        4 : "Часто занимаюсь спортом или физической активностью (высокая потливость)",
+        5 : "Мой образ жизни не подходит ни под одно из этих описаний",
+    }
+    lifestyle_texts = [lifestyle_descriptions[lifestyle] for lifestyle in lifestyle_nums if lifestyle in lifestyle_descriptions]
+    await state.update_data(lifestyle=lifestyle_texts)
+
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[[
             InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)
@@ -209,7 +218,16 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
 @router.callback_query(StateFilter(Questionnaire2.phototype), lambda c: c.data.startswith("phototype_"))
 async def process_phototype(callback_query: types.CallbackQuery, state: FSMContext):
     phototype = callback_query.data.split("_")[1]
-    await state.update_data(phototype=phototype)
+    phototype_map = {
+        "1": "Очень светлая кожа, не загорает, сразу краснеет",
+        "2": "Светлая кожа, легко сгорает, загорает с трудом",
+        "3": "Светлая/средняя кожа, редко сгорает, загорает постепенно",
+        "4": "Средняя/оливковая кожа, редко сгорает, хорошо загорает",
+        "5": "Темная кожа, практически не сгорает, быстро загорает",
+        "6": "Очень темная кожа, никогда не сгорает",
+    }
+    description = phototype_map.get(phototype, "Неизвестный фототип")
+    await state.update_data(phototype=description)
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="Низкая", callback_data="activity_low")],
@@ -375,9 +393,9 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await state.set_state(Questionnaire.lifestyle)
     await callback_query.message.answer(
         "Особенности образа жизни:\n"
-        "1. Частое пребывание на солнце\n"
-        "2. Работа в сухом помещении\n"
-        "3. Частые физические нагрузки\n"
+        "1 - Частое пребывание на солнце\n"
+        "2 - Работа в сухом помещении\n"
+        "3 - Частые физические нагрузки\n"
         "Укажите через запятую все, что применимо (например, 1, 2):"
     )
     await callback_query.answer()
@@ -501,16 +519,16 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
     await callback_query.message.answer(pre_message_map[callback_query.data])
     await callback_query.message.answer(
         "14) Есть ли у тебя какие-либо осложнения с кожей на лице?\n"
-        "1) Пигментация\n"
-        "2) Неровный тон\n"
-        "3) Акне, постакне\n"
-        "4) Рубцы и шрамы\n"
-        "5) Морщины\n"
-        "6) Расширенные поры\n"
-        "7) Открытые и/или закрытые комедоны\n"
-        "8) Сосудистые проявления\n"
-        "9) Сухость, шелушение\n"
-        "10) Нет особых проблем\n\n"
+        "1 - Пигментация\n"
+        "2 - Неровный тон\n"
+        "3 - Акне, постакне\n"
+        "4 - Рубцы и шрамы\n"
+        "5 - Морщины\n"
+        "6 - Расширенные поры\n"
+        "7 - Открытые и/или закрытые комедоны\n"
+        "8 - Сосудистые проявления\n"
+        "9 - Сухость, шелушение\n"
+        "10 - Нет особых проблем\n\n"
         "Выбирай несколько вариантов и пиши их через запятую или разделяя пробелом. \n<i>Типо: (1,4,6) или (1 4 5)</i>",
         reply_markup=None
     )
@@ -537,16 +555,16 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
     await state.set_state(QuestionnaireFace.skin_goals)
     await message.answer(
         "15) Какие задачи ты могла бы себе поставить для улучшения кожи лица? \n"
-        "1) Увлажнённая и гладкая кожа\n"
-        "2) Сияющая свежая кожа\n"
-        "3) Убрать жирный блеск\n"
-        "4) Избавиться от расширенных пор\n"
-        "5) Убрать чёрные точки\n"
-        "6) Убрать воспаления и постакне\n"
-        "7) Убрать морщины\n"
-        "8) Выровнять тон\n"
-        "9) Уменьшить \"мешки\" и тёмные круги под глазами\n"
-        "10) Снять покраснение и раздражение\n\n"
+        "1 - Увлажнённая и гладкая кожа\n"
+        "2 - Сияющая свежая кожа\n"
+        "3 - Убрать жирный блеск\n"
+        "4 - Избавиться от расширенных пор\n"
+        "5 - Убрать чёрные точки\n"
+        "6 - Убрать воспаления и постакне\n"
+        "7 - Убрать морщины\n"
+        "8 - Выровнять тон\n"
+        "9 - Уменьшить \"мешки\" и тёмные круги под глазами\n"
+        "10 - Снять покраснение и раздражение\n\n"
         "Выбирай несколько вариантов и пиши их через запятую или разделяя пробелом. \n<i>Типо: (1,4,6) или (1 4 5)</i>",
         reply_markup=None
     )
@@ -739,7 +757,7 @@ async def process_body_goals(message: types.Message, state: FSMContext):
     else:
         await state.clear()
         await message.answer("Опрос завершен. Спасибо за участие!")
-    await state.clear()
+    await state.clear() 
 
 @router.callback_query(StateFilter(QuestionnaireHair.scalp_type), lambda c: True)
 async def process_hair_scalp_type(callback_query: CallbackQuery, state: FSMContext):
@@ -804,14 +822,14 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
     await state.set_state(QuestionnaireHair.hair_goals)
     await callback_query.message.answer(
         "24) Какие цели ухода для тебя важны? Выбери один или несколько пунктов\n"
-        "1. Увлажнение кожи головы и волос\n"
-        "2. Восстановление структуры волос\n"
-        "3. Борьба с перхотью\n"
-        "4. Укрепление волос\n"
-        "5. Уменьшение выпадения волос\n"
-        "6. Стимуляция роста волос\n"
-        "7. Защита окрашенных волос\n"
-        "8. Термозащита",
+        "1 - Увлажнение кожи головы и волос\n"
+        "2 - Восстановление структуры волос\n"
+        "3 - Борьба с перхотью\n"
+        "4 - Укрепление волос\n"
+        "5 - Уменьшение выпадения волос\n"
+        "6 - Стимуляция роста волос\n"
+        "7 - Защита окрашенных волос\n"
+        "8 - Термозащита",
         reply_markup=None
     )
 
