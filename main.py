@@ -1143,10 +1143,10 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
     current_data = await state.get_data()
     user_id = callback_query.from_user.id
+    await state.set_state(QuestionnaireFace.skin_type)
     if not current_data.get("full_sequence", False):
         await state.update_data(full_sequence=False)
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
-    await state.set_state(QuestionnaireFace.skin_type)
     await callback_query.message.answer(
         "<b> Часть 2/4 🟢🟢⚪️⚪️\n"
         "4 вопроса о твоём чудесном лице </b>\n"
@@ -1166,9 +1166,10 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
 async def start_body_questionnaire(user_id: int, state: FSMContext):
     current_data = await state.get_data()
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence", True)}")
+    await state.set_state(QuestionnaireBody.body_skin_type)
     if not current_data.get("full_sequence", False):
         await state.update_data(full_sequence=False)
-    await state.set_state(QuestionnaireBody.body_skin_type)
+    print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
     await bot.send_message(
         user_id,
         "<b> Часть 3/4 🟢🟢🟢⚪️\n"
@@ -1192,9 +1193,10 @@ async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMCo
 
 async def start_hair_questionnaire(user_id: int, state: FSMContext):
     current_data = await state.get_data()
+    await state.set_state(QuestionnaireHair.scalp_type)
     if not current_data.get("full_sequence", False):
         await state.update_data(full_sequence=False)
-    await state.set_state(QuestionnaireHair.scalp_type)
+    print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
     await bot.send_message(
         user_id,
         "<b>Часть 4/4 🟢🟢🟢🟢\n"
