@@ -383,6 +383,7 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
     user_data = await state.get_data()
     await callback_query.message.answer(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
+        f"Имя: {user_data['name']}\n"
         f"Возраст: {user_data['age']}\n"
         f"Пол: {user_data['gender']}\n"
         f"Место проживания: {user_data['location']}\n"
@@ -397,6 +398,7 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
     )
 
     user_data_gen = {
+                "name": f"{user_data['name']}",
                 "age": f"{user_data['age']}",
                 "gender": f"{user_data['gender']}",
                 "location": f"{user_data['location']}",
@@ -888,7 +890,6 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
             }
     response = await send_user_data(us_id, user_hair_data, "SetUserHairData", "user_hair_data")
     await callback_query.message.answer(f"Сохранено в базе: {response}")
-    # response = await send_user_data(us_id, user_data)
     await bot.send_message(us_id, "Опрос завершен, /start для возврата в меню")
     await state.clear()
 
@@ -945,7 +946,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         response = await remove_json_block(response1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
-        await message.answer(f"Вот информация по продукту в базе: {response}")
+        # await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
