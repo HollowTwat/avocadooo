@@ -130,20 +130,20 @@ async def process_name(message: types.Message, state: FSMContext):
     )
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'what_do_you_do')
-async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+async def process_questionnaire_yapp(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.answer(
         "Чтобы проанализировать состав баночки максимально точно, мне нужно немного больше узнать о вас! \n"
         "🤔 Давайте заполним подробную анкету — это поможет мне лучше понять ваши потребности и подобрать самые подходящие продукты именно вам. Готовы?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Да", callback_data="agreement_yes"),
-             InlineKeyboardButton(text="Нет", callback_data="agreement_no")],
+             InlineKeyboardButton(text="Нет", callback_data="agreement_no")]
         ])
     )
     await callback_query.answer()
 
-
+                                                  
 @router.message(StateFilter(Questionnaire.intro), lambda c: c.data.startswith("agreement_"))
-async def process_age(callback_query: types.CallbackQuery, state: FSMContext):
+async def process_agreement(callback_query: types.CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     print("hit_agreement")
     if callback_query.data == "agreement_no":
@@ -172,7 +172,7 @@ async def process_age(callback_query: types.CallbackQuery, state: FSMContext):
         await bot.send_message(us_id, text, reply_markup=keyboard)
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'lesgo')
-async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+async def process_questionnaire_lesgo(callback_query: CallbackQuery, state: FSMContext):
 
     await state.set_state(Questionnaire.age)
     await callback_query.message.answer(
