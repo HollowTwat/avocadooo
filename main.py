@@ -1196,7 +1196,7 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     }
 
     analysis_var = analysis_matrix.get(analysis_type)
-    db_var = db_matrix(analysis_type)
+    db_var = db_matrix.get(analysis_type)
     
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
