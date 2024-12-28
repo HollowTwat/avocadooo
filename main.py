@@ -182,6 +182,8 @@ async def process_questionnaire_lesgo(callback_query: CallbackQuery, state: FSMC
 
 @router.message(StateFilter(Questionnaire.age))
 async def process_age(message: types.Message, state: FSMContext):
+    current_data = await state.get_data()
+    print(f"Updated state in process_all_questionnaires: {current_data}")
     await state.update_data(age=message.text)
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -421,6 +423,8 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
 @router.callback_query(StateFilter(QuestionnaireFace.skin_type), lambda c: True)
 async def process_face_skin_type(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(face_skin_type=callback_query.data)
+    current_data = await state.get_data()
+    print(f"Updated state in process_all_questionnaires: {current_data}")
     await state.set_state(QuestionnaireFace.skin_condition)
     await callback_query.message.answer(
         "13) Как ты оцениваешь текущее состояние кожи своего лица?",
@@ -532,7 +536,6 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
-        await state.clear()
         await start_body_questionnaire(message.from_user.id, state)
     else:
         await state.clear()
@@ -683,7 +686,6 @@ async def process_body_goals(message: types.Message, state: FSMContext):
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
-        await state.clear()
         await start_hair_questionnaire(message.from_user.id, state)
     else:
         await state.clear()
@@ -1124,6 +1126,8 @@ async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data == 'all_questionnaires')
 async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMContext):
+    current_data = await state.get_data()
+    print(f"Updated state in process_all_questionnaires: {current_data}")
     await state.set_state(UserState.info_coll)
     await state.update_data(full_sequence=True)
     await process_questionaire2(callback_query, state)
@@ -1199,12 +1203,14 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
 async def default_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
     await state.update_data(full_sequence=False)
-    buttons = [[InlineKeyboardButton(
-        text="Анализ состава 🔍", callback_data="analysis")], 
-        [InlineKeyboardButton(text="Опросник_2", callback_data="questionaire2")], 
-        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")], 
-        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")], 
-        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")]]
+    buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+        [InlineKeyboardButton(text="Опросник_Начало", callback_data="questionaire2")],
+        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
+        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
+        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
+        [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
+        ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
         if message.sticker:
