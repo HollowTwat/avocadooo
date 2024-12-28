@@ -100,6 +100,79 @@ async def get_user_data(tg_id):
             raise
             
 
+async def fetch_user_data(user_tg_id, infotype):
+    url = f"https://avocado-production.up.railway.app/api/TypesCRUD/GetUserData?userTgId={user_tg_id}"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                text_response = await response.text()
+                try:
+                    data = json.loads(text_response)
+                    return format_user_data(data, infotype)
+                except json.JSONDecodeError:
+                    print(f"Failed to parse JSON for user {user_tg_id}. Response: {text_response}")
+                    return None
+            else:
+                print(f"Failed to fetch user data {user_tg_id}. Status: {response.status}")
+                return None
+
+def format_user_data(data, infotype):
+    if infotype == "general":
+        return {
+            "user_data": {
+                "age": data.get("age", ""),
+                "gender": data.get("gender", ""),
+                "location": data.get("location", ""),
+                "allergy": data.get("allergy", ""),
+                "lifestyle": data.get("lifestyle", ""),
+                "phototype": data.get("phototype", ""),
+                "activity": data.get("activity", ""),
+                "water_intake": data.get("waterIntake", ""),
+                "stress": data.get("stress", ""),
+                "habits": data.get("habits", ""),
+                "ethics": data.get("ethics", "")
+            }
+        }
+    elif infotype == "face":
+        return {
+            "user_face_data": {
+                "face_skin_type": data.get("faceskintype", ""),
+                "face_skin_condition": data.get("faceskincondition", ""),
+                "face_skin_issues": data.get("faceskinissues", ""),
+                "face_skin_goals": data.get("faceskingoals", "")
+            }
+        }
+    elif infotype == "body":
+        return {
+            "user_body_data": {
+                "body_skin_type": data.get("bodyskintype", ""),
+                "body_skin_sensitivity": data.get("bodyskinsensitivity", ""),
+                "body_skin_condition": data.get("bodyskincondition", ""),
+                "body_hair_issues": data.get("bodyhairissues", ""),
+                "body_attention_areas": data.get("bodyattentionareas", ""),
+                "body_goals": data.get("bodygoals", "")
+            }
+        }
+    elif infotype == "hair":
+        return {
+            "user_hair_data": {
+                "hair_scalp_type": data.get("hairscalptype", ""),
+                "hair_thickness": data.get("hairthickness", ""),
+                "hair_length": data.get("hairlength", ""),
+                "hair_structure": data.get("hairstructure", ""),
+                "hair_condition": data.get("haircondition", ""),
+                "hair_goals": data.get("hairgoals", ""),
+                "washing_frequency": data.get("hairwashingfrequency", ""),
+                "current_products": data.get("haircurrentproducts", ""),
+                "product_texture": data.get("hairproducttexture", ""),
+                "sensitivity": data.get("hairsensitivity", ""),
+                "styling_tools": data.get("hairstylingtools", "")
+            }
+        }
+    else:
+        print(f"Invalid infotype: {infotype}")
+        return None
+
 async def process_photo(photo_data, user_id, assistant):
     thread_id = await check_if_thread_exists(user_id)
 

@@ -911,7 +911,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
-        response = await remove_json_block(response1)
+        # response = await remove_json_block(response1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
         extracted_list = await extract_list_from_input(response1)
@@ -943,7 +943,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
-        response = await remove_json_block(response1)
+        # response = await remove_json_block(response1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
         # await message.answer(f"Вот информация по продукту в базе: {response}")
@@ -978,10 +978,10 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
-        response = await remove_json_block(response1)
+        # response = await remove_json_block(response1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
-        await message.answer(f"Вот информация по продукту в базе: {response}")
+        # await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
         print(extracted_list)
         if extracted_list:
@@ -1189,13 +1189,21 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
         'body': ANALYSIS_P_BODY_ASS,
         'hair': ANALYSIS_P_HAIR_ASS,
     }
+    db_matrix = {
+        'face': "face",
+        'body': "body",
+        'hair': "hair",
+    }
 
     analysis_var = analysis_matrix.get(analysis_type)
+    db_var = db_matrix(analysis_type)
     
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
-    user_info = await get_user_data(us_id)
-    gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info}"
+    # user_info = await get_user_data(us_id)
+    user_info_general = await fetch_user_data(us_id, "general")
+    user_info_type = await fetch_user_data(us_id, db_var)
+    gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info_general}, {user_info_type}"
     pers_analysis = await no_thread_ass(gpt_message, analysis_var)
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
 
