@@ -1047,7 +1047,7 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
     current_data = await state.get_data()
     user_id = callback_query.from_user.id
     await state.set_state(QuestionnaireFace.skin_type)
-    if not current_data.get("full_sequence", False):
+    if not current_data.get("full_sequence", True):
         await state.update_data(full_sequence=False)
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
     await callback_query.message.answer(
@@ -1070,7 +1070,7 @@ async def start_body_questionnaire(user_id: int, state: FSMContext):
     current_data = await state.get_data()
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence", True)}")
     await state.set_state(QuestionnaireBody.body_skin_type)
-    if not current_data.get("full_sequence", False):
+    if not current_data.get("full_sequence", True):
         await state.update_data(full_sequence=False)
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
     await bot.send_message(
@@ -1120,7 +1120,9 @@ async def start_hair_questionnaire(user_id: int, state: FSMContext):
 @router.callback_query(lambda c: c.data == 'questionnaire_hair')
 async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.info_coll)
-    await state.update_data(full_sequence=False)
+    current_data = await state.get_data()
+    if not current_data.get("full_sequence", False):
+        await state.update_data(full_sequence=False)
     await start_hair_questionnaire(callback_query.from_user.id, state)
     await callback_query.answer()
 
