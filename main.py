@@ -145,6 +145,7 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
 @router.message(StateFilter(Questionnaire.intro), lambda c: c.data.startswith("agreement_"))
 async def process_age(callback_query: types.CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
+    print("hit_agreement")
     if callback_query.data == "agreement_no":
         text = ( 
             "Понимаю, что у вас может быть много дел, но без информации о вас, к сожалению, я не смогу подобрать подходящее средство. 😞 \n\n"  
