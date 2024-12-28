@@ -413,7 +413,6 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
-        await state.clear()
         await process_questionnaire_face(callback_query, state)
     else:
         await state.clear()
@@ -536,6 +535,7 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
+        print(f"leaving_questionnaire with full_seq:{full_sequence}")
         await start_body_questionnaire(message.from_user.id, state)
     else:
         await state.clear()
@@ -1068,7 +1068,8 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
 
 async def start_body_questionnaire(user_id: int, state: FSMContext):
     current_data = await state.get_data()
-    print(f"user: {user_id}, full_seq: {current_data.get("full_sequence", True)}")
+    full_sequence = current_data.get("full_sequence", False)
+    print(f"user: {user_id}, full_seq: {full_sequence}")
     await state.set_state(QuestionnaireBody.body_skin_type)
     if not current_data.get("full_sequence", True):
         await state.update_data(full_sequence=False)
