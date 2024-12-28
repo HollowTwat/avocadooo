@@ -58,19 +58,8 @@ class UserState(StatesGroup):
     recognition = State()
 
 class Questionnaire(StatesGroup):
-    age = State()
-    gender = State()
-    location = State()
-    allergy = State()
-    lifestyle = State()
-    phototype = State()
-    activity = State()
-    water_intake = State()
-    stress = State()
-    habits = State()
-
-class Questionnaire2(StatesGroup):
-    intro_answer = State()
+    name = State()
+    intro = State()
     age = State()
     gender = State()
     location = State()
@@ -116,8 +105,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
-        [InlineKeyboardButton(text="Опросник", callback_data="questionaire")],
-        [InlineKeyboardButton(text="Опросник_2", callback_data="questionaire2")],
+        [InlineKeyboardButton(text="Опросник_Начало", callback_data="questionaire2")],
         [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
         [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
         [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
@@ -126,14 +114,73 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
 
-@router.message(StateFilter(Questionnaire2.intro_answer))
-async def process_intro_answer(message: types.Message, state: FSMContext):
-    await state.set_state(Questionnaire2.age)
+@router.message(StateFilter(Questionnaire.name))
+async def process_name(message: types.Message, state: FSMContext):
+    state.update_data(name=message.text)
+    keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Это точно, давай начинать!", callback_data="what_do_you_do")]
+            ]
+        )
+    await state.set_state(Questionnaire.intro)
     await message.answer(
-        "1) Раз уж у нас с тобой честный разговор, скажи, сколько тебе лет =) \n\nОбещаю, это останется между нами! Напиши только число. <i> Например, 35</i>"
+        f"Приятно познакомиться, {message.text}!  🌿 \nЯ здесь, чтобы помочь вам с анализом состава косметики и рассказать, что именно в ней содержится и как работает."    
+        "На основе информации о вашей коже и образе жизни я подберу те средства, которые подойдут именно вам.  Могу порекомендовать, какие продукты стоит попробовать, а какие лучше оставить на полке.  Всё просто — вместе мы сделаем выбор безопасным и эффективным и подходящим именно вам!"
+        , reply_markup=keyboard
     )
 
-@router.message(StateFilter(Questionnaire2.age))
+@router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'what_do_you_do')
+async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+
+    await callback_query.message.answer(
+        "Чтобы проанализировать состав баночки максимально точно, мне нужно немного больше узнать о вас! \n"
+        "🤔 Давайте заполним подробную анкету — это поможет мне лучше понять ваши потребности и подобрать самые подходящие продукты именно вам. Готовы?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Да", callback_data="agreement_yes"),
+             InlineKeyboardButton(text="Нет", callback_data="agreement_no")],
+        ])
+    )
+    await callback_query.answer()
+
+
+@router.message(StateFilter(Questionnaire.intro), lambda c: c.data.startswith("agreement_"))
+async def process_age(callback_query: types.CallbackQuery, state: FSMContext):
+    us_id = callback_query.from_user.id
+    if callback_query.data == "agreement_no":
+        text = ( 
+            "Понимаю, что у вас может быть много дел, но без информации о вас, к сожалению, я не смогу подобрать подходящее средство. 😞 \n\n"  
+            "Давайте вернемся к этому, когда вам будет удобнее? Avocado всегда рядом!"
+        )
+
+        await bot.send_message(us_id, text)
+        await state.clear()
+
+    elif callback_query.data == "agreement_yes":
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Это точно, давай начинать!", callback_data="lesgo")]
+            ]
+        )
+        user_data = await state.get_data()
+        text = (
+            "<b>Часть 1/4</b> 🟢⚪️⚪️⚪️\n"
+            "<b>11 вопросов о тебе </b>\n\n"
+            f"{user_data['name']}, при составлении твоей индивидуальной рекомендации того или иного средства – я должна знать всё о твоем стиле жизни, фототипе и предпочтениях. "
+            "Чтобы не получилось так, что я для тебя одобрила средство, которое абсолютно не подходит тебе по этическим предпочтениям."
+        )
+
+        await bot.send_message(us_id, text, reply_markup=keyboard)
+
+@router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'lesgo')
+async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+
+    await state.set_state(Questionnaire.age)
+    await callback_query.message.answer(
+        "1) Начнем с простого. Сколько вам годиков?   \nНапишите только число. \n<i>Например, 35</i>"
+    )
+    await callback_query.answer()
+
+@router.message(StateFilter(Questionnaire.age))
 async def process_age(message: types.Message, state: FSMContext):
     await state.update_data(age=message.text)
     keyboard = InlineKeyboardMarkup(
@@ -142,21 +189,21 @@ async def process_age(message: types.Message, state: FSMContext):
             [InlineKeyboardButton(text="Мужской", callback_data="gender_male")]
         ]
     )
-    await state.set_state(Questionnaire2.gender)
+    await state.set_state(Questionnaire.gender)
     await message.answer("2) Твой пол", reply_markup=keyboard)
 
-@router.callback_query(StateFilter(Questionnaire2.gender), lambda c: c.data.startswith("gender_"))
+@router.callback_query(StateFilter(Questionnaire.gender), lambda c: c.data.startswith("gender_"))
 async def process_gender(callback_query: types.CallbackQuery, state: FSMContext):
     gender = "Женский" if callback_query.data == "gender_female" else "Мужской"
     await state.update_data(gender=gender)
-    await state.set_state(Questionnaire2.location)
+    await state.set_state(Questionnaire.location)
     await callback_query.message.answer(
         "3) Для расчета времени года и климата проживания, мне нужно знать, где ты находишься большая часть года\n"
         "Напиши вот в таком формате: \n<i>Россия, Санкт-Петербург</i>"
     )
     await callback_query.answer()
 
-@router.message(StateFilter(Questionnaire2.location))
+@router.message(StateFilter(Questionnaire.location))
 async def process_location(message: types.Message, state: FSMContext):
     await state.update_data(location=message.text)
     keyboard = InlineKeyboardMarkup(
@@ -165,14 +212,14 @@ async def process_location(message: types.Message, state: FSMContext):
             [InlineKeyboardButton(text="Нет", callback_data="allergy_no")]
         ]
     )
-    await state.set_state(Questionnaire2.allergy)
+    await state.set_state(Questionnaire.allergy)
     await message.answer("4) Есть ли у тебя склонность к аллергическим реакциям?", reply_markup=keyboard)
 
-@router.callback_query(StateFilter(Questionnaire2.allergy), lambda c: c.data.startswith("allergy_"))
+@router.callback_query(StateFilter(Questionnaire.allergy), lambda c: c.data.startswith("allergy_"))
 async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext):
     allergy = "Да" if callback_query.data == "allergy_yes" else "Нет"
     await state.update_data(allergy=allergy)
-    await state.set_state(Questionnaire2.lifestyle)
+    await state.set_state(Questionnaire.lifestyle)
     await callback_query.message.answer(
         "5) Особенности образа жизни: какой из вариантов больше описывает твою жизнь? <i>Можно выбрать несколько вариантов</i>\n"
         "1 - Часто нахожусь на солнце\n"
@@ -184,7 +231,7 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     )
     await callback_query.answer()
 
-@router.message(StateFilter(Questionnaire2.lifestyle))
+@router.message(StateFilter(Questionnaire.lifestyle))
 async def process_lifestyle(message: types.Message, state: FSMContext):
     lifestyle_nums = [int(x) for x in message.text.replace(",", " ").split()]
     lifestyle_descriptions = {
@@ -202,7 +249,7 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
             InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)
         ]]
     )
-    await state.set_state(Questionnaire2.phototype)
+    await state.set_state(Questionnaire.phototype)
     await message.answer(
         "6) Теперь нужно определить фототип твоей кожи:\n"
         "1 — Очень светлая кожа, не загорает, сразу краснеет\n"
@@ -215,7 +262,7 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
         reply_markup=keyboard
     )
 
-@router.callback_query(StateFilter(Questionnaire2.phototype), lambda c: c.data.startswith("phototype_"))
+@router.callback_query(StateFilter(Questionnaire.phototype), lambda c: c.data.startswith("phototype_"))
 async def process_phototype(callback_query: types.CallbackQuery, state: FSMContext):
     phototype = callback_query.data.split("_")[1]
     phototype_map = {
@@ -235,11 +282,11 @@ async def process_phototype(callback_query: types.CallbackQuery, state: FSMConte
             [InlineKeyboardButton(text="Высокая", callback_data="activity_high")]
         ]
     )
-    await state.set_state(Questionnaire2.activity)
+    await state.set_state(Questionnaire.activity)
     await callback_query.message.answer("7) Как ты оцениваешь свою физическую активность?", reply_markup=keyboard)
     await callback_query.answer()
 
-@router.callback_query(StateFilter(Questionnaire2.activity), lambda c: c.data.startswith("activity_"))
+@router.callback_query(StateFilter(Questionnaire.activity), lambda c: c.data.startswith("activity_"))
 async def process_activity(callback_query: types.CallbackQuery, state: FSMContext):
     activity_map = {
         "activity_low": "Низкая",
@@ -255,11 +302,11 @@ async def process_activity(callback_query: types.CallbackQuery, state: FSMContex
             [InlineKeyboardButton(text="Более 2 литров", callback_data="water_>2")]
         ]
     )
-    await state.set_state(Questionnaire2.water_intake)
+    await state.set_state(Questionnaire.water_intake)
     await callback_query.message.answer("8) Сколько воды ты пьешь ежедневно?", reply_markup=keyboard)
     await callback_query.answer()
 
-@router.callback_query(StateFilter(Questionnaire2.water_intake), lambda c: c.data.startswith("water_"))
+@router.callback_query(StateFilter(Questionnaire.water_intake), lambda c: c.data.startswith("water_"))
 async def process_water_intake(callback_query: types.CallbackQuery, state: FSMContext):
     water_map = {
         "water_<1": "Меньше 1 литра",
@@ -275,11 +322,11 @@ async def process_water_intake(callback_query: types.CallbackQuery, state: FSMCo
             [InlineKeyboardButton(text="Высокий", callback_data="stress_high")]
         ]
     )
-    await state.set_state(Questionnaire2.stress)
+    await state.set_state(Questionnaire.stress)
     await callback_query.message.answer("9) Какой уровень стресса в твоей жизни наиболее соответствует реальности?", reply_markup=keyboard)
     await callback_query.answer()
 
-@router.callback_query(StateFilter(Questionnaire2.stress), lambda c: c.data.startswith("stress_"))
+@router.callback_query(StateFilter(Questionnaire.stress), lambda c: c.data.startswith("stress_"))
 async def process_stress(callback_query: types.CallbackQuery, state: FSMContext):
     stress_map = {
         "stress_low": "Низкий",
@@ -302,11 +349,11 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
             [InlineKeyboardButton(text="Нет вредных привычек", callback_data="habits_none")]
         ]
     )
-    await state.set_state(Questionnaire2.habits)
+    await state.set_state(Questionnaire.habits)
     await callback_query.message.answer("10) Какая из вредных привычек тебе свойственна?", reply_markup=keyboard)
     await callback_query.answer()
 
-@router.callback_query(StateFilter(Questionnaire2.habits), lambda c: c.data.startswith("habits_"))
+@router.callback_query(StateFilter(Questionnaire.habits), lambda c: c.data.startswith("habits_"))
 async def process_habits(callback_query: types.CallbackQuery, state: FSMContext):
     habits_map = {
         "habits_smoking": "Курение",
@@ -322,11 +369,11 @@ async def process_habits(callback_query: types.CallbackQuery, state: FSMContext)
             [InlineKeyboardButton(text="Это не имеет значения", callback_data="ethics_none")]
         ]
     )
-    await state.set_state(Questionnaire2.ethics)
+    await state.set_state(Questionnaire.ethics)
     await callback_query.message.answer("11) Этические предпочтения: что для тебя важно в косметике?", reply_markup=keyboard)
     await callback_query.answer()
 
-@router.callback_query(StateFilter(Questionnaire2.ethics), lambda c: c.data.startswith("ethics_"))
+@router.callback_query(StateFilter(Questionnaire.ethics), lambda c: c.data.startswith("ethics_"))
 async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext):
     ethics = "Натуральный состав, Vegan продукт и Cruelty-free" if callback_query.data == "ethics_cruelty_free" else "Это не имеет значения"
     us_id = callback_query.from_user.id
@@ -370,144 +417,6 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
         await state.clear()
         await callback_query.answer("Опрос завершен. Спасибо за участие!")
 
-@router.message(StateFilter(Questionnaire.age))
-async def process_age(message: types.Message, state: FSMContext):
-    await state.update_data(age=message.text)
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Мужской", callback_data="gender_male")],
-            [InlineKeyboardButton(text="Женский", callback_data="gender_female")]
-        ]
-    )
-    await state.set_state(Questionnaire.gender)
-    await message.answer("Какой у вас пол?", reply_markup=keyboard)
-
-@router.callback_query(StateFilter(Questionnaire.gender), lambda c: c.data.startswith("gender_"))
-async def process_gender(callback_query: types.CallbackQuery, state: FSMContext):
-    gender = "Мужской" if callback_query.data == "gender_male" else "Женский"
-    await state.update_data(gender=gender)
-    await state.set_state(Questionnaire.location)
-    await callback_query.message.answer("Укажите вашу страну и город проживания:")
-    await callback_query.answer()
-
-@router.message(StateFilter(Questionnaire.location))
-async def process_location(message: types.Message, state: FSMContext):
-    await state.update_data(location=message.text)
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Да", callback_data="allergy_yes")],
-            [InlineKeyboardButton(text="Нет", callback_data="allergy_no")]
-        ]
-    )
-    await state.set_state(Questionnaire.allergy)
-    await message.answer("Есть ли у вас склонность к аллергии?", reply_markup=keyboard)
-
-@router.callback_query(StateFilter(Questionnaire.allergy), lambda c: c.data.startswith("allergy_"))
-async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext):
-    allergy = "Да" if callback_query.data == "allergy_yes" else "Нет"
-    await state.update_data(allergy=allergy)
-    await state.set_state(Questionnaire.lifestyle)
-    await callback_query.message.answer(
-        "Особенности образа жизни:\n"
-        "1 - Частое пребывание на солнце\n"
-        "2 - Работа в сухом помещении\n"
-        "3 - Частые физические нагрузки\n"
-        "Укажите через запятую все, что применимо (например, 1, 2):"
-    )
-    await callback_query.answer()
-
-@router.message(StateFilter(Questionnaire.lifestyle))
-async def process_lifestyle(message: types.Message, state: FSMContext):
-    await state.update_data(lifestyle=message.text)
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)]
-        ]
-    )
-    await state.set_state(Questionnaire.phototype)
-    await message.answer("Какой у вас фототип от 1 до 6?", reply_markup=keyboard)
-
-@router.callback_query(StateFilter(Questionnaire.phototype), lambda c: c.data.startswith("phototype_"))
-async def process_phototype(callback_query: types.CallbackQuery, state: FSMContext):
-    phototype = callback_query.data.split("_")[1]
-    await state.update_data(phototype=phototype)
-    await state.set_state(Questionnaire.activity)
-    await callback_query.message.answer("Каков ваш уровень физической активности?")
-    await callback_query.answer()
-
-@router.message(StateFilter(Questionnaire.activity))
-async def process_activity(message: types.Message, state: FSMContext):
-    await state.update_data(activity=message.text)
-    await state.set_state(Questionnaire.water_intake)
-    await message.answer("Опишите ваш питьевой режим:")
-
-@router.message(StateFilter(Questionnaire.water_intake))
-async def process_water_intake(message: types.Message, state: FSMContext):
-    await state.update_data(water_intake=message.text)
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Низкий", callback_data="stress_low")],
-            [InlineKeyboardButton(text="Средний", callback_data="stress_medium")],
-            [InlineKeyboardButton(text="Высокий", callback_data="stress_high")]
-        ]
-    )
-    await state.set_state(Questionnaire.stress)
-    await message.answer("Каков уровень вашего стресса?", reply_markup=keyboard)
-
-# Step 9: Stress
-@router.callback_query(StateFilter(Questionnaire.stress), lambda c: c.data.startswith("stress_"))
-async def process_stress(callback_query: types.CallbackQuery, state: FSMContext):
-    stress = {
-        "stress_low": "Низкий",
-        "stress_medium": "Средний",
-        "stress_high": "Высокий"
-    }[callback_query.data]
-    await state.update_data(stress=stress)
-    await state.set_state(Questionnaire.habits)
-    await callback_query.message.answer("Есть ли у вас вредные привычки? Опишите:")
-    await callback_query.answer()
-
-# Step 10: Habits
-@router.message(StateFilter(Questionnaire.habits))
-async def process_habits(message: types.Message, state: FSMContext):
-    await state.update_data(habits=message.text)
-    user_data = await state.get_data()
-    buttons = [[InlineKeyboardButton(
-        text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
-        text="Опросник", callback_data="questionaire")]]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    us_id = message.from_user.id
-
-    await message.answer(
-        "Спасибо за участие в опросе! Вот ваши данные:\n"
-        f"Возраст: {user_data['age']}\n"
-        f"Пол: {user_data['gender']}\n"
-        f"Место проживания: {user_data['location']}\n"
-        f"Склонность к аллергии: {user_data['allergy']}\n"
-        f"Особенности образа жизни: {user_data['lifestyle']}\n"
-        f"Фототип: {user_data['phototype']}\n"
-        f"Уровень физической активности: {user_data['activity']}\n"
-        f"Питьевой режим: {user_data['water_intake']}\n"
-        f"Уровень стресса: {user_data['stress']}\n"
-        f"Вредные привычки: {user_data['habits']}",
-        reply_markup=keyboard
-    )
-
-    user_data = {
-                "age": f"{user_data['age']}",
-                "gender": f"{user_data['gender']}",
-                "location": f"{user_data['location']}",
-                "allergy": f"{user_data['allergy']}",
-                "lifestyle": f"{user_data['lifestyle']}",
-                "phototype": f"{user_data['phototype']}",
-                "activity": f"{user_data['activity']}",
-                "water_intake": f"{user_data['water_intake']}",
-                "stress": f"{user_data['stress']}",
-                "habits": f"{user_data['habits']}"
-            }
-    response = await send_user_data(us_id, user_data)
-    await message.answer(str(response))
-    await state.clear()
 
 @router.callback_query(StateFilter(QuestionnaireFace.skin_type), lambda c: True)
 async def process_face_skin_type(callback_query: CallbackQuery, state: FSMContext):
@@ -1114,13 +1023,6 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
     await bot.send_message(us_id, text)
     await callback_query.answer()
 
-@router.callback_query(lambda c: c.data == 'questionaire')
-async def process_questionaire(callback_query: CallbackQuery, state: FSMContext):
-    us_id = callback_query.from_user.id
-    text = "Привет! Давайте начнем наш опрос. Сколько вам лет?"
-    await bot.send_message(us_id, text)
-    await state.set_state(Questionnaire.age)
-    await callback_query.answer()
 
 @router.callback_query(lambda c: c.data == 'questionaire2')
 async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext):
@@ -1128,19 +1030,22 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
     if not current_data.get("full_sequence", True):
         await state.update_data(full_sequence=False)
     us_id = callback_query.from_user.id
-    text = (
+    text = ( 
+        "Холи Гуакамоле! 😊\nЯ — Avocado Bot, ваш карманный защитник в мире безопасной косметики. А как вас зовут?"
         "<b>Часть 1/4</b> 🟢⚪️⚪️⚪️\n"
         "<b>11 вопросов о тебе </b>\n\n"
         "Имя, при составлении твоей индивидуальной рекомендации того или иного средства – я должна знать всё о твоем стиле жизни, фототипе и предпочтениях. "
         "Чтобы не получилось так, что я для тебя одобрила средство, которое абсолютно не подходит тебе по этическим предпочтениям."
     )
+
     await bot.send_message(us_id, text)
-    await state.set_state(Questionnaire2.intro_answer)
+    await state.set_state(Questionnaire.name)
     await callback_query.answer()
 
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.info_coll)
     current_data = await state.get_data()
     user_id = callback_query.from_user.id
     await state.set_state(QuestionnaireFace.skin_type)
@@ -1186,6 +1091,7 @@ async def start_body_questionnaire(user_id: int, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 'questionnaire_body')
 async def process_questionnaire_body(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.info_coll)
     await state.update_data(full_sequence=False)
     await start_body_questionnaire(callback_query.from_user.id, state)
     await callback_query.answer()
@@ -1215,12 +1121,14 @@ async def start_hair_questionnaire(user_id: int, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 'questionnaire_hair')
 async def process_questionnaire_hair(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.info_coll)
     await state.update_data(full_sequence=False)
     await start_hair_questionnaire(callback_query.from_user.id, state)
     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data == 'all_questionnaires')
 async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.info_coll)
     await state.update_data(full_sequence=True)
     await process_questionaire2(callback_query, state)
 
@@ -1296,12 +1204,11 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
     await state.update_data(full_sequence=False)
     buttons = [[InlineKeyboardButton(
-        text="Анализ состава 🔍", callback_data="analysis")], [InlineKeyboardButton(
-        text="Опросник", callback_data="questionaire")], [InlineKeyboardButton(
-        text="Опросник_2", callback_data="questionaire2")], [InlineKeyboardButton(
-        text="Опросник_Лицо", callback_data="questionnaire_face")], [InlineKeyboardButton(
-        text="Опросник_Тело", callback_data="questionnaire_body")], [InlineKeyboardButton(
-        text="Опросник_Волосы", callback_data="questionnaire_hair")]]
+        text="Анализ состава 🔍", callback_data="analysis")], 
+        [InlineKeyboardButton(text="Опросник_2", callback_data="questionaire2")], 
+        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")], 
+        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")], 
+        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
         if message.sticker:
