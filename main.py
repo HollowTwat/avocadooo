@@ -116,7 +116,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(StateFilter(Questionnaire.name))
 async def process_name(message: types.Message, state: FSMContext):
-    state.update_data(name=message.text)
+    await state.update_data(name=message.text)
     keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Это точно, давай начинать!", callback_data="what_do_you_do")]
@@ -131,7 +131,6 @@ async def process_name(message: types.Message, state: FSMContext):
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'what_do_you_do')
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
-
     await callback_query.message.answer(
         "Чтобы проанализировать состав баночки максимально точно, мне нужно немного больше узнать о вас! \n"
         "🤔 Давайте заполним подробную анкету — это поможет мне лучше понять ваши потребности и подобрать самые подходящие продукты именно вам. Готовы?",
@@ -1032,10 +1031,6 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
     us_id = callback_query.from_user.id
     text = ( 
         "Холи Гуакамоле! 😊\nЯ — Avocado Bot, ваш карманный защитник в мире безопасной косметики. А как вас зовут?"
-        "<b>Часть 1/4</b> 🟢⚪️⚪️⚪️\n"
-        "<b>11 вопросов о тебе </b>\n\n"
-        "Имя, при составлении твоей индивидуальной рекомендации того или иного средства – я должна знать всё о твоем стиле жизни, фототипе и предпочтениях. "
-        "Чтобы не получилось так, что я для тебя одобрила средство, которое абсолютно не подходит тебе по этическим предпочтениям."
     )
 
     await bot.send_message(us_id, text)
