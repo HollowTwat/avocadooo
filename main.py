@@ -142,7 +142,7 @@ async def process_questionnaire_yapp(callback_query: CallbackQuery, state: FSMCo
     await callback_query.answer()
 
                                                   
-@router.message(StateFilter(Questionnaire.intro), lambda c: c.data.startswith("agreement_"))
+@router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data.startswith("agreement_"))
 async def process_agreement(callback_query: types.CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     print("hit_agreement")
