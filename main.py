@@ -27,6 +27,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_KEY = os.getenv("OPENAI_KEY")
 ASSISTANT_ID = os.getenv("RECOGNIZE_MAKEUP_ASS")
 ASSISTANT_ID_2 = os.getenv("FIND_PRODUCT_ASS")
+YAPP_ASS = os.getenv("YAPP_ASS")
 
 ANALYSIS_G_FACE_ASS = os.getenv("ANALYSIS_G_FACE_ASS")
 ANALYSIS_G_BODY_ASS = os.getenv("ANALYSIS_G_BODY_ASS")
@@ -56,6 +57,8 @@ class StateMiddleware(BaseMiddleware):
 class UserState(StatesGroup):
     info_coll = State()
     recognition = State()
+    yapp = State()
+    menu = State()
 
 class Questionnaire(StatesGroup):
     name = State()
@@ -893,6 +896,34 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     await bot.send_message(us_id, "Опрос завершен, /start для возврата в меню")
     await state.clear()
 
+
+@router.message(StateFilter(UserState.yapp))
+async def yapp_handler(message: Message, state: FSMContext) -> None:
+    user_data = await state.get_data()
+    us_id = str(message.from_user.id)
+    chat_id = message.chat.id
+    sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+    if message.text:
+        await message.answer(trainscription)
+        response_1 = await generate_response(message.text, us_id, YAPP_ASS)
+        response = remove_tags(response_1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await message.answer(response)
+    elif message.voice:
+        trainscription = await audio_file(message.voice.file_id)
+        await message.answer(trainscription)
+        response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
+        response = remove_tags(response_1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await message.answer(response)
+    elif message.photo:
+        file = await bot.get_file(message.photo[-1].file_id)
+        file_path = file.file_path
+        file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
+        url_response_1 = await process_url(file_url, us_id)
+        url_response = remove_tags(url_response_1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await message.answer(url_response)
 
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
