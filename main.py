@@ -1204,7 +1204,8 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     user_info_general = await fetch_user_data(us_id, "general")
     user_info_type = await fetch_user_data(us_id, db_var)
     gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info_general}, {user_info_type}"
-    pers_analysis = await no_thread_ass(gpt_message, analysis_var)
+    pers_analysis1 = await no_thread_ass(gpt_message, analysis_var)
+    pers_analysis = remove_tags(pers_analysis1)
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
 
     await bot.send_message(us_id, pers_analysis)
