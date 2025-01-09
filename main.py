@@ -1254,6 +1254,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
         [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
         [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
         [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
+        [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     if not current_state:
