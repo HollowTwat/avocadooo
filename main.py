@@ -919,7 +919,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
-        url_response_1 = await process_url(file_url, us_id)
+        url_response_1 = await process_url(file_url, us_id, YAPP_ASS)
         url_response = remove_tags(url_response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(url_response)
