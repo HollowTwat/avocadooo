@@ -904,7 +904,6 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     chat_id = message.chat.id
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     if message.text:
-        await message.answer(trainscription)
         response_1 = await generate_response(message.text, us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
