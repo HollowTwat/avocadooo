@@ -1072,6 +1072,11 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
     await state.set_state(Questionnaire.name)
     await callback_query.answer()
 
+@router.callback_query(lambda c: c.data == 'setstate_yapp')
+async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.yapp)
+    await callback_query.answer("yapp_state_set")
+
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
