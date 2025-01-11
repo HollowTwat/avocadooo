@@ -23,6 +23,7 @@ import shelve
 import json
 
 from functions import *
+
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_KEY = os.getenv("OPENAI_KEY")
 ASSISTANT_ID = os.getenv("RECOGNIZE_MAKEUP_ASS")
@@ -112,7 +113,10 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
         [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
         [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
         [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
-        [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],]
+        [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
+        [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
+        [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
+        ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
@@ -1076,6 +1080,17 @@ async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext
     await state.set_state(UserState.yapp)
     await callback_query.answer("yapp_state_set")
 
+@router.callback_query(lambda c: c.data == 'settings')
+async def process_settings(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer("yapp_state_set")
+    buttons = [
+        [InlineKeyboardButton(text="Инструкция по применению Avocado Bot 🔖", callback_data="explain_4_retard")],
+        [InlineKeyboardButton(text="Обновить анкету 📖", callback_data="settings_questionaire")],
+        [InlineKeyboardButton(text="Подписка", callback_data="settings_sub")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+    await callback_query.message.answer("Настройки", reply_markup=keyboard)
+
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
@@ -1194,8 +1209,8 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
 
     buttons = [
-        InlineKeyboardButton(text="yep", callback_data=f'personal_{analysis_type}_{item_id}'),
-        InlineKeyboardButton(text="nope", callback_data='analysis')
+        InlineKeyboardButton(text="Да, хочу 📊", callback_data=f'personal_{analysis_type}_{item_id}'),
+        InlineKeyboardButton(text="Нет, не хочу", callback_data='analysis')
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
 
@@ -1207,7 +1222,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
 
     await bot.send_message(us_id, analysis_result)
-    await bot.send_message(us_id, "Хочешь персональный анализ?", reply_markup=keyboard)
+    await bot.send_message(us_id, "Хотите узнать подходит ли это средство именно <b>вам</b>?", reply_markup=keyboard)
 
     await callback_query.answer()
 
