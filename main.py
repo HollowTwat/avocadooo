@@ -1089,7 +1089,8 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Подписка", callback_data="settings_sub")],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
-    await bot.send_message(us_id,"Настройки", reply_markup=keyboard)
+    text = "Настройки"
+    await bot.send_message(us_id,text, reply_markup=keyboard)
 
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
