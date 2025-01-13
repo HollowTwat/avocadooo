@@ -1092,6 +1092,36 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     text = "Настройки"
     await callback_query.message.answer(text, reply_markup=keyboard)
 
+@router.callback_query(lambda c: c.data == 'settings_sub')
+async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
+    buttons = [
+        [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
+        [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "Ваш текущий тариф: X   \n\nВаша подписка истекает ДАТА, не забудьте продлить \n\n<i>Ожидает метода для инфы </i>"
+    await callback_query.message.answer(text, reply_markup=keyboard)
+
+@router.callback_query(lambda c: c.data == 're_sub')
+async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
+    # buttons = [
+    #     [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
+    #     [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
+    # ]
+    # keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "Перекидывать на лендинг / система оплаты в ТГ"
+    await callback_query.message.answer(text)
+
+@router.callback_query(lambda c: c.data == 'un_sub')
+async def process_un_sub(callback_query: CallbackQuery, state: FSMContext):
+    buttons = [
+        [InlineKeyboardButton(text="Да", callback_data="un_sub_yes")],
+        [InlineKeyboardButton(text="Нет, я остаюсь", callback_data="un_sub_no")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "Вы уверены? Avocado Bot всегда вас ждёт 💚"
+    await callback_query.message.answer(text, reply_markup=keyboard)
+
 @router.callback_query(lambda c: c.data == 'settings_questionaire')
 async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
