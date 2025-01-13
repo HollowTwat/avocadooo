@@ -1084,13 +1084,13 @@ async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext
 async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     buttons = [
-        [InlineKeyboardButton(text="Инструкция по применению Avocado Bot 🔖", callback_data="explain_4_retard")],
+        [InlineKeyboardButton(text="Инструкция по применению Avocado Bot 🔖", callback_data="explain_4")],
         [InlineKeyboardButton(text="Обновить анкету 📖", callback_data="settings_questionaire")],
         [InlineKeyboardButton(text="Подписка", callback_data="settings_sub")],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
     text = "Настройки"
-    await bot.send_message(us_id,text, reply_markup=keyboard)
+    await callback_query.message.answer(us_id,text, reply_markup=keyboard)
 
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
