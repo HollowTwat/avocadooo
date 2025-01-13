@@ -1088,7 +1088,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Обновить анкету 📖", callback_data="settings_questionaire")],
         [InlineKeyboardButton(text="Подписка", callback_data="settings_sub")],
     ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Настройки"
     await callback_query.message.answer(us_id,text, reply_markup=keyboard)
 
