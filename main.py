@@ -1092,6 +1092,29 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     text = "Настройки"
     await callback_query.message.answer(text, reply_markup=keyboard)
 
+@router.callback_query(lambda c: c.data == 'settings_questionaire')
+async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
+    us_id = callback_query.from_user.id
+    buttons = [
+        [InlineKeyboardButton(text="Заполнить заново 🪴", callback_data="all_questionnaires")],
+        [InlineKeyboardButton(text="Внести изменения 🌱", callback_data="questionnaires_pick")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "Хотите внести несколько изменений или пройти анкету с самого начала?"
+    await callback_query.message.answer(text, reply_markup=keyboard)
+
+@router.callback_query(lambda c: c.data == 'questionnaires_pick')
+async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
+    us_id = callback_query.from_user.id
+    buttons = [
+        [InlineKeyboardButton(text="Опросник_Общее", callback_data="questionaire2")],
+        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
+        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
+        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "Выберите, в какой части анкеты хотите внести изменения. Когда будете готовы, нажмите «Завершить редактирование» — и вуаля, ваша анкета обновится!"
+    await callback_query.message.answer(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
 async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
