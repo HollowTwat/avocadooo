@@ -966,6 +966,13 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+        else:
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
+                ]
+            )
+            await message.answer("Простите, не нашли подходящий товар в наших базах", reply_markup=keyboard)
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
@@ -999,6 +1006,13 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+        else:
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
+                ]
+            )
+            await message.answer("Простите, не нашли подходящий товар в наших базах", reply_markup=keyboard)
     elif message.photo:
 
         file = await bot.get_file(message.photo[-1].file_id)
@@ -1034,6 +1048,13 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+        else:
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
+                ]
+            )
+            await message.answer("Простите, не нашли подходящий товар в наших базах", reply_markup=keyboard)
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
@@ -1092,6 +1113,12 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     text = "Настройки"
     await callback_query.message.answer(text, reply_markup=keyboard)
 
+@router.callback_query(lambda c: c.data == 'explain_4')
+async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
+    text = "Давайте покажу, что я умею 🙌"
+    await callback_query.message.answer(text)
+    await callback_query.message.answer("Будет перенос после переработки онбординга")
+
 @router.callback_query(lambda c: c.data == 'settings_sub')
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
@@ -1104,11 +1131,6 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 're_sub')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
-    # buttons = [
-    #     [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
-    #     [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
-    # ]
-    # keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Перекидывать на лендинг / система оплаты в ТГ"
     await callback_query.message.answer(text)
 
