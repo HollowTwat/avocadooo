@@ -121,6 +121,18 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
 
+@router.message(commands=["menu"])
+async def command_start_handler(message: Message, state: FSMContext) -> None:
+    await state.update_data(full_sequence=False)
+    buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+        [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
+        [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
+        ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    step0txt = "Привет"
+    await message.answer(step0txt, reply_markup=keyboard)
+
 @router.message(StateFilter(Questionnaire.name))
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)
@@ -1155,9 +1167,19 @@ async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
     text = "Хотите внести несколько изменений или пройти анкету с самого начала?"
     await callback_query.message.answer(text, reply_markup=keyboard)
 
+@router.callback_query(lambda c: c.data == 'un_sub_yes')
+async def process_un_sub_yes(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.answer("Подписка отменена. Возвращайтесь скорее 💚")
+
+@router.callback_query(lambda c: c.data == 'un_sub_no')
+async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.answer("Аvocado очень радо! 🥰")
+
 @router.callback_query(lambda c: c.data == 'questionnaires_pick')
 async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
+    us_data = await get_user_data(us_id)
+    await callback_query.message.answer(f"us_data")
     buttons = [
         [InlineKeyboardButton(text="Опросник_Общее", callback_data="questionaire2")],
         [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
