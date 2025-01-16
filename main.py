@@ -121,8 +121,8 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
 
-@router.message(commands=["menu"])
-async def command_start_handler(message: Message, state: FSMContext) -> None:
+@router.message(Command("menu"))
+async def menu_handler(message: Message, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
