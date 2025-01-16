@@ -984,7 +984,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
                 ]
             )
-            await message.answer("Простите, не нашли подходящий товар в наших базах", reply_markup=keyboard)
+            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ещё раз, пожалуйста!  🌟", reply_markup=keyboard)
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
@@ -1024,7 +1024,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
                 ]
             )
-            await message.answer("Простите, не нашли подходящий товар в наших базах", reply_markup=keyboard)
+            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ещё раз, пожалуйста!  🌟", reply_markup=keyboard)
     elif message.photo:
 
         file = await bot.get_file(message.photo[-1].file_id)
@@ -1066,18 +1066,18 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
                 ]
             )
-            await message.answer("Простите, не нашли подходящий товар в наших базах", reply_markup=keyboard)
+            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ещё раз, пожалуйста!  🌟", reply_markup=keyboard)
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
 @router.callback_query(lambda c: c.data == 'analysis')
 async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
-    text = "Выберите тип продукта: Лицо или Тело"
+    text = "Давайте уточним, к какой категории относится баночка, которую мы проверяем на безопасность?"
     buttons = [
-        [InlineKeyboardButton(text="Лицо", callback_data="product_type_face")],
-        [InlineKeyboardButton(text="Тело", callback_data="product_type_body")],
-        [InlineKeyboardButton(text="Волосы", callback_data="product_type_hair")],
+        [InlineKeyboardButton(text="Для лица", callback_data="product_type_face")],
+        [InlineKeyboardButton(text="Для тела и рук", callback_data="product_type_body")],
+        [InlineKeyboardButton(text="Для волос и кожи головы", callback_data="product_type_hair")],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     await bot.send_message(us_id, text, reply_markup=keyboard)
@@ -1088,7 +1088,7 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
     product_type = callback_query.data.split('_')[2]  # Extracts 'face' or 'body'
     await state.update_data(product_type=product_type)
     us_id = callback_query.from_user.id
-    text = "Скинь мне фото или ссылку твоего средства и я проанализирую? \nИли напиши или надиктуй название"
+    text = "Скиньте мне фото 📸 или <u>ссылку</u> на то средство, о котором ты хочешь узнать больше.  Я всё проверю и дам честную оценку! \n<i>Можете также написать ️ или надиктовать ️ название — как вам удобнее. Ваш выбор имеет значение для Avocado bot </i> 🥑"
     await state.set_state(UserState.recognition)
     await bot.send_message(us_id, text)
     await callback_query.answer()
@@ -1179,7 +1179,7 @@ async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
 async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     us_data = await get_user_data(us_id)
-    await callback_query.message.answer(f"us_data")
+    await callback_query.message.answer(f"{us_data}")
     buttons = [
         [InlineKeyboardButton(text="Опросник_Общее", callback_data="questionaire2")],
         [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
