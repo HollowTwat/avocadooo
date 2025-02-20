@@ -122,6 +122,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
     await message.answer(step0txt, reply_markup=keyboard)
 
+
 @router.message(Command("menu"))
 async def menu_handler(message: Message, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
@@ -151,7 +152,7 @@ async def process_name(message: types.Message, state: FSMContext):
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'what_do_you_do')
 async def process_questionnaire_yapp(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "Чтобы проанализировать состав баночки максимально точно, мне нужно немного больше узнать о вас! \n"
         "🤔 Давайте заполним подробную анкету — это поможет мне лучше понять ваши потребности и подобрать самые подходящие продукты именно вам. Готовы?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
@@ -172,7 +173,7 @@ async def process_agreement(callback_query: types.CallbackQuery, state: FSMConte
             "Давайте вернемся к этому, когда вам будет удобнее? Avocado всегда рядом!"
         )
 
-        await bot.send_message(us_id, text)
+        await callback_query.message.edit_text(text)
         await state.clear()
 
     elif callback_query.data == "agreement_yes":
@@ -189,14 +190,14 @@ async def process_agreement(callback_query: types.CallbackQuery, state: FSMConte
             "Чтобы не получилось так, что я для тебя одобрила средство, которое абсолютно не подходит тебе по этическим предпочтениям."
         )
 
-        await bot.send_message(us_id, text, reply_markup=keyboard)
+        await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'lesgo')
 async def process_questionnaire_lesgo(callback_query: CallbackQuery, state: FSMContext):
 
     await state.set_state(Questionnaire.age)
-    await callback_query.message.answer(
-        "1) Начнем с простого. Сколько вам годиков?   \nНапишите только число. \n<i>Например, 35</i>"
+    await callback_query.message.edit_text(
+        "1) Начнем с простого. \nСколько вам годиков?   \nНапишите только число. \n<i>Например, 35</i>"
     )
     await callback_query.answer()
 
@@ -219,7 +220,7 @@ async def process_gender(callback_query: types.CallbackQuery, state: FSMContext)
     gender = "Женский" if callback_query.data == "gender_female" else "Мужской"
     await state.update_data(gender=gender)
     await state.set_state(Questionnaire.location)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "3) Для расчета времени года и климата проживания, мне нужно знать, где ты находишься большая часть года\n"
         "Напиши вот в таком формате: \n<i>Россия, Санкт-Петербург</i>"
     )
@@ -305,7 +306,7 @@ async def process_phototype(callback_query: types.CallbackQuery, state: FSMConte
         ]
     )
     await state.set_state(Questionnaire.activity)
-    await callback_query.message.answer("7) Как ты оцениваешь свою физическую активность?", reply_markup=keyboard)
+    await callback_query.message.edit_text("7) Как ты оцениваешь свою физическую активность?", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.activity), lambda c: c.data.startswith("activity_"))
@@ -325,7 +326,7 @@ async def process_activity(callback_query: types.CallbackQuery, state: FSMContex
         ]
     )
     await state.set_state(Questionnaire.water_intake)
-    await callback_query.message.answer("8) Сколько воды ты пьешь ежедневно?", reply_markup=keyboard)
+    await callback_query.message.edit_text("8) Сколько воды ты пьешь ежедневно?", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.water_intake), lambda c: c.data.startswith("water_"))
@@ -345,7 +346,7 @@ async def process_water_intake(callback_query: types.CallbackQuery, state: FSMCo
         ]
     )
     await state.set_state(Questionnaire.stress)
-    await callback_query.message.answer("9) Какой уровень стресса в твоей жизни наиболее соответствует реальности?", reply_markup=keyboard)
+    await callback_query.message.edit_text("9) Какой уровень стресса в твоей жизни наиболее соответствует реальности?", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.stress), lambda c: c.data.startswith("stress_"))
@@ -362,7 +363,7 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
         "stress_mid": "Это нормально. Но не забывай про самопомощь и поддержку близких💖",
         "stress_high": "Очень и очень тебя понимаю! Больше 70% людей подвержены высокому стрессу, не забывай себя иногда сильно-сильно баловать 🌸"
     }
-    await callback_query.message.answer(stress_message_map[callback_query.data])
+    await callback_query.message.edit_text(stress_message_map[callback_query.data])
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="Курение", callback_data="habits_smoking")],
@@ -392,7 +393,7 @@ async def process_habits(callback_query: types.CallbackQuery, state: FSMContext)
         ]
     )
     await state.set_state(Questionnaire.ethics)
-    await callback_query.message.answer("11) Этические предпочтения: что для тебя важно в косметике?", reply_markup=keyboard)
+    await callback_query.message.edit_text("11) Этические предпочтения: что для тебя важно в косметике?", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.ethics), lambda c: c.data.startswith("ethics_"))
@@ -447,7 +448,7 @@ async def process_face_skin_type(callback_query: CallbackQuery, state: FSMContex
     current_data = await state.get_data()
     print(f"Updated state in process_all_questionnaires: {current_data}")
     await state.set_state(QuestionnaireFace.skin_condition)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "13) Как ты оцениваешь текущее состояние кожи своего лица?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Обезвоженная", callback_data="dehydrated")],
@@ -466,7 +467,7 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
         "sensitive": "Хорошо тебя понимаю, муха мимо пролетит, а у меня уже всё краснеет 🦋",
         "normal": "Не многие могут таким похвастаться ✨🍃"
     }
-    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
         "14) Есть ли у тебя какие-либо осложнения с кожей на лице?\n"
         "1 - Пигментация\n"
@@ -1081,7 +1082,7 @@ async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Для волос и кожи головы", callback_data="product_type_hair")],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    await bot.send_message(us_id, text, reply_markup=keyboard)
+    await callback_query.message.edit_text(text, reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data.startswith('product_type_'))
@@ -1091,7 +1092,7 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
     us_id = callback_query.from_user.id
     text = "Скиньте мне фото 📸 или <u>ссылку</u> на то средство, о котором ты хочешь узнать больше.  Я всё проверю и дам честную оценку! \n<i>Можете также написать ️ или надиктовать ️ название — как вам удобнее. Ваш выбор имеет значение для Avocado bot </i> 🥑"
     await state.set_state(UserState.recognition)
-    await bot.send_message(us_id, text)
+    await callback_query.message.edit_text(text)
     await callback_query.answer()
 
 
@@ -1105,7 +1106,7 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
         "Холи Гуакамоле! 😊\nЯ — Avocado Bot, ваш карманный защитник в мире безопасной косметики. А как вас зовут?"
     )
 
-    await bot.send_message(us_id, text)
+    await callback_query.message.edit_text(text)
     await state.set_state(Questionnaire.name)
     await callback_query.answer()
 
@@ -1124,7 +1125,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Настройки"
-    await callback_query.message.answer(text, reply_markup=keyboard)
+    await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'explain_4')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
@@ -1140,7 +1141,7 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Ваш текущий тариф: X   \n\nВаша подписка истекает ДАТА, не забудьте продлить \n\n<i>Ожидает метода для инфы </i>"
-    await callback_query.message.answer(text, reply_markup=keyboard)
+    await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 're_sub')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
@@ -1155,7 +1156,7 @@ async def process_un_sub(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Вы уверены? Avocado Bot всегда вас ждёт 💚"
-    await callback_query.message.answer(text, reply_markup=keyboard)
+    await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'settings_questionaire')
 async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
@@ -1166,15 +1167,15 @@ async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Хотите внести несколько изменений или пройти анкету с самого начала?"
-    await callback_query.message.answer(text, reply_markup=keyboard)
+    await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'un_sub_yes')
 async def process_un_sub_yes(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.answer("Подписка отменена. Возвращайтесь скорее 💚")
+    await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚")
 
 @router.callback_query(lambda c: c.data == 'un_sub_no')
 async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.answer("Аvocado очень радо! 🥰")
+    await callback_query.message.edit_text("Аvocado очень радо! 🥰")
 
 @router.callback_query(lambda c: c.data == 'questionnaires_pick')
 async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
