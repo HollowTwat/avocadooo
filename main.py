@@ -911,7 +911,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
             }
     response = await send_user_data(us_id, user_hair_data, "SetUserHairData", "user_hair_data")
     await callback_query.message.answer(f"Сохранено в базе: {response}")
-    await bot.send_message(us_id, "Опрос завершен, /start для возврата в меню")
+    await bot.send_message(us_id, "Опрос завершен, /menu для возврата в меню")
     await state.clear()
 
 
