@@ -107,18 +107,19 @@ class QuestionnaireHair(StatesGroup):
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
-    buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
-        [InlineKeyboardButton(text="Опросник_Начало", callback_data="questionaire2")],
-        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
-        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
-        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
-        [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
-        [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
-        [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
-        ]
+    # buttons = [
+    #     [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+    #     [InlineKeyboardButton(text="Опросник_Начало", callback_data="questionaire2")],
+    #     [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
+    #     [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
+    #     [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
+    #     [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
+    #     [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
+    #     [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
+    #     ]
+    buttons = [[InlineKeyboardButton(text="Пройти опросник", callback_data="all_questionnaires")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    step0txt = "Привет"
+    step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
     await message.answer(step0txt, reply_markup=keyboard)
 
 @router.message(Command("menu"))
