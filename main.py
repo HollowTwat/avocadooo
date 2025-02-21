@@ -60,6 +60,7 @@ class UserState(StatesGroup):
     recognition = State()
     yapp = State()
     menu = State()
+    yapp_with_xtra = State()
 
 class Questionnaire(StatesGroup):
     name = State()
@@ -952,6 +953,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+    await remove_thread(us_id)
     if message.text:
         response_1 = await generate_response(message.text, us_id, YAPP_ASS)
         response = remove_tags(response_1)
@@ -972,6 +974,36 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         url_response = remove_tags(url_response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(url_response)
+
+@router.message(StateFilter(UserState.yapp_with_xtra))
+async def yapp_handler(message: Message, state: FSMContext) -> None:
+    user_data = await state.get_data()
+    pers_analysis = user_data['pers_analysis']
+    us_id = str(message.from_user.id)
+    chat_id = message.chat.id
+    sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+    await remove_thread(us_id)
+    if message.text:
+        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, вопрос пользователя: {message.text} ", us_id, YAPP_ASS)
+        response = remove_tags(response_1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await message.answer(response)
+    elif message.voice:
+        trainscription = await audio_file(message.voice.file_id)
+        await message.answer(trainscription)
+        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, вопрос пользователя: {trainscription}", us_id, YAPP_ASS)
+        response = remove_tags(response_1)
+        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await message.answer(response)
+    elif message.photo:
+        await message.answer("Введи текст или надиктуй голосом")
+        # file = await bot.get_file(message.photo[-1].file_id)
+        # file_path = file.file_path
+        # file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
+        # url_response_1 = await process_url(file_url, us_id, YAPP_ASS)
+        # url_response = remove_tags(url_response_1)
+        # await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        # await message.answer(url_response)
 
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
@@ -1144,6 +1176,11 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp)
     await callback_query.answer("yapp_state_set")
+
+@router.callback_query(lambda c: c.data == 'yapp_with_extra_info')
+async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.yapp_with_xtra)
+    await callback_query.answer("yapp_with_xtra")
 
 @router.callback_query(lambda c: c.data == 'settings')
 async def process_settings(callback_query: CallbackQuery, state: FSMContext):
@@ -1387,8 +1424,13 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     pers_analysis1 = await no_thread_ass(gpt_message, analysis_var)
     pers_analysis = remove_tags(pers_analysis1)
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+    await state.update_data(pers_analysis=pers_analysis)
+    buttons = [
+        [InlineKeyboardButton(text="Проанализировать еще одну баночку", callback_data="analysis")],
+        [InlineKeyboardButton(text="Задать вопрос Авокадо Bot про эту баночку", callback_data="yapp_with_extra_info")]
+    ]
 
-    await bot.send_message(us_id, pers_analysis)
+    await callback_query.message.answer(pers_analysis)
     await callback_query.answer()
 
 
