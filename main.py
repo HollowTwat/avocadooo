@@ -135,6 +135,37 @@ async def menu_handler(message: Message, state: FSMContext) -> None:
     step0txt = "Привет"
     await message.answer(step0txt, reply_markup=keyboard)
 
+@router.message(Command("devmenu"))
+async def devmenu_handler(message: Message, state: FSMContext) -> None:
+    await state.update_data(full_sequence=False)
+    buttons = [
+        [InlineKeyboardButton(text="My Avocado Box AI 💚", callback_data="avo_box")],
+        [InlineKeyboardButton(text="Промокоды 💥", callback_data="avo_promo")],
+        ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    step0txt = "Привет"
+    await message.answer(step0txt, reply_markup=keyboard)
+
+@router.callback_query(lambda c: c.data == 'avo_box')
+async def process_avo_box(callback_query: CallbackQuery, state: FSMContext):
+    buttons = [[InlineKeyboardButton(text="Урвать бокс", callback_data="avo_box_2")]]
+    text = "Соберите свой идеальный My Avocado Box AI!\n\nВыбирайте только то, что действительно хочется.\n\nРегулярные подборки премиальной натуральной косметики со скидками до 50% – тестируйте лучшие продукты по суперценам.\n\nГарантия безопасности и качества от Авокадской Конторы 💚\n\nНикаких случайных баночек – только идеальный бьюти-бокс, который подходит именно вашей коже!"
+    await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(lambda c: c.data == 'avo_promo')
+async def process_avo_promo(callback_query: CallbackQuery, state: FSMContext):
+    buttons = [[InlineKeyboardButton(text="Воспользоваться скидкой", callback_data="avo_promo_2")]]
+    text = "Скидки, созданные специально для вас!\n\nМы объединили все лучшие эко-бренды – друзей My Avocado Box, чтобы у вас всегда был доступ к безопасной косметике по самой приятной цене. \n\n🌿Лучшие бренды готовы радовать тебя натуральными и проверенными продуктами.\n\n💚Постоянные скидки 15-20% – эксклюзивно для наших подписчиков.\n\n✨ Лучшее из мира эко-косметики всегда доступно в один клик.\n\nВыбирайте, пробуйте, влюбляйтесь – с Avocado Bot вы всегда в выигрыше!"
+    await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(lambda c: c.data == 'avo_box_2')
+async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.edit_text("indev")
+
+@router.callback_query(lambda c: c.data == 'avo_promo_2')
+async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.edit_text("indev")
+
 @router.message(StateFilter(Questionnaire.name))
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)
@@ -568,7 +599,7 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
 async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(body_skin_type=callback_query.data)
     await state.set_state(QuestionnaireBody.body_skin_sensitivity)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "17) Укажи степень чувствительности кожи тела:",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")],
@@ -585,7 +616,7 @@ async def process_body_skin_sensitivity(callback_query: CallbackQuery, state: FS
         "sensitive": "Я тоже чувствительна и к погоде, и к прикосновениям, и даже к плотной одежде 💔",
         "normal": "А ты счастливый человек, я вот довольно чувствительна и к погоде, и к прикосновениям, и даже к плотной одежде 💔"
     }
-    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
         "18) Как ты оцениваешь текущее состояние кожи на теле:",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
@@ -606,7 +637,7 @@ async def process_body_skin_sensitivity(callback_query: CallbackQuery, state: FS
 async def process_body_skin_condition(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(body_skin_condition=callback_query.data)
     await state.set_state(QuestionnaireBody.body_hair_issues)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "19) Есть ли у тебя проблемы, связанные с волосами на теле?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Вросшие волосы", callback_data="ingrown_hairs")],
@@ -625,7 +656,7 @@ async def process_body_hair_issues(callback_query: CallbackQuery, state: FSMCont
         "irritation": "Сочувствую от всей души, но мы поработаем над этим🥺",
         "no_problems": "Везунчик! Самый настоящий😜"
     }
-    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
         "20) Есть ли у тебя участки, которым нужно особое внимание (бо́льшее увлажнение или серьезные трещины)?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
@@ -642,7 +673,7 @@ async def process_body_hair_issues(callback_query: CallbackQuery, state: FSMCont
 async def process_body_attention_areas(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(body_attention_areas=callback_query.data)
     await state.set_state(QuestionnaireBody.body_goals)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "21) Какие задачи ты могла бы себе поставить для улучшения кожи тела?\n"
         "1 - Увлажнение\n"
         "2 - Питание\n"
