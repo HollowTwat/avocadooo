@@ -433,7 +433,7 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
     us_id = callback_query.from_user.id
     await state.update_data(ethics=ethics)
     user_data = await state.get_data()
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
         f"Имя: {user_data['name']}\n"
         f"Возраст: {user_data['age']}\n"
@@ -990,7 +990,6 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
-        # response = await remove_json_block(response1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
 
         extracted_list = await extract_list_from_input(response1)
@@ -1232,7 +1231,7 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
     if not current_data.get("full_sequence", True):
         await state.update_data(full_sequence=False)
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "<b> Часть 2/4 🟢🟢⚪️⚪️\n"
         "4 вопроса о твоём чудесном лице </b>\n"
         "Спасибо за честные ответы, перейдем к “знакомству” с твоей кожей 🙌\n\n"
