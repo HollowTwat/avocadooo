@@ -1430,7 +1430,7 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Задать вопрос Авокадо Bot про эту баночку", callback_data="yapp_with_extra_info")]
     ]
 
-    await callback_query.message.answer(pers_analysis)
+    await callback_query.message.answer(pers_analysis, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await callback_query.answer()
 
 
