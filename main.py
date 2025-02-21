@@ -749,7 +749,7 @@ async def process_body_goals(message: types.Message, state: FSMContext):
 async def process_hair_scalp_type(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(hair_scalp_type=callback_query.data)
     await state.set_state(QuestionnaireHair.hair_thickness)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "23.1) Какой у тебя тип волос: толщина?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Тонкие", callback_data="thin"),
@@ -763,7 +763,7 @@ async def process_hair_scalp_type(callback_query: CallbackQuery, state: FSMConte
 async def process_hair_thickness(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(hair_thickness=callback_query.data)
     await state.set_state(QuestionnaireHair.hair_length)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "23.2) Какой у тебя тип волос: длина?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Короткие", callback_data="short"),
@@ -777,7 +777,7 @@ async def process_hair_thickness(callback_query: CallbackQuery, state: FSMContex
 async def process_hair_length(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(hair_length=callback_query.data)
     await state.set_state(QuestionnaireHair.hair_structure)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "23.3) Какой у тебя тип волос: структура?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Прямые", callback_data="straight"),
@@ -791,7 +791,7 @@ async def process_hair_length(callback_query: CallbackQuery, state: FSMContext):
 async def process_hair_structure(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(hair_structure=callback_query.data)
     await state.set_state(QuestionnaireHair.hair_condition)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "23.4) Какой у тебя тип волос: состояние?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Поврежденные", callback_data="damaged"),
@@ -806,7 +806,7 @@ async def process_hair_structure(callback_query: CallbackQuery, state: FSMContex
 async def process_hair_condition(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(hair_condition=callback_query.data)
     await state.set_state(QuestionnaireHair.hair_goals)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "24) Какие цели ухода для тебя важны? Выбери один или несколько пунктов\n"
         "1 - Увлажнение кожи головы и волос\n"
         "2 - Восстановление структуры волос\n"
@@ -849,7 +849,7 @@ async def process_hair_goals(message: types.Message, state: FSMContext):
 async def process_washing_frequency(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(washing_frequency=callback_query.data)
     await state.set_state(QuestionnaireHair.current_products)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "26) Какие средства ты используешь сейчас? Можно выбрать несколько",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Шампунь", callback_data="shampoo"),
@@ -865,7 +865,7 @@ async def process_washing_frequency(callback_query: CallbackQuery, state: FSMCon
 async def process_current_products(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(current_products=callback_query.data)
     await state.set_state(QuestionnaireHair.product_texture)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "27) Какую текстуру средства ты предпочитаешь?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Легкую", callback_data="light"),
@@ -882,7 +882,7 @@ async def process_product_texture(callback_query: CallbackQuery, state: FSMConte
         "light": "Понимаю, тоже не люблю жирные средства и ощущение липкости 🙏",
         "dense": "Согласна, по плотной структуре будто больше кажется, что средство \"работает\" 😂"
     }
-    await callback_query.message.answer(pre_message_map[callback_query.data])
+    await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
         "28) Есть ли у тебя аллергия или чувствительность к каким-либо компонентам на коже головы (например, сульфатам, эфирным маслам, ароматизаторам)?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
@@ -896,7 +896,7 @@ async def process_product_texture(callback_query: CallbackQuery, state: FSMConte
 async def process_sensitivity(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(sensitivity=callback_query.data)
     await state.set_state(QuestionnaireHair.styling_tools)
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "29) Используешь ли ты термоукладочные приборы (фен, утюжок)?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Да, часто", callback_data="often"),
@@ -910,7 +910,7 @@ async def process_sensitivity(callback_query: CallbackQuery, state: FSMContext):
 async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(styling_tools=callback_query.data)
     user_data = await state.get_data()
-    await callback_query.message.answer(
+    await callback_query.message.edit_text(
         "Спасибо за участие в опросе! Вот ваши данные:\n"
         f"Тип кожи головы: {user_data['hair_scalp_type']}\n"
         f"Толщина волос: {user_data['hair_thickness']}\n"
