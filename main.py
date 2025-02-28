@@ -1049,9 +1049,10 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         print(extracted_list)
         if extracted_list:
             buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
-            product_messages = []
-            for product in extracted_list:
-                product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+            # product_messages = []
+            # for product in extracted_list:
+            for product in extracted_list[:5]:
+                # product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
                 buttons.append(
                     [
                 InlineKeyboardButton(
@@ -1060,9 +1061,10 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
-            combined_message = "\n".join(product_messages)
+            # combined_message = "\n".join(product_messages)
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+            # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+            await message.answer(f"Выбери один из товаров", reply_markup=keyboard)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
