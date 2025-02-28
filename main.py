@@ -959,7 +959,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     buttons = [
         [InlineKeyboardButton(text="Меню", callback_data="menu")]
     ]
-    await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(buttons))
+    await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     # await bot.send_message(us_id, "Опрос завершен, /menu для возврата в меню")
     await state.clear()
 
@@ -972,20 +972,20 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
     buttons = [
-        [InlineKeyboardButton(text="Меню", callback_data="menu")]
+        [InlineKeyboardButton(text="Меню", callback_data="menu")],
     ]
     if message.text:
         response_1 = await generate_response(message.text, us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(buttons))
+        await message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
         response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(buttons))
+        await message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     elif message.photo:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
@@ -993,7 +993,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         url_response_1 = await process_url(file_url, us_id, YAPP_ASS)
         url_response = remove_tags(url_response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(f"{url_response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(buttons))
+        await message.answer(f"{url_response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 
 @router.message(StateFilter(UserState.yapp_with_xtra))
@@ -1241,7 +1241,7 @@ async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text=arrow_back, callback_data="settings_sub"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
-    await callback_query.message.answer(text, reply_markup=InlineKeyboardMarkup(buttons))
+    await callback_query.message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'un_sub')
 async def process_un_sub(callback_query: CallbackQuery, state: FSMContext):
@@ -1271,7 +1271,7 @@ async def process_un_sub_yes(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
-    await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚", reply_markup=InlineKeyboardMarkup(buttons))
+    await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'un_sub_no')
 async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
