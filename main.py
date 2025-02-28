@@ -39,6 +39,8 @@ ANALYSIS_P_BODY_ASS = os.getenv("ANALYSIS_P_BODY_ASS")
 ANALYSIS_P_HAIR_ASS = os.getenv("ANALYSIS_P_HAIR_ASS")
 
 TOKEN = BOT_TOKEN
+arrow_back = "⬅️"
+arrow_menu = "⏏️" #🆕
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(
     parse_mode=ParseMode.HTML))
@@ -128,13 +130,25 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 async def menu_handler(message: Message, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
     buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp")],
         [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
-        [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    step0txt = "Привет"
+    step0txt = "Меню"
     await message.answer(step0txt, reply_markup=keyboard)
+
+@router.callback_query(lambda c: c.data == 'menu')
+async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
+    await state.update_data(full_sequence=False)
+    buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
+        ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    step0txt = "Меню"
+    await callback_query.message.edit_text(step0txt, reply_markup=keyboard)
 
 @router.message(Command("devmenu"))
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
@@ -942,8 +956,11 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
                 "styling_tools": f"Термоукладочные приборы: {user_data['styling_tools']}",
             }
     response = await send_user_data(us_id, user_hair_data, "SetUserHairData", "user_hair_data")
-    await callback_query.message.answer(f"Сохранено в базе: {response}")
-    await bot.send_message(us_id, "Опрос завершен, /menu для возврата в меню")
+    buttons = [
+        [InlineKeyboardButton(text="Меню", callback_data="menu")]
+    ]
+    await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(buttons))
+    # await bot.send_message(us_id, "Опрос завершен, /menu для возврата в меню")
     await state.clear()
 
 
@@ -954,18 +971,21 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     chat_id = message.chat.id
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
+    buttons = [
+        [InlineKeyboardButton(text="Меню", callback_data="menu")]
+    ]
     if message.text:
         response_1 = await generate_response(message.text, us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(response)
+        await message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(buttons))
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
         response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(response)
+        await message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(buttons))
     elif message.photo:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
@@ -973,7 +993,8 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         url_response_1 = await process_url(file_url, us_id, YAPP_ASS)
         url_response = remove_tags(url_response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(url_response)
+        await message.answer(f"{url_response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(buttons))
+
 
 @router.message(StateFilter(UserState.yapp_with_xtra))
 async def yapp_handler(message: Message, state: FSMContext) -> None:
@@ -1176,6 +1197,8 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp)
     await callback_query.answer("yapp_state_set")
+    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>\n Я всегда готов помочь! 🥑"
+    await callback_query.message.answer(text)
 
 @router.callback_query(lambda c: c.data == 'yapp_with_extra_info')
 async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSMContext):
@@ -1189,6 +1212,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Инструкция по применению Avocado Bot 🔖", callback_data="explain_4")],
         [InlineKeyboardButton(text="Обновить анкету 📖", callback_data="settings_questionaire")],
         [InlineKeyboardButton(text="Подписка", callback_data="settings_sub")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Настройки"
@@ -1205,6 +1229,7 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
         [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
+        [InlineKeyboardButton(text=arrow_back, callback_data="settings"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Ваш текущий тариф: X   \n\nВаша подписка истекает ДАТА, не забудьте продлить \n\n<i>Ожидает метода для инфы </i>"
@@ -1213,13 +1238,17 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(lambda c: c.data == 're_sub')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
     text = "Перекидывать на лендинг / система оплаты в ТГ"
-    await callback_query.message.answer(text)
+    buttons = [
+        [InlineKeyboardButton(text=arrow_back, callback_data="settings_sub"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
+    await callback_query.message.answer(text, reply_markup=InlineKeyboardMarkup(buttons))
 
 @router.callback_query(lambda c: c.data == 'un_sub')
 async def process_un_sub(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text="Да", callback_data="un_sub_yes")],
         [InlineKeyboardButton(text="Нет, я остаюсь", callback_data="un_sub_no")],
+        [InlineKeyboardButton(text=arrow_back, callback_data="settings_sub"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Вы уверены? Avocado Bot всегда вас ждёт 💚"
@@ -1231,6 +1260,7 @@ async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text="Заполнить заново 🪴", callback_data="all_questionnaires")],
         [InlineKeyboardButton(text="Внести изменения 🌱", callback_data="questionnaires_pick")],
+        [InlineKeyboardButton(text=arrow_back, callback_data="settings"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Хотите внести несколько изменений или пройти анкету с самого начала?"
@@ -1238,7 +1268,10 @@ async def process_re_quest(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 'un_sub_yes')
 async def process_un_sub_yes(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚")
+    buttons = [
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
+    await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚", reply_markup=InlineKeyboardMarkup(buttons))
 
 @router.callback_query(lambda c: c.data == 'un_sub_no')
 async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
@@ -1254,6 +1287,7 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
         [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
         [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
         [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
+        [InlineKeyboardButton(text=arrow_back, callback_data="settings_questionaire"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Выберите, в какой части анкеты хотите внести изменения. Когда будете готовы, нажмите «Завершить редактирование» — и вуаля, ваша анкета обновится!"
