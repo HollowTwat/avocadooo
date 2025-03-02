@@ -1,4 +1,5 @@
 import asyncio
+import re
 import aiogram
 import random
 import os
@@ -245,6 +246,11 @@ async def process_questionnaire_lesgo(callback_query: CallbackQuery, state: FSMC
     await callback_query.message.edit_text(
         "1) Начнем с простого. \nСколько вам годиков?   \nНапишите только число. \n<i>Например, 35</i>"
     )
+    pattern = r'^(0|[1-9]\d?|1[01]\d|120)$'
+    if re.match(pattern, callback_query.text):
+        await process_age(callback_query, state)
+    else:
+        await callback_query.answer("Не поняла. Попробуй ввести число  ещё раз без дополнительных символов и букв.")
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire.age))
@@ -259,6 +265,7 @@ async def process_age(message: types.Message, state: FSMContext):
         ]
     )
     await state.set_state(Questionnaire.gender)
+    await message.answer("Принято")
     await message.answer("2) Твой пол", reply_markup=keyboard)
 
 @router.callback_query(StateFilter(Questionnaire.gender), lambda c: c.data.startswith("gender_"))
@@ -270,6 +277,12 @@ async def process_gender(callback_query: types.CallbackQuery, state: FSMContext)
         "3) Для расчёта времени года и климатических условий вашего проживания мне нужно знать, где вы находитесь большую часть времени.\n\n"
         "Напишите, пожалуйста, вот в таком формате: \n<i>Россия, Санкт-Петербург</i>"
     )
+    pattern = r'^[А-Яа-яЁё\s-]+, [А-Яа-яЁё\s-]+$'
+    if re.match(pattern, callback_query.text):
+        await process_location(callback_query, state)
+    else:
+        await callback_query.answer("Не поняла. Попробуй ввести еще раз.")
+    
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire.location))
@@ -282,6 +295,7 @@ async def process_location(message: types.Message, state: FSMContext):
         ]
     )
     await state.set_state(Questionnaire.allergy)
+    await message.answer("Благодарю!")
     await message.answer("4) Есть ли у тебя склонность к аллергическим реакциям?", reply_markup=keyboard)
 
 @router.callback_query(StateFilter(Questionnaire.allergy), lambda c: c.data.startswith("allergy_"))
@@ -982,8 +996,35 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     await bot.send_message(us_id, 
                            "Ура, мы закончили!  Теперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     Осталось немного подождать — результаты скоро будут готовы! 🪴"
                            )
-    await bot.send_message(us_id,"Тут булет аналитика")
+    user_data = await state.get_data()
+
+    await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocad﻿o Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  Ваша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊Голова и волос {user_data['hair_scalp_type']}   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
     await bot.send_message(us_id,"Ну как, всё ли понятно? 🥑  \nЕсли нужно, я могу подробнее рассказать, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе. 🧖‍♀️    \nAvocado всегда радо поделиться всеми секретами красоты и ухода — просто дайте знать!")
+    await process_about_avocado(callback_query, state)
+
+
+async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext):
+    img1="AgACAgIAAxkBAAILOWfElQUBkr7wkvwOFKsRCZbP6g9xAAI18jEbxbQpSlRffZUDlbBjAQADAgADeQADNgQ"
+    img2="AgACAgIAAxkBAAILPGfElRBs6AL6-zGh1OYBKuGT84LyAAI28jEbxbQpSgvtn0qE0goLAQADAgADeQADNgQ"
+    img3="AgACAgIAAxkBAAILTWfElwltoleIVbfsQNhgPnh3K-TYAAJO8jEbxbQpSn8pvsmUlUdlAQADAgADeQADNgQ"
+    img4="AgACAgIAAxkBAAILUGfElw1nqa4PW3WbNY6pCWyCdgyUAAJP8jEbxbQpSrTAXNtG-L3TAQADAgADeQADNgQ"
+    img5="AgACAgIAAxkBAAILU2fElxA8Rs_Ugtle716x6kbpNhhpAAJQ8jEbxbQpSoleyT3KJGehAQADAgADeQADNgQ"
+    img6="AgACAgIAAxkBAAILVmfElxM3vQXqzQv2zjrhtxT2AAH8pQACUfIxG8W0KUpzZ_hkpHHzqgEAAwIAA3kAAzYE"
+    media_files = [
+        InputMediaPhoto(media=img1),
+        InputMediaPhoto(media=img2),
+        InputMediaPhoto(media=img3),
+        InputMediaPhoto(media=img4),
+        InputMediaPhoto(media=img5),
+        InputMediaPhoto(media=img6)
+    ]
+    await callback_query.message.answer_media_group(media=media_files)
+    await callback_query.message.answer(
+        "Вот и все пора начинать! С чего хотите начать?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Анализ состава", callback_data="analysis"), InlineKeyboardButton(text="Спросить Avocado Bot ❔", callback_data="setstate_yapp")]
+        ])
+    )
     await state.clear()
 
 
@@ -1247,7 +1288,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
     text = "Давайте покажу, что я умею 🙌"
     await callback_query.message.answer(text)
-    await callback_query.message.answer("Будет перенос после переработки онбординга")
+    await process_about_avocado(callback_query, state)
 
 @router.callback_query(lambda c: c.data == 'settings_sub')
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
