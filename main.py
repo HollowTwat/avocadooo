@@ -272,17 +272,11 @@ async def process_age(message: types.Message, state: FSMContext):
 async def process_gender(callback_query: types.CallbackQuery, state: FSMContext):
     gender = "Женский" if callback_query.data == "gender_female" else "Мужской"
     await state.update_data(gender=gender)
-    
+    await state.set_state(Questionnaire.location)
     await callback_query.message.edit_text(
         "3) Для расчёта времени года и климатических условий вашего проживания мне нужно знать, где вы находитесь большую часть времени.\n\n"
         "Напишите, пожалуйста, вот в таком формате: \n<i>Россия, Санкт-Петербург</i>"
     )
-    pattern = r'^[А-Яа-яЁё\s-]+, [А-Яа-яЁё\s-]+$'
-    if re.match(pattern, callback_query.text):
-        await state.set_state(Questionnaire.location)
-        await process_location(callback_query, state)
-    else:
-        await callback_query.answer("Не поняла. Попробуй ввести еще раз.")
     
     await callback_query.answer()
 
@@ -295,10 +289,14 @@ async def process_location(message: types.Message, state: FSMContext):
             [InlineKeyboardButton(text="Нет", callback_data="allergy_no")]
         ]
     )
-    await state.set_state(Questionnaire.allergy)
-    await message.answer("Благодарю!")
-    await message.answer("4) Есть ли у тебя склонность к аллергическим реакциям?", reply_markup=keyboard)
-
+    pattern = r'^[А-Яа-яЁё\s-]+, [А-Яа-яЁё\s-]+$'
+    if re.match(pattern, message.text):
+        await state.set_state(Questionnaire.allergy)
+        await message.answer("Благодарю!")
+        await message.answer("4) Есть ли у тебя склонность к аллергическим реакциям?", reply_markup=keyboard)
+    else:
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
+        
 @router.callback_query(StateFilter(Questionnaire.allergy), lambda c: c.data.startswith("allergy_"))
 async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext):
     allergy = "Да" if callback_query.data == "allergy_yes" else "Нет"
