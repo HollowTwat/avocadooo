@@ -1355,7 +1355,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(lambda c: c.data == 'explain_4')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
     text = "Давайте покажу, что я умею 🙌"
-    await callback_query.message.answer(text)
+    await callback_query.message.edit_text(text, reply_markup=None)
     await process_about_avocado(callback_query, state)
 
 @router.callback_query(lambda c: c.data == 'settings_sub')
