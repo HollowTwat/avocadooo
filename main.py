@@ -615,12 +615,12 @@ async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContex
     await state.update_data(body_skin_type=callback_query.data)
     await state.set_state(QuestionnaireBody.body_skin_sensitivity)
     await callback_query.message.edit_text("17) Как вы оцениваете чувствительность кожи вашего тела?\n<i>Ниже будет памятка</i>")
-    await bot.send_message(
+    await callback_query.message.answer(
         "<b>Нормальная кожа</b> (без повышенной чувствительности) \n- Не реагирует на внешние раздражители \n- Редко возникают покраснения, шелушения или зуд \n- Хорошо переносит разные средства ухода \n\n<b>Умеренно чувствительная кожа</b> \n- Иногда реагирует на изменения климата, косметику или моющие средства \n- Возможны легкие покраснения или зуд при использовании новых продуктов \n\n<b>Чувствительная кожа</b> \n- Часто проявляет реакции на раздражители, такие как сухой воздух, горячая вода, солнце или неподходящая косметика \n- Часто ощущается стянутость, зуд или покраснение \n\n<b>Очень чувствительная кожа</b> \n- Реагирует даже на мягкие раздражители, включая ткань одежды или воду \n- Постоянные покраснения, зуд, раздражения, шелушения или высыпания \n- Требует специализированного ухода и минимального контакта с потенциальными аллергенами",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")],
             [InlineKeyboardButton(text="Нормальная кожа", callback_data="normal")],
-            [InlineKeyboardButton(text="Умеренно чувствительная кожа", callback_data="mid_sensitive")]
+            [InlineKeyboardButton(text="Умеренно чувствительная кожа", callback_data="mid_sensitive")],
             [InlineKeyboardButton(text="Очень чувствительная кожа", callback_data="very_sensitive")]
         ])
     )
