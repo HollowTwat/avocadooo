@@ -107,6 +107,11 @@ class QuestionnaireHair(StatesGroup):
     sensitivity = State()
     styling_tools = State()
 
+checkbox_states = {
+    "option_1": False,
+    "option_2": False,
+}
+
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
@@ -125,6 +130,45 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
     await message.answer(step0txt, reply_markup=keyboard)
+
+@router.message(Command("checkbox"))
+async def start(message: types.Message):
+    # Создаём клавиатуру с чекбоксами
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text=f"✅ Опция 1" if checkbox_states["option_1"] else "☐ Опция 1",
+            callback_data="toggle_option_1"
+        )],
+        [InlineKeyboardButton(
+            text=f"✅ Опция 2" if checkbox_states["option_2"] else "☐ Опция 2",
+            callback_data="toggle_option_2"
+        )],
+        [InlineKeyboardButton(text="Подтвердить", callback_data="confirm")]
+    ])
+    
+    await message.answer("Выберите опции:", reply_markup=keyboard)
+
+# Обработчик для переключения чекбоксов
+@router.callback_query(lambda c: c.data.startswith("toggle_"))
+async def handle_checkbox(callback_query: types.CallbackQuery):
+    option = callback_query.data.replace("toggle_", "")  # Получаем название опции
+    checkbox_states[option] = not checkbox_states[option]  # Меняем состояние
+    
+    # Обновляем сообщение с новым состоянием кнопок
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text=f"✅ Опция 1" if checkbox_states["option_1"] else "☐ Опция 1",
+            callback_data="toggle_option_1"
+        )],
+        [InlineKeyboardButton(
+            text=f"✅ Опция 2" if checkbox_states["option_2"] else "☐ Опция 2",
+            callback_data="toggle_option_2"
+        )],
+        [InlineKeyboardButton(text="Подтвердить", callback_data="confirm")]
+    ])
+    
+    await callback_query.message.edit_text("Выберите опции:", reply_markup=keyboard)
+    await callback_query.answer()
 
 
 @router.message(Command("menu"))
