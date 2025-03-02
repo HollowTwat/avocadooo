@@ -337,19 +337,25 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
     await state.update_data(lifestyle=lifestyle_texts)
 
     keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[[
-            InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)
-        ]]
+        inline_keyboard=[
+            # [InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)]
+            [InlineKeyboardButton(text="1 — Очень светлая кожа, не загорает, сразу краснеет", callback_data="phototype_1")],
+            [InlineKeyboardButton(text="2 — Светлая кожа, легко сгорает, загорает с трудом", callback_data="phototype_2")],
+            [InlineKeyboardButton(text="3 — Светлая/средняя кожа, редко сгорает, загорает постепенно", callback_data="phototype_3")],
+            [InlineKeyboardButton(text="4 — Средняя/оливковая кожа, редко сгорает, хорошо загорает", callback_data="phototype_4")],
+            [InlineKeyboardButton(text="5 — Темная кожа, практически не сгорает, быстро загорает", callback_data="phototype_5")],
+            [InlineKeyboardButton(text="6 — Очень темная кожа, никогда не сгорает", callback_data="phototype_6")],
+            ]
     )
     await state.set_state(Questionnaire.phototype)
-    await message.answer(
-        "6) Теперь нужно определить фототип твоей кожи:\n"
-        "1 — Очень светлая кожа, не загорает, сразу краснеет\n"
-        "2 — Светлая кожа, легко сгорает, загорает с трудом\n"
-        "3 — Светлая/средняя кожа, редко сгорает, загорает постепенно\n"
-        "4 — Средняя/оливковая кожа, редко сгорает, хорошо загорает\n"
-        "5 — Темная кожа, практически не сгорает, быстро загорает\n"
-        "6 — Очень темная кожа, никогда не сгорает\n",
+    await message.answer("6) Теперь задачка поинтереснее. Давайте определим ваш фототип кожи? Это совсем не сложно — всё кратко и понятно описали:",
+        # "6) Теперь нужно определить фототип твоей кожи:\n"
+        # "1 — Очень светлая кожа, не загорает, сразу краснеет\n"
+        # "2 — Светлая кожа, легко сгорает, загорает с трудом\n"
+        # "3 — Светлая/средняя кожа, редко сгорает, загорает постепенно\n"
+        # "4 — Средняя/оливковая кожа, редко сгорает, хорошо загорает\n"
+        # "5 — Темная кожа, практически не сгорает, быстро загорает\n"
+        # "6 — Очень темная кожа, никогда не сгорает\n",
         reply_markup=keyboard
     )
 
