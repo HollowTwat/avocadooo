@@ -242,16 +242,10 @@ async def process_agreement(callback_query: types.CallbackQuery, state: FSMConte
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'lesgo')
 async def process_questionnaire_lesgo(callback_query: CallbackQuery, state: FSMContext):
 
-    
+    await state.set_state(Questionnaire.age)
     await callback_query.message.edit_text(
         "1) Начнем с простого. \nСколько вам годиков?   \nНапишите только число. \n<i>Например, 35</i>"
     )
-    pattern = r'^(0|[1-9]\d?|1[01]\d|120)$'
-    if re.match(pattern, callback_query.text):
-        await state.set_state(Questionnaire.age)
-        await process_age(callback_query, state)
-    else:
-        await callback_query.answer("Не поняла. Попробуй ввести число  ещё раз без дополнительных символов и букв.")
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire.age))
@@ -265,9 +259,14 @@ async def process_age(message: types.Message, state: FSMContext):
             [InlineKeyboardButton(text="Мужской", callback_data="gender_male")]
         ]
     )
-    await state.set_state(Questionnaire.gender)
-    await message.answer("Принято")
-    await message.answer("2) Твой пол", reply_markup=keyboard)
+
+    pattern = r'^(0|[1-9]\d?|1[01]\d|120)$'
+    if re.match(pattern, message.text): 
+        await state.set_state(Questionnaire.gender)
+        await message.answer("Принято")
+        await message.answer("2) Твой пол", reply_markup=keyboard)
+    else:
+        await message.answer("Не поняла. Попробуй ввести число  ещё раз без дополнительных символов и букв.")
 
 @router.callback_query(StateFilter(Questionnaire.gender), lambda c: c.data.startswith("gender_"))
 async def process_gender(callback_query: types.CallbackQuery, state: FSMContext):
