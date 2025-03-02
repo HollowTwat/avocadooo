@@ -1497,6 +1497,11 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
 @router.message()
 async def default_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
+    if message.photo:
+        file_id = message.photo[-1].file_id
+
+        await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
+                            "You can use this file_id to send the image in your bot.")
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
