@@ -1166,37 +1166,48 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     chat_id = message.chat.id
     if message.text:
 
-        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        # sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await generate_response(message.text, us_id, ASSISTANT_ID)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        # await sticker_message.delete()
 
 
-        await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+        # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
 
-        sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        # sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
+        # await sticker_message1.delete()
 
         extracted_list = await extract_list_from_input(response1)
-        print(extracted_list)
         if extracted_list:
-            buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
-            # product_messages = []
-            # for product in extracted_list:
-            for product in extracted_list[:5]:
-                # product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                buttons.append(
-                    [
-                InlineKeyboardButton(
-                    text=product.get('FullName'),
-                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
-                )
+            db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
+            Name = db_info.get("Name")
+            Type = db_info.get("Type")
+            Brand = db_info.get("Brand")
+            Country = db_info.get("Country")
+            text = f"Найдено:   \n\n- Название {Name} \n- Тип средства {Type} \n- Бренд {Brand} \n- Страна {Country}  \n\nВсё верно 💚?"
+            buttons = [
+                [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
+                [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
             ]
-        )
-            # combined_message = "\n".join(product_messages)
-            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
-            await message.answer(f"Выбери один из товаров", reply_markup=keyboard)
+            await message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        # if extracted_list:
+        #     buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
+        #     # product_messages = []
+        #     # for product in extracted_list:
+        #     for product in extracted_list[:5]:
+        #         # product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+        #         buttons.append(
+        #             [
+        #         InlineKeyboardButton(
+        #             text=product.get('FullName'),
+        #             callback_data=f"item_{product_type}_{product.get('Identifier')}"
+        #         )
+        #     ]
+        # )
+        #     # combined_message = "\n".join(product_messages)
+        #     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        #     # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+        #     await message.answer(f"Выбери один из товаров", reply_markup=keyboard)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1207,36 +1218,47 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
-        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        # sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
 
         med_name = await generate_response(transcribed_text, us_id, ASSISTANT_ID)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+        # await sticker_message.delete()
+        # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
 
-        sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        # sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         # response = await remove_json_block(response1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
+        # await sticker_message1.delete()
 
         # await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
-        print(extracted_list)
         if extracted_list:
-            buttons = []
-            product_messages = []
-            for product in extracted_list:
-                product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                buttons.append(
-                    [
-                InlineKeyboardButton(
-                    text=product.get('FullName'),
-                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
-                )
+            db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
+            Name = db_info.get("Name")
+            Type = db_info.get("Type")
+            Brand = db_info.get("Brand")
+            Country = db_info.get("Country")
+            text = f"Найдено:   \n\n- Название {Name} \n- Тип средства {Type} \n- Бренд {Brand} \n- Страна {Country}  \n\nВсё верно 💚?"
+            buttons = [
+                [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
+                [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
             ]
-        )
-            combined_message = "\n".join(product_messages)
-            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+            await message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        # if extracted_list:
+        #     buttons = []
+        #     product_messages = []
+        #     for product in extracted_list[:5]:
+        #         product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+        #         buttons.append(
+        #             [
+        #         InlineKeyboardButton(
+        #             text=product.get('FullName'),
+        #             callback_data=f"item_{product_type}_{product.get('Identifier')}"
+        #         )
+        #     ]
+        # )
+        #     combined_message = "\n".join(product_messages)
+        #     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        #     await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1250,42 +1272,52 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
 
-        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        # sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await process_url(file_url, us_id, ASSISTANT_ID)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
-        await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+        # await sticker_message.delete()
+        # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
 
-        sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        # sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         # response = await remove_json_block(response1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message1.message_id)
+        # await sticker_message1.delete()
 
         # await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
-        print(extracted_list)
         if extracted_list:
-            buttons = []
-            product_messages = []
-            for product in extracted_list:
-                product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                buttons.append(
-                    [
-                InlineKeyboardButton(
-                    text=product.get('FullName'),
-                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
-                )
+            db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
+            Name = db_info.get("Name")
+            Type = db_info.get("Type")
+            Brand = db_info.get("Brand")
+            Country = db_info.get("Country")
+            text = f"Найдено:   \n\n- Название {Name} \n- Тип средства {Type} \n- Бренд {Brand} \n- Страна {Country}  \n\nВсё верно 💚?"
+            buttons = [
+                [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
+                [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
             ]
-        )
-            combined_message = "\n".join(product_messages)
-            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-            await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+            await message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        #     buttons = []
+        #     product_messages = []
+        #     for product in extracted_list[:5]:
+        #         product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
+        #         buttons.append(
+        #             [
+        #         InlineKeyboardButton(
+        #             text=product.get('FullName'),
+        #             callback_data=f"item_{product_type}_{product.get('Identifier')}"
+        #         )
+        #     ]
+        # )
+        #     combined_message = "\n".join(product_messages)
+        #     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        #     await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
                     [InlineKeyboardButton(text="Попробовать снова", callback_data="analysis")]
                 ]
             )
-            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ещё раз, пожалуйста!  🌟", reply_markup=keyboard)
+            await message.answer("Упс, что-то не получилось распознать этот продукт!  \nПопробуйте ещё раз, пожалуйста!  🌟", reply_markup=keyboard)
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
@@ -1550,11 +1582,12 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
 
-
+    analys_mssg = await callback_query.message.answer("Анализирую 🔍")
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
     analysis_result1 = await no_thread_ass(str(db_info), analysis_var)
     analysis_result = remove_tags(analysis_result1)
+    await analys_mssg.delete()
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
 
     await bot.send_message(us_id, analysis_result)
