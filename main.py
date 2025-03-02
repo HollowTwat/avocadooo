@@ -339,8 +339,7 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
         "3 — Светлая/средняя кожа, редко сгорает, загорает постепенно\n"
         "4 — Средняя/оливковая кожа, редко сгорает, хорошо загорает\n"
         "5 — Темная кожа, практически не сгорает, быстро загорает\n"
-        "6 — Очень темная кожа, никогда не сгорает\n"
-        "Укажи через запятую все, что применимо \n<i>(например: 1, 2)</i>",
+        "6 — Очень темная кожа, никогда не сгорает\n",
         reply_markup=keyboard
     )
 
@@ -447,8 +446,11 @@ async def process_habits(callback_query: types.CallbackQuery, state: FSMContext)
     await state.update_data(habits=habits)
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Натуральный состав, Vegan продукт и Cruelty-free", callback_data="ethics_cruelty_free")],
-            [InlineKeyboardButton(text="Это не имеет значения", callback_data="ethics_none")]
+            [InlineKeyboardButton(text="Натуральный состав: только безопасные и природные ингредиенты", callback_data="ethics_1")],
+            [InlineKeyboardButton(text="Не тестируется на животных: продукция, созданная с уважением к братьям нашим меньшим", callback_data="ethics_2")],
+            [InlineKeyboardButton(text="Перерабатываемая упаковка: забота об окружающей среде и минимизация отходов", callback_data="ethics_3")],
+            [InlineKeyboardButton(text="Локальное производство: поддержка местных производителей и снижение углеродного следа", callback_data="ethics_4")],
+            [InlineKeyboardButton(text="Социальная ответственность: Продукты и бренды, которые поддерживают важные инициативы и создают положительный социальный эффект.", callback_data="ethics_5")]
         ]
     )
     await state.set_state(Questionnaire.ethics)
@@ -457,8 +459,15 @@ async def process_habits(callback_query: types.CallbackQuery, state: FSMContext)
 
 @router.callback_query(StateFilter(Questionnaire.ethics), lambda c: c.data.startswith("ethics_"))
 async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext):
-    ethics = "Натуральный состав, Vegan продукт и Cruelty-free" if callback_query.data == "ethics_cruelty_free" else "Это не имеет значения"
+    ethics_map = {
+        "ethics_1": "Натуральный состав: только безопасные и природные ингредиенты",
+        "ethics_2": "Не тестируется на животных: продукция, созданная с уважением к братьям нашим меньшим",
+        "ethics_3": "Перерабатываемая упаковка: забота об окружающей среде и минимизация отходов",
+        "ethics_4": "Локальное производство: поддержка местных производителей и снижение углеродного следа",
+        "ethics_5": "Социальная ответственность: Продукты и бренды, которые поддерживают важные инициативы и создают положительный социальный эффект."
+    }
     us_id = callback_query.from_user.id
+    ethics = ethics_map[callback_query.data]
     await state.update_data(ethics=ethics)
     user_data = await state.get_data()
     await callback_query.message.edit_text(
@@ -1428,10 +1437,10 @@ async def start_hair_questionnaire(user_id: int, state: FSMContext):
         user_id,
         "22) Какой у вас тип кожи головы?\n<i>Если не уверены, какой у вас тип, вот небольшие подсказки</i>\n\n*Попробуйте оценить ощущения после обычного ухода за волосами или вспомнить, как часто вам нужно мыть голову.",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
-             InlineKeyboardButton(text="Сухая", callback_data="dry")],
-            [InlineKeyboardButton(text="Жирная", callback_data="oily"),
-             InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
+            [InlineKeyboardButton(text="Нормальная: кожа не ощущается жирной или сухой, волосы остаются свежими 2–3 дня после мытья", callback_data="normal"),
+             InlineKeyboardButton(text="Сухая: зуд или шелушение, волосы кажутся ломкими и обезвоженными", callback_data="dry")],
+            [InlineKeyboardButton(text="Жирная: кожа головы быстро становится жирной, волосы теряют объем уже к концу дня", callback_data="oily"),
+             InlineKeyboardButton(text="Комбинированная: корни жирные, а кончики сухие", callback_data="combination")]
         ])
     )
 
