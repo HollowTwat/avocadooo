@@ -563,7 +563,7 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
                 "habits": f"{user_data['habits']}"
             }
     response = await send_user_data(us_id, user_data_gen, "SetUserBaseData", "user_data")
-    await callback_query.message.answer(f"Сохранено в базе: {response}")
+    # await callback_query.message.answer(f"Сохранено в базе: {response}")
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
@@ -686,7 +686,7 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
                 "face_skin_goals": f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}",
             }
     response = await send_user_data(us_id, user_face_data, "SetUserFaceData", "user_face_data")
-    await message.answer(f"Сохранено в базе: {response}")
+    # await message.answer(f"Сохранено в базе: {response}")
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
@@ -842,7 +842,7 @@ async def process_body_goals(message: types.Message, state: FSMContext):
             }
 
     response = await send_user_data(us_id, user_body_data, "SetUserBodyData", "user_body_data")
-    await message.answer(f"Сохранено в базе: {response}")
+    # await message.answer(f"Сохранено в базе: {response}")
 
     full_sequence = user_data.get("full_sequence", False)
     if full_sequence:
@@ -921,9 +921,9 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
         "5 - Защита от термического воздействия (фен, плойка, утюжок)\n"
         "6 - Усиление роста волос\n"
         "7 - Укрепление корней и предотвращение выпадения\n"
-        "8 - Блеск и гладкость"
-        "9 - Сохранение объёма и лёгкости"
-        "10 - Борьба с секущимися кончиками"
+        "8 - Блеск и гладкость\n"
+        "9 - Сохранение объёма и лёгкости\n"
+        "10 - Борьба с секущимися кончиками\n"
         "11 - Легкость расчёсывания и укладки",
         reply_markup=None
     )
@@ -1066,13 +1066,13 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     buttons = [
         [InlineKeyboardButton(text="Меню", callback_data="menu")]
     ]
-    await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    # await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await bot.send_message(us_id, 
                            "Ура, мы закончили!  Теперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     Осталось немного подождать — результаты скоро будут готовы! 🪴"
                            )
     user_data = await state.get_data()
     gpt_response = await no_thread_ass(str(user_data), USER_ANAL_ASS)
-    gpt_resp = await remove_tags(gpt_response)
+    gpt_resp = remove_tags(gpt_response)
     # await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocado Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  \т\тВаша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊<b>Голова и волос {user_data['hair_scalp_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
     await callback_query.message.answer(gpt_resp)
     await bot.send_message(us_id,"Ну как, всё ли понятно? 🥑  \nЕсли нужно, я могу подробнее рассказать, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе. 🧖‍♀️    \nAvocado всегда радо поделиться всеми секретами красоты и ухода — просто дайте знать!")
