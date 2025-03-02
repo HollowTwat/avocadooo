@@ -533,19 +533,20 @@ async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext)
     await state.update_data(ethics=ethics)
     user_data = await state.get_data()
     await callback_query.message.edit_text(
-        "Спасибо за участие в опросе! Вот ваши данные:\n"
-        f"Имя: {user_data['name']}\n"
-        f"Возраст: {user_data['age']}\n"
-        f"Пол: {user_data['gender']}\n"
-        f"Место проживания: {user_data['location']}\n"
-        f"Склонность к аллергии: {user_data['allergy']}\n"
-        f"Особенности образа жизни: {', '.join(map(str, user_data['lifestyle']))}\n"
-        f"Фототип: {user_data['phototype']}\n"
-        f"Уровень физической активности: {user_data['activity']}\n"
-        f"Питьевой режим: {user_data['water_intake']}\n"
-        f"Уровень стресса: {user_data['stress']}\n"
-        f"Вредные привычки: {user_data['habits']}\n"
-        f"Этические предпочтения: {user_data['ethics']}"
+        "Спасибо за участие в опросе! "
+        # "Вот ваши данные:\n"
+        # f"Имя: {user_data['name']}\n"
+        # f"Возраст: {user_data['age']}\n"
+        # f"Пол: {user_data['gender']}\n"
+        # f"Место проживания: {user_data['location']}\n"
+        # f"Склонность к аллергии: {user_data['allergy']}\n"
+        # f"Особенности образа жизни: {', '.join(map(str, user_data['lifestyle']))}\n"
+        # f"Фототип: {user_data['phototype']}\n"
+        # f"Уровень физической активности: {user_data['activity']}\n"
+        # f"Питьевой режим: {user_data['water_intake']}\n"
+        # f"Уровень стресса: {user_data['stress']}\n"
+        # f"Вредные привычки: {user_data['habits']}\n"
+        # f"Этические предпочтения: {user_data['ethics']}"
     )
 
     user_data_gen = {
@@ -669,11 +670,12 @@ async def process_face_skin_goals(message: types.Message, state: FSMContext):
     await state.update_data(face_skin_goals=goal_texts)
     user_data = await state.get_data()
     await message.answer(
-        "Спасибо за участие в опросе! Вот ваши данные:\n"
-        f"Тип кожи: {user_data['face_skin_type']}\n"
-        f"Состояние кожи: {user_data['face_skin_condition']}\n"
-        f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}\n"
-        f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}"
+        "Спасибо за участие в опросе! "
+        # "Вот ваши данные:\n"
+        # f"Тип кожи: {user_data['face_skin_type']}\n"
+        # f"Состояние кожи: {user_data['face_skin_condition']}\n"
+        # f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}\n"
+        # f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}"
     )
     us_id = message.from_user.id
 
@@ -818,13 +820,14 @@ async def process_body_goals(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     print(f"user: {message.from_user.id}, full_seq: {user_data.get("full_sequence")}")
     await message.answer(
-        "Спасибо за участие в опросе! Вот ваши данные:\n"
-        f"Тип кожи тела: {user_data['body_skin_type']}\n"
-        f"Чувствительность кожи: {user_data['body_skin_sensitivity']}\n"
-        f"Состояние кожи: {user_data['body_skin_condition']}\n"
-        f"Проблемы с волосами: {user_data['body_hair_issues']}\n"
-        f"Участки с особыми потребностями: {user_data['body_attention_areas']}\n"
-        f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}"
+        "Спасибо за участие в опросе! "
+        # "Вот ваши данные:\n"
+        # f"Тип кожи тела: {user_data['body_skin_type']}\n"
+        # f"Чувствительность кожи: {user_data['body_skin_sensitivity']}\n"
+        # f"Состояние кожи: {user_data['body_skin_condition']}\n"
+        # f"Проблемы с волосами: {user_data['body_hair_issues']}\n"
+        # f"Участки с особыми потребностями: {user_data['body_attention_areas']}\n"
+        # f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}"
     )
 
     us_id = message.from_user.id
@@ -1029,18 +1032,19 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     await state.update_data(styling_tools=callback_query.data)
     user_data = await state.get_data()
     await callback_query.message.edit_text(
-        "Спасибо за участие в опросе! Вот ваши данные:\n"
-        f"Тип кожи головы: {user_data['hair_scalp_type']}\n"
-        f"Толщина волос: {user_data['hair_thickness']}\n"
-        f"Длина волос: {user_data['hair_length']}\n"
-        f"Структура волос: {user_data['hair_structure']}\n"
-        f"Состояние волос: {user_data['hair_condition']}\n"
-        f"Цели ухода: {', '.join(map(str, user_data['hair_goals']))}\n"
-        f"Частота мытья головы: {user_data['washing_frequency']}\n"
-        f"Используемые средства: {user_data['current_products']}\n"
-        f"Предпочитаемая текстура: {user_data['product_texture']}\n"
-        f"Чувствительность: {user_data['sensitivity']}\n"
-        f"Термоукладочные приборы: {user_data['styling_tools']}"
+        "Спасибо за участие в опросе! "
+        # "Вот ваши данные:\n"
+        # f"Тип кожи головы: {user_data['hair_scalp_type']}\n"
+        # f"Толщина волос: {user_data['hair_thickness']}\n"
+        # f"Длина волос: {user_data['hair_length']}\n"
+        # f"Структура волос: {user_data['hair_structure']}\n"
+        # f"Состояние волос: {user_data['hair_condition']}\n"
+        # f"Цели ухода: {', '.join(map(str, user_data['hair_goals']))}\n"
+        # f"Частота мытья головы: {user_data['washing_frequency']}\n"
+        # f"Используемые средства: {user_data['current_products']}\n"
+        # f"Предпочитаемая текстура: {user_data['product_texture']}\n"
+        # f"Чувствительность: {user_data['sensitivity']}\n"
+        # f"Термоукладочные приборы: {user_data['styling_tools']}"
     )
 
     us_id = callback_query.from_user.id
@@ -1067,7 +1071,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
                            "Ура, мы закончили!  Теперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     Осталось немного подождать — результаты скоро будут готовы! 🪴"
                            )
     user_data = await state.get_data()
-    gpt_response = await no_thread_ass(user_data, USER_ANAL_ASS)
+    gpt_response = await no_thread_ass(str(user_data), USER_ANAL_ASS)
     gpt_resp = await remove_tags(gpt_response)
     # await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocado Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  \т\тВаша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊<b>Голова и волос {user_data['hair_scalp_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
     await callback_query.message.answer(gpt_resp)
@@ -1631,8 +1635,10 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     pers_analysis = remove_tags(pers_analysis1)
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
     await state.update_data(pers_analysis=pers_analysis)
+    await state.update_data(db_info=db_info)
     buttons = [
         [InlineKeyboardButton(text="Проанализировать еще одну баночку", callback_data="analysis")],
+        [InlineKeyboardButton(text="Вернуться в меню", callback_data="menu")],
         [InlineKeyboardButton(text="Задать вопрос Авокадо Bot про эту баночку", callback_data="yapp_with_extra_info")]
     ]
 
