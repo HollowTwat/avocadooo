@@ -1458,45 +1458,45 @@ async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
 async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     us_data = await get_user_data(us_id)
-    await callback_query.message.answer(
-        f"<b>Общая информация:</b> \n "   
-        # f"Имя: {us_data['name']}\n"
-        f"Возраст: {us_data['age']}\n"
-        f"Пол: {us_data['gender']}\n"
-        f"Место проживания: {us_data['location']}\n"
-        f"Склонность к аллергии: {us_data['allergy']}\n"
-        f"Особенности образа жизни: {us_data['lifestyle']}\n"
-        # f"Фототип: {us_data['phototype']}\n"
-        f"Уровень физической активности: {us_data['activity']}\n"
-        f"Питьевой режим: {us_data['water_intake']}\n"
-        f"Уровень стресса: {us_data['stress']}\n"
-        f"Вредные привычки: {us_data['habits']}\n"
-        # f"Этические предпочтения: {us_data['ethics']}\n"
-        f"\n<b>Информация о лице:</b>\n"
-        f"{us_data['face_skin_type']}\n",
-        f"{us_data['face_skin_condition']}\n",
-        f"{us_data['face_skin_issues']}\n",
-        f"{us_data['face_skin_goals']}\n",       
-        f"\n<b>Информация о теле:</b>\n"    
-        f"{us_data['body_skin_type']}\n"
-        f"{us_data['body_skin_sensitivity']}\n"
-        f"{us_data['body_skin_condition']}\n"
-        f"{us_data['body_hair_issues']}\n"
-        f"{us_data['body_attention_areas']}\n"
-        f"{us_data['body_goals']}\n"
-        f"\n<b>Информация о волосах:</b>\n"
-        f"{us_data['hair_scalp_type']}\n"
-        f"{us_data['hair_thickness']}\n"
-        f"{us_data['hair_length']}\n"
-        f"{us_data['hair_structure']}\n"
-        f"{us_data['hair_condition']}\n"
-        f"{us_data['hair_goals']}\n"
-        f"{us_data['washing_frequency']}\n"
-        f"{us_data['current_products']}\n"
-        f"{us_data['product_texture']}\n"
-        f"{us_data['sensitivity']}\n"
-        f"{us_data['styling_tools']}"
-    )
+    # await callback_query.message.answer(
+    #     f"<b>Общая информация:</b> \n "   
+    #     # f"Имя: {us_data['name']}\n"
+    #     f"Возраст: {us_data['age']}\n"
+    #     f"Пол: {us_data['gender']}\n"
+    #     f"Место проживания: {us_data['location']}\n"
+    #     f"Склонность к аллергии: {us_data['allergy']}\n"
+    #     f"Особенности образа жизни: {us_data['lifestyle']}\n"
+    #     # f"Фототип: {us_data['phototype']}\n"
+    #     f"Уровень физической активности: {us_data['activity']}\n"
+    #     f"Питьевой режим: {us_data['waterIntake']}\n"
+    #     f"Уровень стресса: {us_data['stress']}\n"
+    #     f"Вредные привычки: {us_data['habits']}\n"
+    #     # f"Этические предпочтения: {us_data['ethics']}\n"
+    #     f"\n<b>Информация о лице:</b>\n"
+    #     f"{us_data['face_skin_type']}\n",
+    #     f"{us_data['face_skin_condition']}\n",
+    #     f"{us_data['face_skin_issues']}\n",
+    #     f"{us_data['face_skin_goals']}\n",       
+    #     f"\n<b>Информация о теле:</b>\n"    
+    #     f"{us_data['body_skin_type']}\n"
+    #     f"{us_data['body_skin_sensitivity']}\n"
+    #     f"{us_data['body_skin_condition']}\n"
+    #     f"{us_data['body_hair_issues']}\n"
+    #     f"{us_data['body_attention_areas']}\n"
+    #     f"{us_data['body_goals']}\n"
+    #     f"\n<b>Информация о волосах:</b>\n"
+    #     f"{us_data['hair_scalp_type']}\n"
+    #     f"{us_data['hair_thickness']}\n"
+    #     f"{us_data['hair_length']}\n"
+    #     f"{us_data['hair_structure']}\n"
+    #     f"{us_data['hair_condition']}\n"
+    #     f"{us_data['hair_goals']}\n"
+    #     f"{us_data['washing_frequency']}\n"
+    #     f"{us_data['current_products']}\n"
+    #     f"{us_data['product_texture']}\n"
+    #     f"{us_data['sensitivity']}\n"
+    #     f"{us_data['styling_tools']}"
+    # )
     await callback_query.message.answer(f"{us_data}")
     buttons = [
         [InlineKeyboardButton(text="Опросник Общее", callback_data="questionaire2")],
