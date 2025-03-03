@@ -1398,7 +1398,7 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
         await callback_query.message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await state.set_state(UserState.yapp)
     elif transfer_type == "voice":
-        voice = user_data['transfer_audio']
+        voice = user_data['transfer_voice']
         trainscription = await audio_file(voice)
         # await callback_query.message.answer(trainscription)
         response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
