@@ -1471,7 +1471,7 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
         f"Питьевой режим: {us_data['water_intake']}\n"
         f"Уровень стресса: {us_data['stress']}\n"
         f"Вредные привычки: {us_data['habits']}\n"
-        f"Этические предпочтения: {us_data['ethics']}\n"
+        # f"Этические предпочтения: {us_data['ethics']}\n"
         f"\n<b>Информация о лице:</b>\n"
         f"{us_data['face_skin_type']}\n",
         f"{us_data['face_skin_condition']}\n",
