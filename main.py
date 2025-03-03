@@ -1141,19 +1141,20 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
 async def yapp_handler(message: Message, state: FSMContext) -> None:
     user_data = await state.get_data()
     pers_analysis = user_data['pers_analysis']
+    db_info = user_data['db_info']
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
     if message.text:
-        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, вопрос пользователя: {message.text} ", us_id, YAPP_ASS)
+        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {message.text} ", us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(response)
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
-        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, вопрос пользователя: {trainscription}", us_id, YAPP_ASS)
+        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {trainscription}", us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(response)
