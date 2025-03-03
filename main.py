@@ -1466,7 +1466,7 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
         f"Место проживания: {us_data['location']}\n"
         f"Склонность к аллергии: {us_data['allergy']}\n"
         f"Особенности образа жизни: {us_data['lifestyle']}\n"
-        f"Фототип: {us_data['phototype']}\n"
+        # f"Фототип: {us_data['phototype']}\n"
         f"Уровень физической активности: {us_data['activity']}\n"
         f"Питьевой режим: {us_data['water_intake']}\n"
         f"Уровень стресса: {us_data['stress']}\n"
@@ -1499,10 +1499,10 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
     )
     await callback_query.message.answer(f"{us_data}")
     buttons = [
-        [InlineKeyboardButton(text="Опросник_Общее", callback_data="questionaire2")],
-        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
-        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
-        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
+        [InlineKeyboardButton(text="Опросник Общее", callback_data="questionaire2")],
+        [InlineKeyboardButton(text="Опросник Лицо", callback_data="questionnaire_face")],
+        [InlineKeyboardButton(text="Опросник Тело", callback_data="questionnaire_body")],
+        [InlineKeyboardButton(text="Опросник Волосы", callback_data="questionnaire_hair")],
         [InlineKeyboardButton(text=arrow_back, callback_data="settings_questionaire"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
