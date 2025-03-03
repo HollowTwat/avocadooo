@@ -176,6 +176,7 @@ async def handle_checkbox(callback_query: types.CallbackQuery):
 
 @router.message(Command("menu"))
 async def menu_handler(message: Message, state: FSMContext) -> None:
+    await state.set_state(UserState.menu)
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
@@ -188,6 +189,7 @@ async def menu_handler(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(lambda c: c.data == 'menu')
 async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.menu)
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
