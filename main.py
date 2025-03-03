@@ -1068,10 +1068,8 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
         [InlineKeyboardButton(text="Меню", callback_data="menu")]
     ]
     # await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
-    await bot.send_message(us_id, 
-                           "Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴"
-                           )
-    sticker_mssg = bot.send_sticker(us_id, sticker=random(STICKERLIST))
+    await bot.send_message(us_id,"Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴")
+    sticker_mssg = bot.send_sticker(us_id, sticker=random.choice(STICKERLIST))
     user_data = await state.get_data()
     gpt_response = await no_thread_ass(str(user_data), USER_ANAL_ASS)
     gpt_resp = remove_tags(gpt_response)
