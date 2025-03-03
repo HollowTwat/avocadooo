@@ -1460,7 +1460,7 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
     us_data = await get_user_data(us_id)
     await callback_query.message.answer(
         f"<b>Общая информация:</b> \n "   
-        f"Имя: {us_data['name']}\n"
+        # f"Имя: {us_data['name']}\n"
         f"Возраст: {us_data['age']}\n"
         f"Пол: {us_data['gender']}\n"
         f"Место проживания: {us_data['location']}\n"
