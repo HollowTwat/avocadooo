@@ -1459,7 +1459,7 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
     us_id = callback_query.from_user.id
     us_data = await get_user_data(us_id)
     await callback_query.message.answer(
-        f"<b>Общая информация</b>: \n "   
+        f"<b>Общая информация:</b> \n "   
         f"Имя: {us_data['name']}\n"
         f"Возраст: {us_data['age']}\n"
         f"Пол: {us_data['gender']}\n"
@@ -1472,19 +1472,19 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
         f"Уровень стресса: {us_data['stress']}\n"
         f"Вредные привычки: {us_data['habits']}\n"
         f"Этические предпочтения: {us_data['ethics']}\n"
-        f"<b>Информация о лице</b>"
+        f"\n<b>Информация о лице:</b>\n"
         f"{us_data['face_skin_type']}\n",
         f"{us_data['face_skin_condition']}\n",
         f"{us_data['face_skin_issues']}\n",
         f"{us_data['face_skin_goals']}\n",       
-        f"<b>Информация о теле</b>"    
+        f"\n<b>Информация о теле:</b>\n"    
         f"{us_data['body_skin_type']}\n"
         f"{us_data['body_skin_sensitivity']}\n"
         f"{us_data['body_skin_condition']}\n"
         f"{us_data['body_hair_issues']}\n"
         f"{us_data['body_attention_areas']}\n"
         f"{us_data['body_goals']}\n"
-        f"<b>Информация о волосах</b>"
+        f"\n<b>Информация о волосах:</b>\n"
         f"{us_data['hair_scalp_type']}\n"
         f"{us_data['hair_thickness']}\n"
         f"{us_data['hair_length']}\n"
