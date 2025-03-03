@@ -1381,6 +1381,32 @@ async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSM
     await state.set_state(UserState.yapp_with_xtra)
     await callback_query.answer("yapp_with_xtra")
 
+@router.callback_query(lambda c: c.data.startswith('setstate_yapp_transfer_'))
+async def process_product_type(callback_query: CallbackQuery, state: FSMContext):
+    transfer_type = callback_query.data.split('_')[3]
+    user_data = state.get_data()
+    us_id = callback_query.from_user.id
+    buttons = [
+        [InlineKeyboardButton(text="Меню", callback_data="menu")],
+    ]
+    sticker_message = await callback_query.message.answer_sticker(random.choice(STICKERLIST))
+    if transfer_type == "txt":
+        txt = user_data['transfer_text']
+        response_1 = await generate_response(txt, us_id, YAPP_ASS)
+        response = remove_tags(response_1)
+        await sticker_message.delete()
+        await callback_query.message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await state.set_state(UserState.yapp)
+    elif transfer_type == "voice":
+        voice = user_data['transfer_audio']
+        trainscription = await audio_file(voice)
+        # await callback_query.message.answer(trainscription)
+        response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
+        response = remove_tags(response_1)
+        await sticker_message.delete()
+        await callback_query.message.answer(f"{response}\n\n можешь продолжить со мной общаться или выйти в меню", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await state.set_state(UserState.yapp)
+
 @router.callback_query(lambda c: c.data == 'settings')
 async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
@@ -1689,25 +1715,29 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
 
 @router.message()
 async def default_handler(message: Message, state: FSMContext) -> None:
-    buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
-        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp_transfer")],
-        ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     await state.set_state(UserState.transfer)
     if message.photo:
         button = [[InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")]]
         await message.answer("Если ты хочешь опознать баночку надо сначала выбрать к какой категории она относится", reply_markup=InlineKeyboardMarkup(inline_keyboard=button))
-
         # file_id = message.photo[-1].file_id
         # await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
         #                     "You can use this file_id to send the image in your bot.")
     await state.update_data(full_sequence=False)
 
     if message.text:
+        buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp_transfer_txt")],
+        ]
+        keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await state.update_data(transfer_text = message.text)
         await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
     if message.voice:
+        buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp_transfer_voice")],
+        ]
+        keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await state.update_data(transfer_voice = message.voice.file_id)
         await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
     # if not current_state:
