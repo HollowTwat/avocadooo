@@ -66,6 +66,7 @@ class UserState(StatesGroup):
     yapp = State()
     menu = State()
     yapp_with_xtra = State()
+    transfer = State()
 
 class Questionnaire(StatesGroup):
     name = State()
@@ -1068,11 +1069,13 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     ]
     # await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await bot.send_message(us_id, 
-                           "Ура, мы закончили!  Теперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     Осталось немного подождать — результаты скоро будут готовы! 🪴"
+                           "Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴"
                            )
+    sticker_mssg = bot.send_sticker(us_id, sticker=random(STICKERLIST))
     user_data = await state.get_data()
     gpt_response = await no_thread_ass(str(user_data), USER_ANAL_ASS)
     gpt_resp = remove_tags(gpt_response)
+    await sticker_mssg.delete()
     # await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocado Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  \т\тВаша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊<b>Голова и волос {user_data['hair_scalp_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
     await callback_query.message.answer(gpt_resp)
     await bot.send_message(us_id,"Ну как, всё ли понятно? 🥑  \nЕсли нужно, я могу подробнее рассказать, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе. 🧖‍♀️    \nAvocado всегда радо поделиться всеми секретами красоты и ухода — просто дайте знать!")
@@ -1455,6 +1458,45 @@ async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
 async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     us_data = await get_user_data(us_id)
+    await callback_query.message.answer(
+        f"<b>Общая информация</b>: \n "   
+        f"Имя: {us_data['name']}\n"
+        f"Возраст: {us_data['age']}\n"
+        f"Пол: {us_data['gender']}\n"
+        f"Место проживания: {us_data['location']}\n"
+        f"Склонность к аллергии: {us_data['allergy']}\n"
+        f"Особенности образа жизни: {us_data['lifestyle']}\n"
+        f"Фототип: {us_data['phototype']}\n"
+        f"Уровень физической активности: {us_data['activity']}\n"
+        f"Питьевой режим: {us_data['water_intake']}\n"
+        f"Уровень стресса: {us_data['stress']}\n"
+        f"Вредные привычки: {us_data['habits']}\n"
+        f"Этические предпочтения: {us_data['ethics']}\n"
+        f"<b>Информация о лице</b>"
+        f"{us_data['face_skin_type']}\n",
+        f"{us_data['face_skin_condition']}\n",
+        f"{us_data['face_skin_issues']}\n",
+        f"{us_data['face_skin_goals']}\n",       
+        f"<b>Информация о теле</b>"    
+        f"{us_data['body_skin_type']}\n"
+        f"{us_data['body_skin_sensitivity']}\n"
+        f"{us_data['body_skin_condition']}\n"
+        f"{us_data['body_hair_issues']}\n"
+        f"{us_data['body_attention_areas']}\n"
+        f"{us_data['body_goals']}\n"
+        f"<b>Информация о волосах</b>"
+        f"{us_data['hair_scalp_type']}\n"
+        f"{us_data['hair_thickness']}\n"
+        f"{us_data['hair_length']}\n"
+        f"{us_data['hair_structure']}\n"
+        f"{us_data['hair_condition']}\n"
+        f"{us_data['hair_goals']}\n"
+        f"{us_data['washing_frequency']}\n"
+        f"{us_data['current_products']}\n"
+        f"{us_data['product_texture']}\n"
+        f"{us_data['sensitivity']}\n"
+        f"{us_data['styling_tools']}"
+    )
     await callback_query.message.answer(f"{us_data}")
     buttons = [
         [InlineKeyboardButton(text="Опросник_Общее", callback_data="questionaire2")],
@@ -1648,31 +1690,35 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
 
 @router.message()
 async def default_handler(message: Message, state: FSMContext) -> None:
-    current_state = await state.get_state()
-    if message.photo:
-        file_id = message.photo[-1].file_id
-
-        await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
-                            "You can use this file_id to send the image in your bot.")
-    await state.update_data(full_sequence=False)
     buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
-        [InlineKeyboardButton(text="Опросник_Начало", callback_data="questionaire2")],
-        [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
-        [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
-        [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
-        [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
-        [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp_transfer")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    if not current_state:
-        if message.sticker:
-            sticker_id = message.sticker.file_id
-            await message.answer(f"{sticker_id}")
-        else: 
-            await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
-    else:
-        await message.answer(f"Текущее состояние: {current_state}")
+    await state.set_state(UserState.transfer)
+    if message.photo:
+        button = [[InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")]]
+        await message.answer("Если ты хочешь опознать баночку надо сначала выбрать к какой категории она относится", reply_markup=InlineKeyboardMarkup(inline_keyboard=button))
+
+        # file_id = message.photo[-1].file_id
+        # await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
+        #                     "You can use this file_id to send the image in your bot.")
+    await state.update_data(full_sequence=False)
+
+    if message.text:
+        await state.update_data(transfer_text = message.text)
+        await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
+    if message.voice:
+        await state.update_data(transfer_voice = message.voice.file_id)
+        await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
+    # if not current_state:
+    #     if message.sticker:
+    #         sticker_id = message.sticker.file_id
+    #         await message.answer(f"{sticker_id}")
+    #     else: 
+    #         await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
+    # else:
+    #     await message.answer(f"Текущее состояние: {current_state}")
 
 
 async def main() -> None:
