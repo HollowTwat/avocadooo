@@ -1481,7 +1481,7 @@ async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 'questionnaires_pick')
 async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext):
-    us_id = callback_query.from_user.id
+    us_id = str(callback_query.from_user.id)
     us_data = await get_user_data(us_id)
     # await callback_query.message.answer(
     #     f"<b>Общая информация:</b> \n "   
