@@ -1384,7 +1384,7 @@ async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSM
 @router.callback_query(lambda c: c.data.startswith('setstate_yapp_transfer_'))
 async def process_product_type(callback_query: CallbackQuery, state: FSMContext):
     transfer_type = callback_query.data.split('_')[3]
-    user_data = state.get_data()
+    user_data = await state.get_data()
     us_id = callback_query.from_user.id
     buttons = [
         [InlineKeyboardButton(text="Меню", callback_data="menu")],
