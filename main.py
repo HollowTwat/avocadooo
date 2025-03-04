@@ -1381,7 +1381,8 @@ async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext
 @router.callback_query(lambda c: c.data == 'yapp_with_extra_info')
 async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp_with_xtra)
-    await callback_query.answer("yapp_with_xtra")
+    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>\n Я всегда готов помочь! 🥑"
+    await callback_query.message.answer(text)
 
 @router.callback_query(lambda c: c.data.startswith('setstate_yapp_transfer_'))
 async def process_product_type(callback_query: CallbackQuery, state: FSMContext):
