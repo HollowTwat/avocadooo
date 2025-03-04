@@ -1205,7 +1205,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             Brand = db_info.get("Brand")
             Country = db_info.get("Country")
             # text = f"Найдено:   \n\n- Название {Name} \n- Тип средства {Type} \n- Бренд {Brand} \n- Страна {Country}  \n\nВсё верно 💚?"
-            text = f"<b>Найдено:</b>   \n\n-({Name}) \n-({Brand}) \n-({Type}) \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
+            text = f"<b>Найдено:</b>   \n\n-{Name} \n-{Brand} \n-{Type} \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
             buttons = [
                 [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
                 [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
@@ -1259,7 +1259,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             Brand = db_info.get("Brand")
             Country = db_info.get("Country")
             # text = f"Найдено:   \n\n- Название {Name} \n- Тип средства {Type} \n- Бренд {Brand} \n- Страна {Country}  \n\nВсё верно 💚?"
-            text = f"<b>Найдено:</b>   \n\n-({Name}) \n-({Brand}) \n-({Type}) \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
+            text = f"<b>Найдено:</b>   \n\n-{Name} \n-{Brand} \n-{Type} \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
             buttons = [
                 [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
                 [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
@@ -1313,7 +1313,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             Brand = db_info.get("Brand")
             Country = db_info.get("Country")
             # text = f"<b>Найдено:</b>   \n\n- Название {Name} \n- Тип средства {Type} \n- Бренд {Brand} \n- Страна {Country}  \n\nВсё верно 💚?"
-            text = f"<b>Найдено:</b>   \n\n-({Name}) \n-({Brand}) \n-({Type}) \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
+            text = f"<b>Найдено:</b>   \n\n-{Name} \n-{Brand} \n-{Type} \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
             buttons = [
                 [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
                 [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
