@@ -293,7 +293,7 @@ async def process_questionnaire_lesgo(callback_query: CallbackQuery, state: FSMC
 
     await state.set_state(Questionnaire.age)
     await callback_query.message.edit_text(
-        "1) Начнем с простого. \nСколько вам годиков?   \nНапишите только число. \n<i>Например, 35</i>"
+        "1) Начнем с простого. Сколько вам годиков?   \n\nНапишите только число. \n<i>Например, 35</i>"
     )
     await callback_query.answer()
 
@@ -313,7 +313,7 @@ async def process_age(message: types.Message, state: FSMContext):
     if re.match(pattern, message.text): 
         await state.set_state(Questionnaire.gender)
         await message.answer("Принято")
-        await message.answer("2) Твой пол", reply_markup=keyboard)
+        await message.answer("2) Ваш пол пол", reply_markup=keyboard)
     else:
         await message.answer("Не поняла. Попробуй ввести число  ещё раз без дополнительных символов и букв.")
 
@@ -342,7 +342,7 @@ async def process_location(message: types.Message, state: FSMContext):
     if re.match(pattern, message.text):
         await state.set_state(Questionnaire.allergy)
         await message.answer("Благодарю!")
-        await message.answer("4) Есть ли у тебя склонность к аллергическим реакциям?", reply_markup=keyboard)
+        await message.answer("4) Есть ли у вас склонность к аллергическим реакциям?", reply_markup=keyboard)
     else:
         await message.answer("Не поняла. Попробуй ввести еще раз.")
         
@@ -352,7 +352,7 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await state.update_data(allergy=allergy)
     await state.set_state(Questionnaire.lifestyle)
     await callback_query.message.answer(
-        "5) Особенности образа жизни: какой из вариантов больше описывает твою жизнь? <i>Можно выбрать несколько вариантов</i>\n"
+        "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни? \n<i>Вы можете выбрать несколько:</i>\n"
         "1 - Часто нахожусь на солнце\n"
         "2 - Работаю в сухом помещении (с кондиционером или отоплением)\n"
         "3 - Сидячая и неактивная работа\n"
@@ -469,7 +469,7 @@ async def process_water_intake(callback_query: types.CallbackQuery, state: FSMCo
         ]
     )
     await state.set_state(Questionnaire.stress)
-    await callback_query.message.edit_text("9) Ваши нервные клетки успевают восстановиться? Как бы вы описали уровень стресса в своей жизни?", reply_markup=keyboard)
+    await callback_query.message.edit_text("9) КВаши нервные клетки успевают восстановиться? Как бы вы описали уровень стресса в своей жизни?", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.stress), lambda c: c.data.startswith("stress_"))
@@ -496,7 +496,7 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
         ]
     )
     await state.set_state(Questionnaire.habits)
-    await callback_query.message.answer("10) У каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.", reply_markup=keyboard)
+    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание. Можете выбрать несколько", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.habits), lambda c: c.data.startswith("habits_"))
