@@ -996,13 +996,10 @@ async def process_washing_frequency(callback_query: CallbackQuery, state: FSMCon
 async def process_current_products(message: types.Message, state: FSMContext):
     
     if re.match(
-        r'^'  
-        r'(?!.*\b(\d+)\b.*\b\1\b)'  
-        r'(?:\b([1-7])\b(?:[ ,]+?\b([1-7])\b)*'  
-        r'$',  
+        r'^(?!.*\b(\d+)\b.*\b\1\b)(?:\b([1-7])\b(?:[ ,]+\b([1-7])\b)*)$',  
         message.text,
         flags=re.ASCII
-    ):
+        ):
         products = [int(x) for x in message.text.replace(",", " ").split()]
         products_descriptions = {
         1 : "Шампунь",
