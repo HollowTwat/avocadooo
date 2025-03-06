@@ -7,6 +7,7 @@ import asyncio
 import aiogram
 from aiogram import Bot, Dispatcher, types
 import openai
+import datetime
 import base64
 # from auth import OPENAI_KEY, ASSISTANT_ID, BOT_TOKEN
 import requests
