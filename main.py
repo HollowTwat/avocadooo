@@ -974,7 +974,7 @@ async def process_washing_frequency(callback_query: CallbackQuery, state: FSMCon
         "1 — Шампунь\n"
         "2 — Кондиционер\n"
         "3 — Маска\n"
-        "4 — Несмываемый уход (масла, сыворотки, спреи\n)"
+        "4 — Несмываемый уход (масла, сыворотки, спреи)\n"
         "5 — Скраб или пилинг для кожи головы\n"
         "6 — Тоники или спреи для роста\n"
         "7 — Укладочные средства (гели, пенки, лаки)"
@@ -1002,9 +1002,20 @@ async def process_current_products(message: types.Message, state: FSMContext):
     flags=re.ASCII
     )
     if pattern.match(message.text):
-        await state.update_data(current_products=message.data)
+        products = [int(x) for x in message.text.replace(",", " ").split()]
+        products_descriptions = {
+        1 : "Шампунь",
+        2 : "Кондиционер",
+        3 : "Маска",
+        4 : "Несмываемый уход (масла, сыворотки, спреи)",
+        5 : "Скраб или пилинг для кожи головы",
+        6 : "Тоники или спреи для роста",
+        7 : "Укладочные средства (гели, пенки, лаки)",
+        }
+        products_texts = [products_descriptions[product] for product in products if product in products_descriptions]
+        await state.update_data(current_products=products_texts)
         await state.set_state(QuestionnaireHair.product_texture)
-        await message.message.answer(
+        await message.answer(
         "27) Какую текстуру ухода вы предпочитаете?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Легкие спреи или тоники", callback_data="light"),
