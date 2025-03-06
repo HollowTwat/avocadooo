@@ -68,6 +68,9 @@ class UserState(StatesGroup):
     yapp_with_xtra = State()
     transfer = State()
 
+class ImageUploadState(StatesGroup):
+    waiting_for_image = State()
+
 class Questionnaire(StatesGroup):
     name = State()
     intro = State()
@@ -1765,6 +1768,20 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     # else:
     #     await message.answer(f"Текущее состояние: {current_state}")
 
+
+@router.message(Command("upload_image"))
+async def upload_image_command(message: types.Message, state: FSMContext):
+    await state.set_state(ImageUploadState.waiting_for_image)
+    await message.answer("Please send me an image, and I'll give you its file_id.")
+
+@router.message(ImageUploadState.waiting_for_image, lambda message: message.photo)
+async def handle_image_upload(message: types.Message, state: FSMContext):
+    file_id = message.photo[-1].file_id
+
+    await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
+                         "You can use this file_id to send the image in your bot.")
+
+    await state.set_state(UserState.menu)
 
 async def main() -> None:
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
