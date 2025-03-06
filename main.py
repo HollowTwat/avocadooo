@@ -327,7 +327,7 @@ async def process_gender(callback_query: types.CallbackQuery, state: FSMContext)
     await state.set_state(Questionnaire.location)
     await callback_query.message.edit_text(
         "3) Для расчёта времени года и климатических условий вашего проживания мне нужно знать, где вы находитесь большую часть времени.\n\n"
-        "Напишите, пожалуйста, вот в таком формате: \n<i>Россия, Санкт-Петербург</i>"
+        "Напишите, пожалуйста, вот в таком формате: \n<i>Санкт-Петербург</i>"
     )
     
     await callback_query.answer()
@@ -341,7 +341,7 @@ async def process_location(message: types.Message, state: FSMContext):
             [InlineKeyboardButton(text="Нет", callback_data="allergy_no")]
         ]
     )
-    pattern = r'^[А-Яа-яЁё\s-]+, [А-Яа-яЁё\s-]+$'
+    pattern = r'^[А-Яа-яЁё\s-]+$'
     if re.match(pattern, message.text):
         await state.set_state(Questionnaire.allergy)
         await message.answer("Благодарю!")
@@ -355,7 +355,7 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await state.update_data(allergy=allergy)
     await state.set_state(Questionnaire.lifestyle)
     await callback_query.message.answer(
-        "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни? \n<i>Вы можете выбрать несколько:</i>\n"
+        "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни?"
         "1 - Часто нахожусь на солнце\n"
         "2 - Работаю в сухом помещении (с кондиционером или отоплением)\n"
         "3 - Сидячая и неактивная работа\n"
@@ -391,11 +391,11 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             # [InlineKeyboardButton(text=str(i), callback_data=f"phototype_{i}") for i in range(1, 7)]
-            [InlineKeyboardButton(text="1 — Очень светлая кожа, не загорает, сразу краснеет", callback_data="phototype_1")],
-            [InlineKeyboardButton(text="2 — Светлая кожа, легко сгорает, загорает с трудом", callback_data="phototype_2")],
-            [InlineKeyboardButton(text="3 — Светлая/средняя кожа, редко сгорает, загорает постепенно", callback_data="phototype_3")],
-            [InlineKeyboardButton(text="4 — Средняя/оливковая кожа, редко сгорает, хорошо загорает", callback_data="phototype_4")],
-            [InlineKeyboardButton(text="5 — Темная кожа, практически не сгорает, быстро загорает", callback_data="phototype_5")],
+            [InlineKeyboardButton(text="1 — Очень светлая кожа, сразу краснеет", callback_data="phototype_1")],
+            [InlineKeyboardButton(text="2 — Светлая кожа, загорает с трудом", callback_data="phototype_2")],
+            [InlineKeyboardButton(text="3 — Светлая/средняя кожа, редко сгорает", callback_data="phototype_3")],
+            [InlineKeyboardButton(text="4 — Средняя/оливковая кожа,  хорошо загорает", callback_data="phototype_4")],
+            [InlineKeyboardButton(text="5 — Темная кожа, не сгорает", callback_data="phototype_5")],
             [InlineKeyboardButton(text="6 — Очень темная кожа, никогда не сгорает", callback_data="phototype_6")],
             ]
     )
@@ -499,7 +499,7 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
         ]
     )
     await state.set_state(Questionnaire.habits)
-    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание. Можете выбрать несколько", reply_markup=keyboard)
+    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   <i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.habits), lambda c: c.data.startswith("habits_"))
@@ -514,15 +514,15 @@ async def process_habits(callback_query: types.CallbackQuery, state: FSMContext)
     await state.update_data(habits=habits)
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Натуральный состав: только безопасные и природные ингредиенты", callback_data="ethics_1")],
-            [InlineKeyboardButton(text="Не тестируется на животных: продукция, созданная с уважением к братьям нашим меньшим", callback_data="ethics_2")],
-            [InlineKeyboardButton(text="Перерабатываемая упаковка: забота об окружающей среде и минимизация отходов", callback_data="ethics_3")],
-            [InlineKeyboardButton(text="Локальное производство: поддержка местных производителей и снижение углеродного следа", callback_data="ethics_4")],
-            [InlineKeyboardButton(text="Социальная ответственность: Продукты и бренды, которые поддерживают важные инициативы и создают положительный социальный эффект.", callback_data="ethics_5")]
+            [InlineKeyboardButton(text="Натуральный состав", callback_data="ethics_1")],
+            [InlineKeyboardButton(text="Не тестируется на животных", callback_data="ethics_2")],
+            [InlineKeyboardButton(text="Перерабатываемая упаковка", callback_data="ethics_3")],
+            [InlineKeyboardButton(text="Локальное производство", callback_data="ethics_4")],
+            [InlineKeyboardButton(text="Социальная ответственность", callback_data="ethics_5")]
         ]
     )
     await state.set_state(Questionnaire.ethics)
-    await callback_query.message.edit_text("11) Этические принципы: что для вас наиболее важно при выборе косметики?", reply_markup=keyboard)
+    await callback_query.message.edit_text("11) Этические принципы: что для вас наиболее важно при выборе косметики? \n<i>Можете выбрать несколько вариантов</i>", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.ethics), lambda c: c.data.startswith("ethics_"))
@@ -606,7 +606,7 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
     }
     await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
-        "14) Есть ли у вашей кожи особенные потребности или сложности? \n"
+        "14) Есть ли у вашей кожи особенные потребности или сложности? \n\n"
         "1 - Пигментация\n"
         "2 - Неровный тон\n"
         "3 - Акне, постакне\n"
@@ -617,7 +617,7 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
         "8 - Сосудистые проявления\n"
         "9 - Сухость, шелушение\n"
         "10 - Нет особых проблем\n\n"
-        "Выбирай несколько вариантов и напиши их через запятую или разделяя пробелом. \n<i>Например: (1,4,6) или (1 4 5)</i>",
+        "<i>Выберите все варианты, которые вам подходят.\nУкажите ответ через запятую, например: 1, 2</i>",
         reply_markup=None
     )
     await callback_query.answer()
@@ -642,7 +642,7 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
     await state.update_data(face_skin_issues=goal_texts)
     await state.set_state(QuestionnaireFace.skin_goals)
     await message.answer(
-        "15) Какие цели вы хотели бы достичь для улучшения состояния кожи лица? \n"
+        "15) Какие цели вы хотели бы достичь для улучшения состояния кожи лица? \n\n"
         "1 - Увлажнённая и гладкая кожа\n"
         "2 - Сияющая свежая кожа\n"
         "3 - Убрать жирный блеск\n"
@@ -653,7 +653,7 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
         "8 - Выровнять тон\n"
         "9 - Уменьшить \"мешки\" и тёмные круги под глазами\n"
         "10 - Снять покраснение и раздражение\n\n"
-        "Выбирай несколько вариантов и напиши их через запятую или разделяя пробелом. \n<i>Например: (1,4,6) или (1 4 5)</i>",
+        "<i>Выберите все варианты, которые вам подходят.\nУкажите ответ через запятую, например: 1, 2</i>",
         reply_markup=None
     )
 
@@ -708,7 +708,7 @@ async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContex
     await state.set_state(QuestionnaireBody.body_skin_sensitivity)
     await callback_query.message.edit_text("17) Как вы оцениваете чувствительность кожи вашего тела?\n<i>Ниже будет памятка</i>")
     await callback_query.message.answer(
-        "<b>Нормальная кожа</b> (без повышенной чувствительности) \n- Не реагирует на внешние раздражители \n- Редко возникают покраснения, шелушения или зуд \n- Хорошо переносит разные средства ухода \n\n<b>Умеренно чувствительная кожа</b> \n- Иногда реагирует на изменения климата, косметику или моющие средства \n- Возможны легкие покраснения или зуд при использовании новых продуктов \n\n<b>Чувствительная кожа</b> \n- Часто проявляет реакции на раздражители, такие как сухой воздух, горячая вода, солнце или неподходящая косметика \n- Часто ощущается стянутость, зуд или покраснение \n\n<b>Очень чувствительная кожа</b> \n- Реагирует даже на мягкие раздражители, включая ткань одежды или воду \n- Постоянные покраснения, зуд, раздражения, шелушения или высыпания \n- Требует специализированного ухода и минимального контакта с потенциальными аллергенами",
+        "<b>Нормальная кожа (без повышенной чувствительности)</b>\n- Не реагирует на внешние раздражители\n- Редко возникают покраснения, шелушения или зуд\n- Хорошо переносит разные средства ухода\n\n<b>Умеренно чувствительная кожа</b>\n- Иногда реагирует на изменения климата, косметику или моющие средства\n- Возможны легкие покраснения или зуд при использовании новых продуктов\n<b>Чувствительная кожа</b>\n- Часто проявляет реакции на раздражители, такие как сухой воздух, горячая вода, солнце или неподходящая косметика\n- Часто ощущается стянутость, зуд или покраснение\n\n<b>Очень чувствительная кожа </b> \n- Реагирует даже на мягкие раздражители, включая ткань одежды или воду\n- Постоянные покраснения, зуд, раздражения, шелушения или высыпания\n- Требует специализированного ухода и минимального контакта с потенциальными аллергенами",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Чувствительная", callback_data="sensitive")],
             [InlineKeyboardButton(text="Нормальная кожа", callback_data="normal")],
@@ -730,7 +730,7 @@ async def process_body_skin_sensitivity(callback_query: CallbackQuery, state: FS
     }
     await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
-        "18) Как ты оцениваешь текущее состояние кожи на теле:",
+        "18) Как ты оцениваешь текущее состояние кожи на теле?   \n\n1 — Сухость и шелушение \n2 — потеря упругости \n3 — целлюлит \n4 — акне/прыщи на теле \n5 — пигментация \n6 — покраснения и раздражения \n7 — трещины на коже (например, на пятках) \n8 — морщины \n10 — без проблем       \n\n<i>Выберите все варианты, которые вам подходят. Укажите ответ через запятую, например: 1, 5</i>",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Сухость и шелушение", callback_data="dryness")],
             [InlineKeyboardButton(text="Потеря упругости", callback_data="loss_of_elasticity")],
@@ -799,7 +799,8 @@ async def process_body_attention_areas(callback_query: CallbackQuery, state: FSM
         "10 - Массаж\n"
         "11 - Убрать вросшие волосы\n"
         "12 - Убрать акне\n"
-        "Выбирай несколько вариантов и напиши их через запятую или разделяя пробелом. \n<i>Например: (1,4,6) или (1 4 5)</i>",
+        "13 - Чтобы средство вкусно пахло\n\n"
+        "<i>Укажите ответ через запятую, например: 1, 5</i>",
         reply_markup=None
     )
 
@@ -919,7 +920,7 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
     await state.update_data(hair_condition=callback_query.data)
     await state.set_state(QuestionnaireHair.hair_goals)
     await callback_query.message.edit_text(
-        "24) Какие цели ухода для тебя важны? Выбери один или несколько пунктов\n"
+        "24) Какие цели ухода за волосами для вас наиболее важны?\n\n<i>Выберите один или несколько пунктов, которые актуальны для вас:</i>\n\n"
         "1 - Контроль жирности кожи головы\n"
         "2 - Увлажнение и питание волос\n"
         "3 - Восстановление поврежденных волос\n"
@@ -930,7 +931,8 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
         "8 - Блеск и гладкость\n"
         "9 - Сохранение объёма и лёгкости\n"
         "10 - Борьба с секущимися кончиками\n"
-        "11 - Легкость расчёсывания и укладки",
+        "11 - Легкость расчёсывания и укладки\n\n"
+        "<i>Укажите ответ через запятую, например: 1, 5</i>",
         reply_markup=None
     )
 
@@ -968,25 +970,41 @@ async def process_washing_frequency(callback_query: CallbackQuery, state: FSMCon
     await state.update_data(washing_frequency=callback_query.data)
     await state.set_state(QuestionnaireHair.current_products)
     await callback_query.message.edit_text(
-        "26) Какие средства вы используете для ухода за волосами сейчас?  \n<i>Выберите все подходящие варианты:</i>",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Шампунь", callback_data="shampoo"),
-             InlineKeyboardButton(text="Кондиционер", callback_data="conditioner")],
-            [InlineKeyboardButton(text="Маска", callback_data="mask"),
-             InlineKeyboardButton(text="Несмываемый уход (масла, сыворотки, спреи)", callback_data="leave_in_care")],
-            [InlineKeyboardButton(text="Скраб или пилинг для кожи головы", callback_data="scrub")],
-            [InlineKeyboardButton(text="Тоники или спреи для роста", callback_data="tonic")],
-            [InlineKeyboardButton(text="Укладочные средства (гели, пенки, лаки)", callback_data="styling")],
-            [InlineKeyboardButton(text="Ничего из вышеперечисленного", callback_data="nothing")]
-        ])
+        "26) Какие средства вы используете для ухода за волосами сейчас?  \n<i>Выберите все подходящие варианты:</i>\n\n"
+        "1 — Шампунь\n"
+        "2 — Кондиционер\n"
+        "3 — Маска\n"
+        "4 — Несмываемый уход (масла, сыворотки, спреи\n)"
+        "5 — Скраб или пилинг для кожи головы\n"
+        "6 — Тоники или спреи для роста\n"
+        "7 — Укладочные средства (гели, пенки, лаки)"
+        #,
+        # reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+        #     [InlineKeyboardButton(text="Шампунь", callback_data="shampoo"),
+        #      InlineKeyboardButton(text="Кондиционер", callback_data="conditioner")],
+        #     [InlineKeyboardButton(text="Маска", callback_data="mask"),
+        #      InlineKeyboardButton(text="Несмываемый уход (масла, сыворотки, спреи)", callback_data="leave_in_care")],
+        #     [InlineKeyboardButton(text="Скраб или пилинг для кожи головы", callback_data="scrub")],
+        #     [InlineKeyboardButton(text="Тоники или спреи для роста", callback_data="tonic")],
+        #     [InlineKeyboardButton(text="Укладочные средства (гели, пенки, лаки)", callback_data="styling")],
+        #     [InlineKeyboardButton(text="Ничего из вышеперечисленного", callback_data="nothing")]
+        # ])
     )
     await callback_query.answer()
 
-@router.callback_query(StateFilter(QuestionnaireHair.current_products), lambda c: True)
-async def process_current_products(callback_query: CallbackQuery, state: FSMContext):
-    await state.update_data(current_products=callback_query.data)
-    await state.set_state(QuestionnaireHair.product_texture)
-    await callback_query.message.edit_text(
+@router.message(StateFilter(QuestionnaireHair.current_products), lambda c: True)
+async def process_current_products(message: types.Message, state: FSMContext):
+    pattern = re.compile(
+    r'^'  
+    r'(?!.*\b(\d+)\b.*\b\1\b)'  
+    r'(?:\b([1-7])\b(?:[ ,]+?\b([1-7])\b)*'  
+    r'$',  
+    flags=re.ASCII
+    )
+    if re.match(pattern, message.text):
+        await state.update_data(current_products=message.data)
+        await state.set_state(QuestionnaireHair.product_texture)
+        await message.message.answer(
         "27) Какую текстуру ухода вы предпочитаете?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Легкие спреи или тоники", callback_data="light"),
@@ -995,8 +1013,10 @@ async def process_current_products(callback_query: CallbackQuery, state: FSMCont
              InlineKeyboardButton(text="Гелевые или сывороточные текстуры", callback_data="gel")],
              [InlineKeyboardButton(text="Не имеет значения, главное — результат", callback_data="any")],
         ])
-    )
-    await callback_query.answer()
+        )
+        await message.answer()
+    else:
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(QuestionnaireHair.product_texture), lambda c: True)
 async def process_product_texture(callback_query: CallbackQuery, state: FSMContext):
@@ -1086,12 +1106,12 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
 
 
 async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext):
-    img1="AgACAgIAAxkBAAILOWfElQUBkr7wkvwOFKsRCZbP6g9xAAI18jEbxbQpSlRffZUDlbBjAQADAgADeQADNgQ"
-    img2="AgACAgIAAxkBAAILPGfElRBs6AL6-zGh1OYBKuGT84LyAAI28jEbxbQpSgvtn0qE0goLAQADAgADeQADNgQ"
-    img3="AgACAgIAAxkBAAILTWfElwltoleIVbfsQNhgPnh3K-TYAAJO8jEbxbQpSn8pvsmUlUdlAQADAgADeQADNgQ"
-    img4="AgACAgIAAxkBAAILUGfElw1nqa4PW3WbNY6pCWyCdgyUAAJP8jEbxbQpSrTAXNtG-L3TAQADAgADeQADNgQ"
-    img5="AgACAgIAAxkBAAILU2fElxA8Rs_Ugtle716x6kbpNhhpAAJQ8jEbxbQpSoleyT3KJGehAQADAgADeQADNgQ"
-    img6="AgACAgIAAxkBAAILVmfElxM3vQXqzQv2zjrhtxT2AAH8pQACUfIxG8W0KUpzZ_hkpHHzqgEAAwIAA3kAAzYE"
+    img1="AgACAgIAAxkBAAIT0WfJez-CUdI7K-YyJ2DOgB09f2fsAAIq7TEbHPJQSkz1NGZe4-1hAQADAgADeQADNgQ"
+    img2="AgACAgIAAxkBAAIT32fJgsrNicPTNe3MkMYFOta84KfwAAKr5zEb2yZISgOzt2HHU-QuAQADAgADeQADNgQ"
+    img3="AgACAgIAAxkBAAIT42fJgs50ZHa4wZYm9YqgModbejwMAAKr7TEbHPJQSrcij3OQ5vXcAQADAgADeQADNgQ"
+    img4="AgACAgIAAxkBAAIT52fJgtJkjavpJcfoWLEH1wWm-b_1AAKs7TEbHPJQSnbl_XDr-QPTAQADAgADeQADNgQ"
+    img5="AgACAgIAAxkBAAIT62fJgtaNuzrEJWlwEQ6W4R0rSUYRAAKt7TEbHPJQSjJovcexbR6jAQADAgADeQADNgQ"
+    img6="AgACAgIAAxkBAAIT72fJgto4vNT0Fxazxtq_9qmU6lw9AAKu7TEbHPJQSqRC7d5pVGQ4AQADAgADeQADNgQ"
     media_files = [
         InputMediaPhoto(media=img1),
         InputMediaPhoto(media=img2),
@@ -1580,7 +1600,7 @@ async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMCo
         await state.update_data(full_sequence=False)
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
     await callback_query.message.answer(
-        "<b>Часть 2/4</b> 🟢🟢⚪️⚪️ \n<b>4 вопроса о вашем прекрасном лице</b> \nСпасибо за искренние ответы! Теперь переходим к следующему этапу — давайте ближе познакомимся с вашей кожей.  🙌 \n\nЕсли будет сложно определиться с ответами, не переживайте! У нас есть небольшая шпаргалка: прочитайте описание каждого типа кожи, подойдите к зеркалу и постарайтесь объективно оценить её состояние прямо сейчас. Всё просто, как утренний ритуал ухода! 🌿"
+        "<b>Часть 2/4</b> 🟢🟢⚪️⚪️ \n<b>4 вопроса о вашем прекрасном лице</b> \nСпасибо за искренние ответы! Теперь переходим к следующему этапу — давайте ближе познакомимся с вашей кожей.  🙌"
         )
     await callback_query.message.answer(
         "12) Какой тип кожи у вас на лице? \nВыберите наиболее подходящий вариант. Если сомневаетесь, подумайте, как ваша кожа обычно реагирует в течение дня — это поможет сделать правильный выбор! 🌿",
@@ -1638,11 +1658,11 @@ async def start_hair_questionnaire(user_id: int, state: FSMContext):
     )
     await bot.send_message(
         user_id,
-        "22) Какой у вас тип кожи головы?\n<i>Если не уверены, какой у вас тип, вот небольшие подсказки</i>\n\n*Попробуйте оценить ощущения после обычного ухода за волосами или вспомнить, как часто вам нужно мыть голову.",
+        "22) Какой у вас тип кожи головы?  \n*Попробуйте оценить ощущения после обычного ухода за волосами или вспомнить, как часто вам нужно мыть голову.",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Нормальная: кожа не ощущается жирной или сухой, волосы остаются свежими 2–3 дня после мытья", callback_data="normal"),
-             InlineKeyboardButton(text="Сухая: зуд или шелушение, волосы кажутся ломкими и обезвоженными", callback_data="dry")],
-            [InlineKeyboardButton(text="Жирная: кожа головы быстро становится жирной, волосы теряют объем уже к концу дня", callback_data="oily"),
+            [InlineKeyboardButton(text="Нормальная: свежие волосы через 2–3 дня после мытья", callback_data="normal"),
+             InlineKeyboardButton(text="Сухая: зуд или шелушение", callback_data="dry")],
+            [InlineKeyboardButton(text="Жирная: кожа головы быстро становится жирной", callback_data="oily"),
              InlineKeyboardButton(text="Комбинированная: корни жирные, а кончики сухие", callback_data="combination")]
         ])
     )
