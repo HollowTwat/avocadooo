@@ -41,6 +41,21 @@ router = Router()
 dp = Dispatcher(storage=storage)
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
+
+async def get_user_sub_info(id):
+    url = f"https://avocado-production.up.railway.app/api/Subscription/GetUserSubDetail?tgId={id}"
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url=url) as response:
+                data = await response.text()
+                data1 = json.loads(data)
+                type_value = data1["type"]
+                date_update = data1["dateUpdate"]
+                formatted_date_update = datetime.fromisoformat(date_update).strftime("%Y-%m-%d")
+                return type_value, formatted_date_update
+        except aiohttp.ClientError as e:
+            return False, e
+
 def remove_tags(input_string):
     output = re.sub(r"</?br\s*/?>", "", input_string)
     return output

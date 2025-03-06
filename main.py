@@ -1447,6 +1447,20 @@ async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 'settings_sub')
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
+    subtype, repayment_time = await get_user_sub_info(callback_query.from_user.id)
+    step0txt = f"Ваш текущий тариф: {subtype} \n☑️ Ваша подписка истекает {repayment_time}, не забудьте продлить"
+    message = "Твой текущий тариф:\n\n"
+    if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
+        message += "☑️ Подписка на сервис Нутри навсегда"
+    elif subtype == "Подписка на 1 год":
+        message += "☑️ Подписка на сервис Нутри на 1 год"
+    elif subtype == "Подписка на 3 месяца" or subtype == "Тариф на 3 месяца":
+        message += f"☑️ Подписка на сервис Нутри на 3 месяца\n"
+        message += f"☑️ Дата автоматического продления: {repayment_time}"
+    elif subtype == "Тариф Бесплатный доступ":
+        message += "☑️ Тариф Бесплатный доступ"
+    else:
+        message += "☑️ Неизвестный тариф"
     buttons = [
         [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
         [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
@@ -1454,7 +1468,7 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     text = "Ваш текущий тариф: X   \n\nВаша подписка истекает ДАТА, не забудьте продлить \n\n<i>Ожидает метода для инфы </i>"
-    await callback_query.message.edit_text(text, reply_markup=keyboard)
+    await callback_query.message.edit_text(step0txt, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 're_sub')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
