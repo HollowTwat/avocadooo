@@ -994,14 +994,15 @@ async def process_washing_frequency(callback_query: CallbackQuery, state: FSMCon
 
 @router.message(StateFilter(QuestionnaireHair.current_products), lambda c: True)
 async def process_current_products(message: types.Message, state: FSMContext):
-    pattern = re.compile(
-    r'^\s*'  
-    r'(?!.*\b(\d+)\b.*\b\1\b)'  
-    r'(?:\b([1-7])\b(?:[ ,]+?\b([1-7])\b)*'  
-    r'\s*$',  
-    flags=re.ASCII
-    )
-    if pattern.match(message.text):
+    
+    if re.match(
+        r'^'  
+        r'(?!.*\b(\d+)\b.*\b\1\b)'  
+        r'(?:\b([1-7])\b(?:[ ,]+?\b([1-7])\b)*'  
+        r'$',  
+        message.text,
+        flags=re.ASCII
+    ):
         products = [int(x) for x in message.text.replace(",", " ").split()]
         products_descriptions = {
         1 : "Шампунь",
