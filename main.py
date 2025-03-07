@@ -530,28 +530,35 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
     await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   <i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>", reply_markup=keyboard)
     await callback_query.answer()
 
-@router.callback_query(StateFilter(Questionnaire.habits), lambda c: c.data.startswith("habits_"))
-async def process_habits(callback_query: types.CallbackQuery, state: FSMContext):
-    habits_map = {
-        "habits_smoking": "Курение",
-        "habits_drinking": "Употребление алкоголя",
-        "habits_both": "Курение и употребление алкоголя",
-        "habits_none": "Нет вредных привычек"
-    }
-    habits = habits_map[callback_query.data]
-    await state.update_data(habits=habits)
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Натуральный состав", callback_data="ethics_1")],
-            [InlineKeyboardButton(text="Не тестируется на животных", callback_data="ethics_2")],
-            [InlineKeyboardButton(text="Перерабатываемая упаковка", callback_data="ethics_3")],
-            [InlineKeyboardButton(text="Локальное производство", callback_data="ethics_4")],
-            [InlineKeyboardButton(text="Социальная ответственность", callback_data="ethics_5")]
-        ]
-    )
-    await state.set_state(Questionnaire.ethics)
-    await callback_query.message.edit_text("11) Этические принципы: что для вас наиболее важно при выборе косметики? \n<i>Можете выбрать несколько вариантов</i>", reply_markup=keyboard)
-    await callback_query.answer()
+@router.message(StateFilter(Questionnaire.habits), lambda c: True)
+async def process_habits(message: types.Message, state: FSMContext):
+    if re.match(
+        r'^(?!.*\b3\b.*\b[1-2]\b)(?:\b([1-3])\b(?:[ ,]+\b([1-3])\b)*)$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        products = [int(x) for x in message.text.replace(",", " ").split()]
+        products_descriptions = {
+            1 : "Курение",
+            2 : "Употребление алкоголя",
+            3 : "Нет вредных привычек",
+        }
+        habits = [products_descriptions[product] for product in products if product in products_descriptions]
+        await state.update_data(habits=habits)
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Натуральный состав", callback_data="ethics_1")],
+                [InlineKeyboardButton(text="Не тестируется на животных", callback_data="ethics_2")],
+                [InlineKeyboardButton(text="Перерабатываемая упаковка", callback_data="ethics_3")],
+                [InlineKeyboardButton(text="Локальное производство", callback_data="ethics_4")],
+                [InlineKeyboardButton(text="Социальная ответственность", callback_data="ethics_5")]
+            ]
+        )
+        await state.set_state(Questionnaire.ethics)
+        await message.answer("11) Этические принципы: что для вас наиболее важно при выборе косметики? \n<i>Можете выбрать несколько вариантов</i>", reply_markup=keyboard)
+        await message.answer()
+    else:
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(Questionnaire.ethics), lambda c: c.data.startswith("ethics_"))
 async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext):
