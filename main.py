@@ -355,16 +355,18 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     allergy = "Да" if callback_query.data == "allergy_yes" else "Нет"
     await state.update_data(allergy=allergy)
     await state.set_state(Questionnaire.lifestyle)
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="Часто нахожусь на солнце", callback_data="lifestyle_1")],
+            [InlineKeyboardButton(text="Работаю в сухом помещении (с кондиционером или отоплением)", callback_data="lifestyle_2")],
+            [InlineKeyboardButton(text="Сидячая и неактивная работа", callback_data="lifestyle_3")],
+            [InlineKeyboardButton(text="Часто занимаюсь спортом или физической активностью (высокая потливость),  хорошо загорает", callback_data="lifestyle_4")],
+            [InlineKeyboardButton(text="Мой образ жизни не подходит ни под одно из этих описаний", callback_data="lifestyle_5")],
+            ]
+    )
     await callback_query.message.answer(
         "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни?",
-            reply_markup = InlineKeyboardMarkup(
-                inlinekeyboard=[
-                [InlineKeyboardButton(text="Часто нахожусь на солнце", callback_data="lifestyle_1")],
-                [InlineKeyboardButton(text="Работаю в сухом помещении (с кондиционером или отоплением)", callback_data="lifestyle_2")],
-                [InlineKeyboardButton(text="Сидячая и неактивная работа", callback_data="lifestyle_3")],
-                [InlineKeyboardButton(text="Часто занимаюсь спортом или физической активностью (высокая потливость)", callback_data="lifestyle_4")],
-                [InlineKeyboardButton(text="Мой образ жизни не подходит ни под одно из этих описаний", callback_data="lifestyle_5")]
-                ])
+            reply_markup=keyboard
         )
     await callback_query.answer()
 
