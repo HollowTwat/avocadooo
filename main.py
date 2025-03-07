@@ -1663,6 +1663,7 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer()
     parts = callback_query.data.split('_')
     analysis_type = parts[1]
     item_id = parts[2]
