@@ -358,12 +358,13 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await callback_query.message.answer(
         "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни?",
             reply_markup = InlineKeyboardMarkup(
-            [InlineKeyboardButton(text="Часто нахожусь на солнце", callback_data="lifestyle_1")],
-            [InlineKeyboardButton(text="Работаю в сухом помещении (с кондиционером или отоплением)", callback_data="lifestyle_2")],
-            [InlineKeyboardButton(text="Сидячая и неактивная работа", callback_data="lifestyle_3")],
-            [InlineKeyboardButton(text="Часто занимаюсь спортом или физической активностью (высокая потливость)", callback_data="lifestyle_4")],
-            [InlineKeyboardButton(text="Мой образ жизни не подходит ни под одно из этих описаний", callback_data="lifestyle_5")]
-            )
+                inlinekeyboard=[
+                [InlineKeyboardButton(text="Часто нахожусь на солнце", callback_data="lifestyle_1")],
+                [InlineKeyboardButton(text="Работаю в сухом помещении (с кондиционером или отоплением)", callback_data="lifestyle_2")],
+                [InlineKeyboardButton(text="Сидячая и неактивная работа", callback_data="lifestyle_3")],
+                [InlineKeyboardButton(text="Часто занимаюсь спортом или физической активностью (высокая потливость)", callback_data="lifestyle_4")],
+                [InlineKeyboardButton(text="Мой образ жизни не подходит ни под одно из этих описаний", callback_data="lifestyle_5")]
+                ])
         )
     await callback_query.answer()
 
