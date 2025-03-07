@@ -79,6 +79,7 @@ class Questionnaire(StatesGroup):
     location = State()
     allergy = State()
     lifestyle = State()
+    user_lifestyle = State()
     phototype = State()
     activity = State()
     water_intake = State()
@@ -355,19 +356,43 @@ async def process_allergy(callback_query: types.CallbackQuery, state: FSMContext
     await state.update_data(allergy=allergy)
     await state.set_state(Questionnaire.lifestyle)
     await callback_query.message.answer(
-        "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни?"
-        "1 - Часто нахожусь на солнце\n"
-        "2 - Работаю в сухом помещении (с кондиционером или отоплением)\n"
-        "3 - Сидячая и неактивная работа\n"
-        "4 - Часто занимаюсь спортом или физической активностью (высокая потливость)\n"
-        "5 - Мой образ жизни не подходит ни под одно из этих описаний\n"
-        "Укажи через запятую все, что применимо \n<i>(например: 1, 2)</i>"
-    )
+        "5) Какие из перечисленных вариантов наиболее точно описывают ваш образ жизни?",
+            reply_markup = InlineKeyboardMarkup(
+            [InlineKeyboardButton(text="Часто нахожусь на солнце", callback_data="lifestyle_1")],
+            [InlineKeyboardButton(text="Работаю в сухом помещении (с кондиционером или отоплением)", callback_data="lifestyle_2")],
+            [InlineKeyboardButton(text="Сидячая и неактивная работа", callback_data="lifestyle_3")],
+            [InlineKeyboardButton(text="Часто занимаюсь спортом или физической активностью (высокая потливость)", callback_data="lifestyle_4")],
+            [InlineKeyboardButton(text="Мой образ жизни не подходит ни под одно из этих описаний", callback_data="lifestyle_5")]
+            )
+        )
     await callback_query.answer()
 
-@router.message(StateFilter(Questionnaire.lifestyle))
-async def process_lifestyle(message: types.Message, state: FSMContext):
-    lifestyle_nums = [int(x) for x in message.text.replace(",", " ").split()]
+@router.callback_query(StateFilter(Questionnaire.lifestyle),lambda c: c.data == 'lifestyle_5')
+async def process_lifestyle_5(callback_query: types.CallbackQuery, state: FSMContext):
+    await callback_query.message.answer("Могу тогда попросить вас описать своими словами?")
+    await state.set_state(Questionnaire.user_lifestyle)
+
+@router.message(StateFilter(Questionnaire.user_lifestyle))
+async def process_user_lifestyle(message: types.Message, state: FSMContext):
+    await state.update_data(lifestyle=message.text)
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="1 — Очень светлая кожа, сразу краснеет", callback_data="phototype_1")],
+            [InlineKeyboardButton(text="2 — Светлая кожа, загорает с трудом", callback_data="phototype_2")],
+            [InlineKeyboardButton(text="3 — Светлая/средняя кожа, редко сгорает", callback_data="phototype_3")],
+            [InlineKeyboardButton(text="4 — Средняя/оливковая кожа,  хорошо загорает", callback_data="phototype_4")],
+            [InlineKeyboardButton(text="5 — Темная кожа, не сгорает", callback_data="phototype_5")],
+            [InlineKeyboardButton(text="6 — Очень темная кожа, никогда не сгорает", callback_data="phototype_6")],
+            ]
+    )
+    await state.set_state(Questionnaire.phototype)
+    await message.answer("6) Теперь задачка поинтереснее. Давайте определим ваш фототип кожи? Это совсем не сложно — всё кратко и понятно описали:",
+        reply_markup=keyboard
+    )
+
+@router.callback_query(StateFilter(Questionnaire.lifestyle))
+async def process_lifestyle(callback_query: types.CallbackQuery, state: FSMContext):
+    lifestyle_nums = [int(x) for x in callback_query.text.replace(",", " ").split()]
     lifestlyle_nums_answer_map = {
         1:"Avocado напоминание : солнце может быть как другом, так и врагом. Но SPF — всегда ваш верный союзник!☀️",
         2:"Это частая проблема, но мы знаем, как с ней бороться 💨",
@@ -377,7 +402,7 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
     }
     for lifestyle in lifestyle_nums:
         lifestyle_response = lifestlyle_nums_answer_map[lifestyle]
-        await message.answer(lifestyle_response)
+        await callback_query.message.answer(lifestyle_response)
     lifestyle_descriptions = {
         1 : "Часто нахожусь на солнце",
         2 :  "Работаю в сухом помещении (с кондиционером или отоплением)",
@@ -400,7 +425,7 @@ async def process_lifestyle(message: types.Message, state: FSMContext):
             ]
     )
     await state.set_state(Questionnaire.phototype)
-    await message.answer("6) Теперь задачка поинтереснее. Давайте определим ваш фототип кожи? Это совсем не сложно — всё кратко и понятно описали:",
+    await callback_query.message.answer("6) Теперь задачка поинтереснее. Давайте определим ваш фототип кожи? Это совсем не сложно — всё кратко и понятно описали:",
         # "6) Теперь нужно определить фототип твоей кожи:\n"
         # "1 — Очень светлая кожа, не загорает, сразу краснеет\n"
         # "2 — Светлая кожа, легко сгорает, загорает с трудом\n"
