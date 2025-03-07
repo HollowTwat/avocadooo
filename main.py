@@ -395,7 +395,7 @@ async def process_user_lifestyle(message: types.Message, state: FSMContext):
 
 @router.callback_query(StateFilter(Questionnaire.lifestyle))
 async def process_lifestyle(callback_query: types.CallbackQuery, state: FSMContext):
-    lifestyle_nums = [int(x) for x in callback_query.text.replace(",", " ").split()]
+    lifestyle_nums = [int(x) for x in callback_query.data.replace("lifestyle_", "").split()]
     lifestlyle_nums_answer_map = {
         1:"Avocado напоминание : солнце может быть как другом, так и врагом. Но SPF — всегда ваш верный союзник!☀️",
         2:"Это частая проблема, но мы знаем, как с ней бороться 💨",
