@@ -527,13 +527,13 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
         ]
     )
     await state.set_state(Questionnaire.habits)
-    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   <i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>", reply_markup=keyboard)
+    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   <i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire.habits), lambda c: True)
 async def process_habits(message: types.Message, state: FSMContext):
     if re.match(
-        r'^(?!.*\b3\b.*\b[1-2]\b)(?:\b([1-3])\b(?:[ ,]+\b([1-3])\b)*)$',  
+        r'^(?:(?!.*\b(\d+)\b.*\b\1\b))(?:(1|2)(?:[ ,]+(1|2))?|3)$',  
         message.text,
         flags=re.ASCII
         ):
