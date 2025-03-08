@@ -518,16 +518,16 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
         "stress_high": "Давайте обниму! 🤗Очень вас понимаю! Больше 70% людей подвержены высокому стрессу! Добрый совет: начните медитировать с Prosto и заниматься питанием с Nutri и все наладится вот увидите! 💚"
     }
     await callback_query.message.edit_text(stress_message_map[callback_query.data])
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Курение", callback_data="habits_smoking")],
-            [InlineKeyboardButton(text="Употребление алкоголя", callback_data="habits_drinking")],
-            [InlineKeyboardButton(text="Курение и употребление алкоголя", callback_data="habits_both")],
-            [InlineKeyboardButton(text="Нет вредных привычек", callback_data="habits_none")]
-        ]
-    )
+    # keyboard = InlineKeyboardMarkup(
+    #     inline_keyboard=[
+    #         [InlineKeyboardButton(text="Курение", callback_data="habits_smoking")],
+    #         [InlineKeyboardButton(text="Употребление алкоголя", callback_data="habits_drinking")],
+    #         [InlineKeyboardButton(text="Курение и употребление алкоголя", callback_data="habits_both")],
+    #         [InlineKeyboardButton(text="Нет вредных привычек", callback_data="habits_none")]
+    #     ]
+    # )
     await state.set_state(Questionnaire.habits)
-    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   <i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
+    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   \n\n<i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire.habits), lambda c: True)
@@ -545,74 +545,81 @@ async def process_habits(message: types.Message, state: FSMContext):
         }
         habits = [products_descriptions[product] for product in products if product in products_descriptions]
         await state.update_data(habits=habits)
-        keyboard = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="Натуральный состав", callback_data="ethics_1")],
-                [InlineKeyboardButton(text="Не тестируется на животных", callback_data="ethics_2")],
-                [InlineKeyboardButton(text="Перерабатываемая упаковка", callback_data="ethics_3")],
-                [InlineKeyboardButton(text="Локальное производство", callback_data="ethics_4")],
-                [InlineKeyboardButton(text="Социальная ответственность", callback_data="ethics_5")]
-            ]
-        )
+        # keyboard = InlineKeyboardMarkup(
+        #     inline_keyboard=[
+        #         [InlineKeyboardButton(text="Натуральный состав", callback_data="ethics_1")],
+        #         [InlineKeyboardButton(text="Не тестируется на животных", callback_data="ethics_2")],
+        #         [InlineKeyboardButton(text="Перерабатываемая упаковка", callback_data="ethics_3")],
+        #         [InlineKeyboardButton(text="Локальное производство", callback_data="ethics_4")],
+        #         [InlineKeyboardButton(text="Социальная ответственность", callback_data="ethics_5")]
+        #     ]
+        # )
         await state.set_state(Questionnaire.ethics)
-        await message.answer("11) Этические принципы: что для вас наиболее важно при выборе косметики? \n<i>Можете выбрать несколько вариантов</i>", reply_markup=keyboard)
+        await message.answer("11) Этические принципы: что для вас наиболее важно при выборе косметики?   \n\n1 — Натуральный со﻿став \n2 — Не тестируется на животн﻿ых \n3 — Перерабатываемая упаковка \n4 — Локальное прои﻿зводство \n5 — Социальная ответственность   \n\n<i>Можете выбрать несколько вариантов.  \nУкажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
         await message.answer()
     else:
         await message.answer("Не поняла. Попробуй ввести еще раз.")
 
-@router.callback_query(StateFilter(Questionnaire.ethics), lambda c: c.data.startswith("ethics_"))
-async def process_ethics(callback_query: types.CallbackQuery, state: FSMContext):
-    ethics_map = {
-        "ethics_1": "Натуральный состав: только безопасные и природные ингредиенты",
-        "ethics_2": "Не тестируется на животных: продукция, созданная с уважением к братьям нашим меньшим",
-        "ethics_3": "Перерабатываемая упаковка: забота об окружающей среде и минимизация отходов",
-        "ethics_4": "Локальное производство: поддержка местных производителей и снижение углеродного следа",
-        "ethics_5": "Социальная ответственность: Продукты и бренды, которые поддерживают важные инициативы и создают положительный социальный эффект."
-    }
-    us_id = callback_query.from_user.id
-    ethics = ethics_map[callback_query.data]
-    await state.update_data(ethics=ethics)
-    user_data = await state.get_data()
-    await callback_query.message.edit_text(
-        "Спасибо за участие в опросе! "
-        # "Вот ваши данные:\n"
-        # f"Имя: {user_data['name']}\n"
-        # f"Возраст: {user_data['age']}\n"
-        # f"Пол: {user_data['gender']}\n"
-        # f"Место проживания: {user_data['location']}\n"
-        # f"Склонность к аллергии: {user_data['allergy']}\n"
-        # f"Особенности образа жизни: {', '.join(map(str, user_data['lifestyle']))}\n"
-        # f"Фототип: {user_data['phototype']}\n"
-        # f"Уровень физической активности: {user_data['activity']}\n"
-        # f"Питьевой режим: {user_data['water_intake']}\n"
-        # f"Уровень стресса: {user_data['stress']}\n"
-        # f"Вредные привычки: {user_data['habits']}\n"
-        # f"Этические предпочтения: {user_data['ethics']}"
-    )
+@router.message(StateFilter(Questionnaire.ethics), lambda c: True)
+async def process_ethics(message: types.Message, state: FSMContext):
+    if re.match(
+        r'^(?!.*\b(\d+)\b.*\b\1\b)(?:\b([1-5])\b(?:[ ,]+\b([1-5])\b)*)$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        products = [int(x) for x in message.text.replace(",", " ").split()]
+        products_descriptions = {
+            1: "Натуральный состав: только безопасные и природные ингредиенты",
+            2: "Не тестируется на животных: продукция, созданная с уважением к братьям нашим меньшим",
+            3: "Перерабатываемая упаковка: забота об окружающей среде и минимизация отходов",
+            4: "Локальное производство: поддержка местных производителей и снижение углеродного следа",
+            5: "Социальная ответственность: Продукты и бренды, которые поддерживают важные инициативы и создают положительный социальный эффект."
+        }
+        us_id = message.from_user.id
+        ethics = [products_descriptions[product] for product in products if product in products_descriptions]
+        await state.update_data(ethics=ethics)
+        user_data = await state.get_data()
+        await message.edit_text(
+            "Спасибо за участие в опросе! "
+            # "Вот ваши данные:\n"
+            # f"Имя: {user_data['name']}\n"
+            # f"Возраст: {user_data['age']}\n"
+            # f"Пол: {user_data['gender']}\n"
+            # f"Место проживания: {user_data['location']}\n"
+            # f"Склонность к аллергии: {user_data['allergy']}\n"
+            # f"Особенности образа жизни: {', '.join(map(str, user_data['lifestyle']))}\n"
+            # f"Фототип: {user_data['phototype']}\n"
+            # f"Уровень физической активности: {user_data['activity']}\n"
+            # f"Питьевой режим: {user_data['water_intake']}\n"
+            # f"Уровень стресса: {user_data['stress']}\n"
+            # f"Вредные привычки: {user_data['habits']}\n"
+            # f"Этические предпочтения: {user_data['ethics']}"
+        )
 
-    user_data_gen = {
-                "name": f"{user_data['name']}",
-                "age": f"{user_data['age']}",
-                "gender": f"{user_data['gender']}",
-                "location": f"{user_data['location']}",
-                "allergy": f"{user_data['allergy']}",
-                "lifestyle": f"{user_data['lifestyle']}",
-                "phototype": f"{user_data['phototype']}",
-                "activity": f"{user_data['activity']}",
-                "water_intake": f"{user_data['water_intake']}",
-                "stress": f"{user_data['stress']}",
-                "habits": f"{user_data['habits']}"
-            }
-    response = await send_user_data(us_id, user_data_gen, "SetUserBaseData", "user_data")
-    # await callback_query.message.answer(f"Сохранено в базе: {response}")
+        user_data_gen = {
+                    "name": f"{user_data['name']}",
+                    "age": f"{user_data['age']}",
+                    "gender": f"{user_data['gender']}",
+                    "location": f"{user_data['location']}",
+                    "allergy": f"{user_data['allergy']}",
+                    "lifestyle": f"{user_data['lifestyle']}",
+                    "phototype": f"{user_data['phototype']}",
+                    "activity": f"{user_data['activity']}",
+                    "water_intake": f"{user_data['water_intake']}",
+                    "stress": f"{user_data['stress']}",
+                    "habits": f"{user_data['habits']}"
+                }
+        response = await send_user_data(us_id, user_data_gen, "SetUserBaseData", "user_data")
+        # await callback_query.message.answer(f"Сохранено в базе: {response}")
 
-    full_sequence = user_data.get("full_sequence", False)
-    if full_sequence:
-        await process_questionnaire_face(callback_query, state)
+        full_sequence = user_data.get("full_sequence", False)
+        if full_sequence:
+            await process_questionnaire_face(message, state)
+        else:
+            await state.clear()
+            await message.answer("Опрос завершен. Спасибо за участие!")
     else:
-        await state.clear()
-        await callback_query.answer("Опрос завершен. Спасибо за участие!")
-
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(QuestionnaireFace.skin_type), lambda c: True)
 async def process_face_skin_type(callback_query: CallbackQuery, state: FSMContext):
@@ -659,83 +666,97 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
 
 @router.message(StateFilter(QuestionnaireFace.skin_issues))
 async def process_face_skin_issues(message: types.Message, state: FSMContext):
-    # issues = [int(x) for x in message.text.replace(",", " ").split()]
-    goals = [int(x) for x in message.text.replace(",", " ").split()]
-    goal_descriptions = {
-        1 : "Пигментация",
-        2 :  "Неровный тон",
-        3 : "Акне, постакне",
-        4 : "Рубцы и шрамы",
-        5 : "Морщины",
-        6 : "Расширенные поры",
-        7 : "Открытые и/или закрытые комедоны",
-        8 : "Сосудистые проявления",
-        9 : "Сухость, шелушение",
-        10 : "Нет особых проблем",
-    }
-    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
-    await state.update_data(face_skin_issues=goal_texts)
-    await state.set_state(QuestionnaireFace.skin_goals)
-    await message.answer(
-        "15) Какие цели вы хотели бы достичь для улучшения состояния кожи лица? \n\n"
-        "1 - Увлажнённая и гладкая кожа\n"
-        "2 - Сияющая свежая кожа\n"
-        "3 - Убрать жирный блеск\n"
-        "4 - Избавиться от расширенных пор\n"
-        "5 - Убрать чёрные точки\n"
-        "6 - Убрать воспаления и постакне\n"
-        "7 - Убрать морщины\n"
-        "8 - Выровнять тон\n"
-        "9 - Уменьшить \"мешки\" и тёмные круги под глазами\n"
-        "10 - Снять покраснение и раздражение\n\n"
-        "<i>Выберите все варианты, которые вам подходят.\nУкажите ответ через запятую, например: 1, 2</i>",
-        reply_markup=None
-    )
+    if re.match(
+        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:(?:[1-9](?:[ ,]+[1-9])*)|10)$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        # issues = [int(x) for x in message.text.replace(",", " ").split()]
+        goals = [int(x) for x in message.text.replace(",", " ").split()]
+        goal_descriptions = {
+            1 : "Пигментация",
+            2 :  "Неровный тон",
+            3 : "Акне, постакне",
+            4 : "Рубцы и шрамы",
+            5 : "Морщины",
+            6 : "Расширенные поры",
+            7 : "Открытые и/или закрытые комедоны",
+            8 : "Сосудистые проявления",
+            9 : "Сухость, шелушение",
+            10 : "Нет особых проблем",
+        }
+        goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+        await state.update_data(face_skin_issues=goal_texts)
+        await state.set_state(QuestionnaireFace.skin_goals)
+        await message.answer(
+            "15) Какие цели вы хотели бы достичь для улучшения состояния кожи лица? \n\n"
+            "1 - Увлажнённая и гладкая кожа\n"
+            "2 - Сияющая свежая кожа\n"
+            "3 - Убрать жирный блеск\n"
+            "4 - Избавиться от расширенных пор\n"
+            "5 - Убрать чёрные точки\n"
+            "6 - Убрать воспаления и постакне\n"
+            "7 - Убрать морщины\n"
+            "8 - Выровнять тон\n"
+            "9 - Уменьшить \"мешки\" и тёмные круги под глазами\n"
+            "10 - Снять покраснение и раздражение\n\n"
+            "<i>Выберите все варианты, которые вам подходят.\nУкажите ответ через запятую, например: 1, 2</i>",
+            reply_markup=None
+        )
+    else:
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.message(StateFilter(QuestionnaireFace.skin_goals))
 async def process_face_skin_goals(message: types.Message, state: FSMContext):
-    goals = [int(x) for x in message.text.replace(",", " ").split()]
-    goal_descriptions = {
-        1 : "Увлажнённая и гладкая кожа",
-        2 :  "Сияющая свежая кожа",
-        3 : "Убрать жирный блеск",
-        4 : "Избавиться от расширенных пор",
-        5 : "Убрать чёрные точки",
-        6 : "Убрать воспаления и постакне",
-        7 : "Убрать морщины",
-        8 : "Выровнять тон",
-        9 : "Уменьшить \"мешки\" и тёмные круги под глазами",
-        10 : "Снять покраснение и раздражение",
-    }
-    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
-    await state.update_data(face_skin_goals=goal_texts)
-    user_data = await state.get_data()
-    await message.answer(
-        "Спасибо за участие в опросе! "
-        # "Вот ваши данные:\n"
-        # f"Тип кожи: {user_data['face_skin_type']}\n"
-        # f"Состояние кожи: {user_data['face_skin_condition']}\n"
-        # f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}\n"
-        # f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}"
-    )
-    us_id = message.from_user.id
+    if re.match(
+        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:(?:[1-9](?:[ ,]+[1-9])*)|10)$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        goals = [int(x) for x in message.text.replace(",", " ").split()]
+        goal_descriptions = {
+            1 : "Увлажнённая и гладкая кожа",
+            2 :  "Сияющая свежая кожа",
+            3 : "Убрать жирный блеск",
+            4 : "Избавиться от расширенных пор",
+            5 : "Убрать чёрные точки",
+            6 : "Убрать воспаления и постакне",
+            7 : "Убрать морщины",
+            8 : "Выровнять тон",
+            9 : "Уменьшить \"мешки\" и тёмные круги под глазами",
+            10 : "Снять покраснение и раздражение",
+        }
+        goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+        await state.update_data(face_skin_goals=goal_texts)
+        user_data = await state.get_data()
+        await message.answer(
+            "Спасибо за участие в опросе! "
+            # "Вот ваши данные:\n"
+            # f"Тип кожи: {user_data['face_skin_type']}\n"
+            # f"Состояние кожи: {user_data['face_skin_condition']}\n"
+            # f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}\n"
+            # f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}"
+        )
+        us_id = message.from_user.id
 
-    user_face_data = {
-                "face_skin_type": f"Тип кожи: {user_data['face_skin_type']}",
-                "face_skin_condition": f"Состояние кожи: {user_data['face_skin_condition']}",
-                "face_skin_issues": f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}",
-                "face_skin_goals": f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}",
-            }
-    response = await send_user_data(us_id, user_face_data, "SetUserFaceData", "user_face_data")
-    # await message.answer(f"Сохранено в базе: {response}")
+        user_face_data = {
+                    "face_skin_type": f"Тип кожи: {user_data['face_skin_type']}",
+                    "face_skin_condition": f"Состояние кожи: {user_data['face_skin_condition']}",
+                    "face_skin_issues": f"Проблемы кожи: {', '.join(map(str, user_data['face_skin_issues']))}",
+                    "face_skin_goals": f"Цели ухода: {', '.join(map(str, user_data['face_skin_goals']))}",
+                }
+        response = await send_user_data(us_id, user_face_data, "SetUserFaceData", "user_face_data")
+        # await message.answer(f"Сохранено в базе: {response}")
 
-    full_sequence = user_data.get("full_sequence", False)
-    if full_sequence:
-        print(f"leaving_questionnaire with full_seq:{full_sequence}")
-        await start_body_questionnaire(message.from_user.id, state)
+        full_sequence = user_data.get("full_sequence", False)
+        if full_sequence:
+            print(f"leaving_questionnaire with full_seq:{full_sequence}")
+            await start_body_questionnaire(message.from_user.id, state)
+        else:
+            await state.clear()
+            await message.answer("Опрос завершен. Спасибо за участие!")
     else:
-        await state.clear()
-        await message.answer("Опрос завершен. Спасибо за участие!")
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(QuestionnaireBody.body_skin_type), lambda c: True)
 async def process_body_skin_type(callback_query: CallbackQuery, state: FSMContext):
@@ -765,34 +786,54 @@ async def process_body_skin_sensitivity(callback_query: CallbackQuery, state: FS
     }
     await callback_query.message.edit_text(pre_message_map[callback_query.data])
     await callback_query.message.answer(
-        "18) Как ты оцениваешь текущее состояние кожи на теле?   \n\n1 — Сухость и шелушение \n2 — потеря упругости \n3 — целлюлит \n4 — акне/прыщи на теле \n5 — пигментация \n6 — покраснения и раздражения \n7 — трещины на коже (например, на пятках) \n8 — морщины \n10 — без проблем       \n\n<i>Выберите все варианты, которые вам подходят. Укажите ответ через запятую, например: 1, 5</i>",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Сухость и шелушение", callback_data="dryness")],
-            [InlineKeyboardButton(text="Потеря упругости", callback_data="loss_of_elasticity")],
-            [InlineKeyboardButton(text="Целлюлит", callback_data="cellulite")],
-            [InlineKeyboardButton(text="Акне/прыщи на теле", callback_data="acne")],
-            [InlineKeyboardButton(text="Пигментация", callback_data="pigmentation")],
-            [InlineKeyboardButton(text="Покраснения и раздражения", callback_data="redness")],
-            [InlineKeyboardButton(text="Трещины на коже (например, на пятках)", callback_data="cracks")],
-            [InlineKeyboardButton(text="Морщины", callback_data="wrinkles")],
-            [InlineKeyboardButton(text="Нет особых проблем", callback_data="no_problems")]
-        ])
+        "18) Как ты оцениваешь текущее состояние кожи на теле?   \n\n1 — Сухость и шелушение \n2 — потеря упругости \n3 — целлюлит \n4 — акне/прыщи на теле \n5 — пигментация \n6 — покраснения и раздражения \n7 — трещины на коже (например, на пятках) \n8 — морщины \n10 — без проблем       \n\n<i>Выберите все варианты, которые вам подходят. Укажите ответ через запятую, например: 1, 5</i>"#,
+        # reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+        #     [InlineKeyboardButton(text="Сухость и шелушение", callback_data="dryness")],
+        #     [InlineKeyboardButton(text="Потеря упругости", callback_data="loss_of_elasticity")],
+        #     [InlineKeyboardButton(text="Целлюлит", callback_data="cellulite")],
+        #     [InlineKeyboardButton(text="Акне/прыщи на теле", callback_data="acne")],
+        #     [InlineKeyboardButton(text="Пигментация", callback_data="pigmentation")],
+        #     [InlineKeyboardButton(text="Покраснения и раздражения", callback_data="redness")],
+        #     [InlineKeyboardButton(text="Трещины на коже (например, на пятках)", callback_data="cracks")],
+        #     [InlineKeyboardButton(text="Морщины", callback_data="wrinkles")],
+        #     [InlineKeyboardButton(text="Нет особых проблем", callback_data="no_problems")]
+        # ])
     )
     await callback_query.answer()
 
-@router.callback_query(StateFilter(QuestionnaireBody.body_skin_condition), lambda c: True)
-async def process_body_skin_condition(callback_query: CallbackQuery, state: FSMContext):
-    await state.update_data(body_skin_condition=callback_query.data)
-    await state.set_state(QuestionnaireBody.body_hair_issues)
-    await callback_query.message.edit_text(
-        "19) Замечаете ли вы какие-либо особенности или сложности, связанные с уходом за волосами на теле?",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Иногда беспокоят вросшие волосы", callback_data="ingrown_hairs")],
-            [InlineKeyboardButton(text="Раздражение после бритья", callback_data="irritation")],
-            [InlineKeyboardButton(text="Все отлично, проблем нет", callback_data="no_problems")]
-        ])
-    )
-    await callback_query.answer()
+@router.message(StateFilter(QuestionnaireBody.body_skin_condition), lambda c: True)
+async def process_body_skin_condition(message: Message, state: FSMContext):
+    if re.match(
+        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b))(?:(?:[1-8](?:[ ,]+[1-8])*)|9))$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        products = [int(x) for x in message.text.replace(",", " ").split()]
+        products_descriptions = {
+        1 : "Сухость и шелушение",
+        2 : "потеря упругости",
+        3 : "целлюлит",
+        4 : "акне/прыщи на теле",
+        5 : "пигментация",
+        6 : "покраснения и раздражения",
+        7 : "трещины на коже (например, на пятках)",
+        8 : "морщины",
+        9 : "без проблем",
+        }
+        products_texts = [products_descriptions[product] for product in products if product in products_descriptions]
+        await state.update_data(body_skin_condition=products_texts)
+        await state.set_state(QuestionnaireBody.body_hair_issues)
+        await message.answer(
+            "19) Замечаете ли вы какие-либо особенности или сложности, связанные с уходом за волосами на теле?",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Иногда беспокоят вросшие волосы", callback_data="ingrown_hairs")],
+                [InlineKeyboardButton(text="Раздражение после бритья", callback_data="irritation")],
+                [InlineKeyboardButton(text="Все отлично, проблем нет", callback_data="no_problems")]
+            ])
+        )
+        await message.answer()
+    else:
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(QuestionnaireBody.body_hair_issues), lambda c: True)
 async def process_body_hair_issues(callback_query: CallbackQuery, state: FSMContext):
@@ -841,57 +882,64 @@ async def process_body_attention_areas(callback_query: CallbackQuery, state: FSM
 
 @router.message(StateFilter(QuestionnaireBody.body_goals))
 async def process_body_goals(message: types.Message, state: FSMContext):
-    goals = [int(x) for x in message.text.replace(",", " ").split()]
-    goal_descriptions = {
-        1 : "Увлажнение",
-        2 :  "Питание",
-        3 : "Смягчение",
-        4 : "Тонизирование",
-        5 : "Отшелушивание",
-        6 : "Антицеллюлитный эффект",
-        7 : "Осветление кожи",
-        8 : "Снятие раздражений",
-        9 : "Защита кожи",
-        10 : "Массаж",
-        11 : "Убрать вросшие волосы",
-        12 : "Убрать акне",
-        13 : "Чтобы средство вкусно пахло",
-    }
-    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
-    await state.update_data(body_goals=goal_texts)
-    user_data = await state.get_data()
-    print(f"user: {message.from_user.id}, full_seq: {user_data.get("full_sequence")}")
-    await message.answer(
-        "Спасибо за участие в опросе! "
-        # "Вот ваши данные:\n"
-        # f"Тип кожи тела: {user_data['body_skin_type']}\n"
-        # f"Чувствительность кожи: {user_data['body_skin_sensitivity']}\n"
-        # f"Состояние кожи: {user_data['body_skin_condition']}\n"
-        # f"Проблемы с волосами: {user_data['body_hair_issues']}\n"
-        # f"Участки с особыми потребностями: {user_data['body_attention_areas']}\n"
-        # f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}"
-    )
+    if re.match(
+        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:[1-9]|1[0-3])(?:[ ,]+(?:[1-9]|1[0-3]))*$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        goals = [int(x) for x in message.text.replace(",", " ").split()]
+        goal_descriptions = {
+            1 : "Увлажнение",
+            2 :  "Питание",
+            3 : "Смягчение",
+            4 : "Тонизирование",
+            5 : "Отшелушивание",
+            6 : "Антицеллюлитный эффект",
+            7 : "Осветление кожи",
+            8 : "Снятие раздражений",
+            9 : "Защита кожи",
+            10 : "Массаж",
+            11 : "Убрать вросшие волосы",
+            12 : "Убрать акне",
+            13 : "Чтобы средство вкусно пахло",
+        }
+        goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+        await state.update_data(body_goals=goal_texts)
+        user_data = await state.get_data()
+        print(f"user: {message.from_user.id}, full_seq: {user_data.get("full_sequence")}")
+        await message.answer(
+            "Спасибо за участие в опросе! "
+            # "Вот ваши данные:\n"
+            # f"Тип кожи тела: {user_data['body_skin_type']}\n"
+            # f"Чувствительность кожи: {user_data['body_skin_sensitivity']}\n"
+            # f"Состояние кожи: {user_data['body_skin_condition']}\n"
+            # f"Проблемы с волосами: {user_data['body_hair_issues']}\n"
+            # f"Участки с особыми потребностями: {user_data['body_attention_areas']}\n"
+            # f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}"
+        )
 
-    us_id = message.from_user.id
+        us_id = message.from_user.id
 
-    user_body_data = {
-                "body_skin_type": f"Тип кожи тела: {user_data['body_skin_type']}",
-                "body_skin_sensitivity": f"Чувствительность кожи: {user_data['body_skin_sensitivity']}",
-                "body_skin_condition": f"Состояние кожи: {user_data['body_skin_condition']}",
-                "body_hair_issues": f"Проблемы с волосами: {user_data['body_hair_issues']}",
-                "body_attention_areas": f"Участки с особыми потребностями: {user_data['body_attention_areas']}",
-                "body_goals": f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}",
-            }
+        user_body_data = {
+                    "body_skin_type": f"Тип кожи тела: {user_data['body_skin_type']}",
+                    "body_skin_sensitivity": f"Чувствительность кожи: {user_data['body_skin_sensitivity']}",
+                    "body_skin_condition": f"Состояние кожи: {user_data['body_skin_condition']}",
+                    "body_hair_issues": f"Проблемы с волосами: {user_data['body_hair_issues']}",
+                    "body_attention_areas": f"Участки с особыми потребностями: {user_data['body_attention_areas']}",
+                    "body_goals": f"Цели ухода: {', '.join(map(str, user_data['body_goals']))}",
+                }
 
-    response = await send_user_data(us_id, user_body_data, "SetUserBodyData", "user_body_data")
-    # await message.answer(f"Сохранено в базе: {response}")
+        response = await send_user_data(us_id, user_body_data, "SetUserBodyData", "user_body_data")
+        # await message.answer(f"Сохранено в базе: {response}")
 
-    full_sequence = user_data.get("full_sequence", False)
-    if full_sequence:
-        await start_hair_questionnaire(message.from_user.id, state)
+        full_sequence = user_data.get("full_sequence", False)
+        if full_sequence:
+            await start_hair_questionnaire(message.from_user.id, state)
+        else:
+            await state.clear()
+            await message.answer("Опрос завершен. Спасибо за участие!")
     else:
-        await state.clear()
-        await message.answer("Опрос завершен. Спасибо за участие!")
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(QuestionnaireHair.scalp_type), lambda c: True)
 async def process_hair_scalp_type(callback_query: CallbackQuery, state: FSMContext):
@@ -973,32 +1021,39 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
 
 @router.message(StateFilter(QuestionnaireHair.hair_goals))
 async def process_hair_goals(message: types.Message, state: FSMContext):
-    goals = [int(x) for x in message.text.replace(",", " ").split()]
-    goal_descriptions = {
-        1 : "Контроль жирности кожи головы",
-        2 : "Увлажнение и питание волос",
-        3 : "Восстановление поврежденных волос",
-        4 : "Устранение перхоти",
-        5 : "Защита от термического воздействия (фен, плойка, утюжок)",
-        6 : "Усиление роста волос",
-        7 : "Укрепление корней и предотвращение выпадения",
-        8 : "Блеск и гладкость",
-        9 : "Сохранение объёма и лёгкости",
-        10 : "Борьба с секущимися кончиками",
-        11 : "Легкость расчёсывания и укладки",
-    }
-    goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
-    await state.update_data(hair_goals=goal_texts)
-    await state.set_state(QuestionnaireHair.washing_frequency)
-    await message.answer(
-        "25) Как часто вы моете голову?  \n<i>Укажите ваш привычный режим ухода:</i>",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Каждый день", callback_data="daily"),
-             InlineKeyboardButton(text="Каждые 2 дня", callback_data="every_2_days")],
-            [InlineKeyboardButton(text="2 раза в неделю", callback_data="twice_weekly"),
-             InlineKeyboardButton(text="1 раз в неделю", callback_data="once_weekly")]
-        ])
-    )
+    if re.match(
+        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:[1-9]|1[0-1])(?:[ ,]+(?:[1-9]|1[0-1]))*$',  
+        message.text,
+        flags=re.ASCII
+        ):
+        goals = [int(x) for x in message.text.replace(",", " ").split()]
+        goal_descriptions = {
+            1 : "Контроль жирности кожи головы",
+            2 : "Увлажнение и питание волос",
+            3 : "Восстановление поврежденных волос",
+            4 : "Устранение перхоти",
+            5 : "Защита от термического воздействия (фен, плойка, утюжок)",
+            6 : "Усиление роста волос",
+            7 : "Укрепление корней и предотвращение выпадения",
+            8 : "Блеск и гладкость",
+            9 : "Сохранение объёма и лёгкости",
+            10 : "Борьба с секущимися кончиками",
+            11 : "Легкость расчёсывания и укладки",
+        }
+        goal_texts = [goal_descriptions[goal] for goal in goals if goal in goal_descriptions]
+        await state.update_data(hair_goals=goal_texts)
+        await state.set_state(QuestionnaireHair.washing_frequency)
+        await message.answer(
+            "25) Как часто вы моете голову?  \n<i>Укажите ваш привычный режим ухода:</i>",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Каждый день", callback_data="daily"),
+                InlineKeyboardButton(text="Каждые 2 дня", callback_data="every_2_days")],
+                [InlineKeyboardButton(text="2 раза в неделю", callback_data="twice_weekly"),
+                InlineKeyboardButton(text="1 раз в неделю", callback_data="once_weekly")]
+            ])
+        )
+    else:
+        await message.answer("Не поняла. Попробуй ввести еще раз.")
 
 @router.callback_query(StateFilter(QuestionnaireHair.washing_frequency), lambda c: True)
 async def process_washing_frequency(callback_query: CallbackQuery, state: FSMContext):
