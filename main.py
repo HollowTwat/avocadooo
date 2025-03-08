@@ -1657,28 +1657,41 @@ async def process_re_quest_pick(callback_query: CallbackQuery, state: FSMContext
     await callback_query.message.answer(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'questionnaire_face')
-async def process_questionnaire_face(callback_query: CallbackQuery, state: FSMContext):
+async def process_questionnaire_face(message_or_callback: types.Message | types.CallbackQuery, state: FSMContext):
     await state.set_state(UserState.info_coll)
     current_data = await state.get_data()
-    user_id = callback_query.from_user.id
+    user_id = message_or_callback.from_user.id
     await state.set_state(QuestionnaireFace.skin_type)
     if not current_data.get("full_sequence", True):
         await state.update_data(full_sequence=False)
     print(f"user: {user_id}, full_seq: {current_data.get("full_sequence")}")
-    await callback_query.message.answer(
-        "<b>Часть 2/4</b> 🟢🟢⚪️⚪️ \n<b>4 вопроса о вашем прекрасном лице</b> \nСпасибо за искренние ответы! Теперь переходим к следующему этапу — давайте ближе познакомимся с вашей кожей.  🙌"
+    if isinstance(message_or_callback, types.CallbackQuery):
+        await message_or_callback.message.answer(
+            "<b>Часть 2/4</b> 🟢🟢⚪️⚪️ \n<b>4 вопроса о вашем прекрасном лице</b> \nСпасибо за искренние ответы! Теперь переходим к следующему этапу — давайте ближе познакомимся с вашей кожей.  🙌"
+            )
+        await message_or_callback.message.answer(
+            "12) Какой тип кожи у вас на лице? \nВыберите наиболее подходящий вариант. Если сомневаетесь, подумайте, как ваша кожа обычно реагирует в течение дня — это поможет сделать правильный выбор! 🌿",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
+                InlineKeyboardButton(text="Сухая", callback_data="dry")],
+                [InlineKeyboardButton(text="Жирная", callback_data="oily"),
+                InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
+            ])
         )
-    await callback_query.message.answer(
-        "12) Какой тип кожи у вас на лице? \nВыберите наиболее подходящий вариант. Если сомневаетесь, подумайте, как ваша кожа обычно реагирует в течение дня — это поможет сделать правильный выбор! 🌿",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
-             InlineKeyboardButton(text="Сухая", callback_data="dry")],
-            [InlineKeyboardButton(text="Жирная", callback_data="oily"),
-             InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
-        ])
-    )
-    await callback_query.answer()
-
+        await message_or_callback.answer()
+    else:
+        await message_or_callback.answer(
+            "<b>Часть 2/4</b> 🟢🟢⚪️⚪️ \n<b>4 вопроса о вашем прекрасном лице</b> \nСпасибо за искренние ответы! Теперь переходим к следующему этапу — давайте ближе познакомимся с вашей кожей.  🙌"
+            )
+        await message_or_callback.answer(
+            "12) Какой тип кожи у вас на лице? \nВыберите наиболее подходящий вариант. Если сомневаетесь, подумайте, как ваша кожа обычно реагирует в течение дня — это поможет сделать правильный выбор! 🌿",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Нормальная", callback_data="normal"),
+                InlineKeyboardButton(text="Сухая", callback_data="dry")],
+                [InlineKeyboardButton(text="Жирная", callback_data="oily"),
+                InlineKeyboardButton(text="Комбинированная", callback_data="combination")]
+            ])
+        )
 
 
 async def start_body_questionnaire(user_id: int, state: FSMContext):
