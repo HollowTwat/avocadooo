@@ -1742,8 +1742,8 @@ async def start_hair_questionnaire(user_id: int, state: FSMContext):
         "22) Какой у вас тип кожи головы?  \n*Попробуйте оценить ощущения после обычного ухода за волосами или вспомнить, как часто вам нужно мыть голову.",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Нормальная: свежие волосы через 2–3 дня после мытья", callback_data="normal"),
-             InlineKeyboardButton(text="Сухая: зуд или шелушение", callback_data="dry")],
-            [InlineKeyboardButton(text="Жирная: кожа головы быстро становится жирной", callback_data="oily"),
+             InlineKeyboardButton(text="Сухая: зуд или шелушение", callback_data="dry"),
+             InlineKeyboardButton(text="Жирная: кожа головы быстро становится жирной", callback_data="oily"),
              InlineKeyboardButton(text="Комбинированная: корни жирные, а кончики сухие", callback_data="combination")]
         ])
     )
