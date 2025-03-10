@@ -1791,7 +1791,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
 
     buttons = [
         InlineKeyboardButton(text="Да, хочу 📊", callback_data=f'personal_{analysis_type}_{item_id}'),
-        InlineKeyboardButton(text="Нет, не хочу", callback_data='analysis')
+        InlineKeyboardButton(text="Нет, не хочу", callback_data='menu')
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
 
