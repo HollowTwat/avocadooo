@@ -59,7 +59,8 @@ async def get_user_sub_info(id):
 
 def remove_tags(input_string):
     output = re.sub(r"</?br\s*/?>", "", input_string)
-    return output
+    output1 = re.sub(r'【.*?】', '', output)
+    return output1
 
 async def fetch_product_details(product_id):
     url = f"https://avocado-production.up.railway.app/api/TypesCRUD/GetElementInfo?Id={product_id}"
