@@ -5,6 +5,7 @@ import asyncio
 import aiohttp
 import asyncio
 import aiogram
+import logging
 from aiogram import Bot, Dispatcher, types
 import openai
 import datetime
@@ -22,6 +23,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, FSInputFile, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from openai import AsyncOpenAI, OpenAI
 import shelve
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -402,9 +406,23 @@ async def run_assistant(thread, assistant_str):
         print(f"An error occurred: {e}")
         return f"exception: {e}"
     
-async def get_existing_topics():
-    topics = await bot.get_forum_topics(CHAT_ID)
-    return {topic.name: topic.message_thread_id for topic in topics.topics}
+# async def get_existing_topics():
+#     topics = await bot.get_forum_topics(CHAT_ID)
+#     return {topic.name: topic.message_thread_id for topic in topics.topics}
+async def get_existing_topics(chat_id: int):
+    """Fetch the list of existing topics in the chat using the raw API."""
+    try:
+        # Use the raw API to call getForumTopics
+        response = await bot.request("getForumTopics", {"chat_id": chat_id})
+        if response and response.get("topics"):
+            # Extract topic names and their thread IDs
+            return {topic["name"]: topic["message_thread_id"] for topic in response["topics"]}
+        else:
+            logger.warning("No topics found or invalid response.")
+            return {}
+    except Exception as e:
+        logger.error(f"Failed to fetch forum topics: {e}")
+        return {}
     
 async def log_user_message(message):
 
