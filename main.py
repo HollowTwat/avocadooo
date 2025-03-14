@@ -1912,6 +1912,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
 
 
 async def main() -> None:
+    init_db()
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     dp.include_router(router)
     dp.message.middleware(StateMiddleware())
