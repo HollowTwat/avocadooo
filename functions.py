@@ -5,6 +5,7 @@ import asyncio
 import aiohttp
 import asyncio
 import aiogram
+import sqlite3
 from aiogram import Bot, Dispatcher, types
 import openai
 import datetime
@@ -408,39 +409,48 @@ async def run_assistant(thread, assistant_str):
         print(f"An error occurred: {e}")
         return f"exception: {e}"
     
-# async def get_existing_topics():
-#     topics = await bot.get_forum_topics(CHAT_ID)
-#     return {topic.name: topic.message_thread_id for topic in topics.topics}
 
 
-async def get_existing_topics():
-    """Fetch the list of existing topics in the chat using the raw API."""
-    try:
-        async with aiohttp.ClientSession() as session:
-            # Call the getForumTopics API method
-            url = f"{API_URL}/getForumTopics"
-            payload = {"chat_id": CHAT_ID}
-            async with session.post(url, json=payload) as response:
-                data = await response.json()
-                print(data)
-                if data.get("ok") and data.get("result", {}).get("topics"):
-                    return {topic["name"]: topic["message_thread_id"] for topic in data["result"]["topics"]}
-                else:
-                    logger.warning("No topics found or invalid response.")
-                    return {}
-    except Exception as e:
-        logger.error(f"Failed to fetch forum topics: {e}")
-        return {}
+DATABASE_FILE = "topics.db"
+    
+def init_db():
+    with sqlite3.connect(DATABASE_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS topics (
+                user_id INTEGER PRIMARY KEY,
+                thread_id INTEGER
+            )
+        """)
+        conn.commit()
+
+def get_thread_id(user_id: int) -> int:
+    with sqlite3.connect(DATABASE_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT thread_id FROM topics WHERE user_id = ?", (user_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None
+
+def save_thread_id(user_id: int, thread_id: int):
+    """Save the thread ID for a user in the database."""
+    with sqlite3.connect(DATABASE_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT OR REPLACE INTO topics (user_id, thread_id)
+            VALUES (?, ?)
+        """, (user_id, thread_id))
+        conn.commit()
     
 async def log_user_message(message):
 
-    existing_topics = await get_existing_topics()
-    print(existing_topics)
     user_id = message.from_user.id
 
-    if str(user_id) not in existing_topics:
+    thread_id = get_thread_id(user_id)
+    if not thread_id:
         topic = await bot.create_forum_topic(CHAT_ID, name=str(user_id))
-        existing_topics[str(user_id)] = topic.message_thread_id
+        thread_id = topic.message_thread_id
+        save_thread_id(user_id, thread_id)
+        logger.info(f"Created new topic for user {user_id} with thread ID {thread_id}")
 
     if message.text:
         content = message.text
@@ -461,33 +471,40 @@ async def log_user_message(message):
     await bot.send_message(
         chat_id=CHAT_ID,
         text=f"User {user_id} sent:\n{content}",
-        message_thread_id=existing_topics[str(user_id)]
+        message_thread_id=thread_id
     )
 
 async def log_user_callback(callback_query):
 
-    existing_topics = await get_existing_topics()
     user_id = callback_query.from_user.id
 
-    if str(user_id) not in existing_topics:
+    thread_id = get_thread_id(user_id)
+    if not thread_id:
         topic = await bot.create_forum_topic(CHAT_ID, name=str(user_id))
-        existing_topics[str(user_id)] = topic.message_thread_id
+        thread_id = topic.message_thread_id
+        save_thread_id(user_id, thread_id)
+        logger.info(f"Created new topic for user {user_id} with thread ID {thread_id}")
 
     await bot.send_message(
         chat_id=CHAT_ID,
         text=f"callback:{callback_query.data}",
-        message_thread_id=existing_topics[str(user_id)]
+        message_thread_id=thread_id
     )
 
 async def log_bot_response(text, user_id):
-    existing_topics = await get_existing_topics()
 
-    if str(user_id) not in existing_topics:
+    thread_id = get_thread_id(user_id)
+    if not thread_id:
+        # Create a new topic with the user's ID as the topic name
         topic = await bot.create_forum_topic(CHAT_ID, name=str(user_id))
-        existing_topics[str(user_id)] = topic.message_thread_id
+        thread_id = topic.message_thread_id
+        save_thread_id(user_id, thread_id)
+        logger.info(f"Created new topic for user {user_id} with thread ID {thread_id}")
 
+    # Send the bot's response to the corresponding topic
     await bot.send_message(
         chat_id=CHAT_ID,
         text=text,
-        message_thread_id=existing_topics[str(user_id)]
+        message_thread_id=thread_id
     )
+    logger.info(f"Logged bot response for user {user_id} in topic {thread_id}")
