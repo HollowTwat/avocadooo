@@ -1235,6 +1235,7 @@ async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext
 
 @router.message(StateFilter(UserState.yapp))
 async def yapp_handler(message: Message, state: FSMContext) -> None:
+    await log_user_message(message)
     user_data = await state.get_data()
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
@@ -1249,6 +1250,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(f"{response}")
         await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await log_bot_response(f"{response}", message.from_user.id)
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
@@ -1257,6 +1259,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(f"{response}")
         await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await log_bot_response(f"{response}", message.from_user.id)
     elif message.photo:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
@@ -1266,10 +1269,12 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(f"{response}")
         await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await log_bot_response(f"{response}", message.from_user.id)
 
 
 @router.message(StateFilter(UserState.yapp_with_xtra))
 async def yapp_handler(message: Message, state: FSMContext) -> None:
+    await log_user_message(message)
     user_data = await state.get_data()
     pers_analysis = user_data['pers_analysis']
     db_info = user_data['db_info']
@@ -1286,6 +1291,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(response)
         await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await log_bot_response(response, message.from_user.id)
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
@@ -1294,6 +1300,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         await message.answer(response)
         await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await log_bot_response(response, message.from_user.id)
     elif message.photo:
         await message.answer("Введи текст или надиктуй голосом")
         # file = await bot.get_file(message.photo[-1].file_id)
@@ -1306,6 +1313,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
+    await log_user_message(message)
     user_data = await state.get_data()
     product_type = user_data.get("product_type")
     us_id = str(message.from_user.id)
@@ -1338,6 +1346,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             text = "Нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
+            await log_bot_response(f"{extracted_list[:5]}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1345,6 +1354,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 ]
             )
             await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
+            await log_bot_response("Не распознали", message.from_user.id)
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
@@ -1372,6 +1382,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             text = "Нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
+            await log_bot_response(f"{extracted_list[:5]}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1379,6 +1390,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 ]
             )
             await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
+            await log_bot_response(f"Не распознали", message.from_user.id)
     elif message.photo:
 
         file = await bot.get_file(message.photo[-1].file_id)
@@ -1427,6 +1439,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
+            await log_bot_response(f"{extracted_list[:5]}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1434,6 +1447,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 ]
             )
             await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
+            await log_bot_response(f"Не распознали", message.from_user.id)
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
@@ -1452,6 +1466,7 @@ async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data.startswith('product_type_'))
 async def process_product_type(callback_query: CallbackQuery, state: FSMContext):
+    await log_user_callback(callback_query)
     product_type = callback_query.data.split('_')[2]
     await state.update_data(product_type=product_type)
     us_id = callback_query.from_user.id
@@ -1770,6 +1785,7 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
+    await log_user_callback(callback_query)
     await callback_query.answer()
     parts = callback_query.data.split('_')
     analysis_type = parts[1]
@@ -1807,11 +1823,13 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
 
     await bot.send_message(us_id, analysis_result)
     await bot.send_message(us_id, "Хотите узнать подходит ли это средство именно <b>вам</b>?", reply_markup=keyboard)
+    await log_bot_response(analysis_result, callback_query.from_user.id)
 
     await callback_query.answer()
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
 async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
+    await log_user_callback(callback_query)
     parts = callback_query.data.split('_')
     analysis_type = parts[1]
     item_id = parts[2]
@@ -1850,6 +1868,7 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     ]
 
     await callback_query.message.answer(pers_analysis, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await log_bot_response(pers_analysis, callback_query.from_user.id)
     await callback_query.answer()
 
 
