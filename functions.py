@@ -422,8 +422,8 @@ async def get_existing_topics():
             payload = {"chat_id": CHAT_ID}
             async with session.post(url, json=payload) as response:
                 data = await response.json()
+                print(data)
                 if data.get("ok") and data.get("result", {}).get("topics"):
-                    # Extract topic names and their thread IDs
                     return {topic["name"]: topic["message_thread_id"] for topic in data["result"]["topics"]}
                 else:
                     logger.warning("No topics found or invalid response.")
