@@ -1858,6 +1858,7 @@ async def upload_image_command(message: types.Message, state: FSMContext):
 
 @router.message(Command("message_info_command"))
 async def message_info(message: types.Message, state: FSMContext):
+    await message.answer(str(message))
     print(message)
 
 
