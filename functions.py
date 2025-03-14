@@ -409,11 +409,13 @@ async def run_assistant(thread, assistant_str):
 # async def get_existing_topics():
 #     topics = await bot.get_forum_topics(CHAT_ID)
 #     return {topic.name: topic.message_thread_id for topic in topics.topics}
-async def get_existing_topics(chat_id: int):
+
+
+async def get_existing_topics():
     """Fetch the list of existing topics in the chat using the raw API."""
     try:
         # Use the raw API to call getForumTopics
-        response = await bot.request("getForumTopics", {"chat_id": chat_id})
+        response = await bot.request("getForumTopics", {"chat_id": CHAT_ID})
         if response and response.get("topics"):
             # Extract topic names and their thread IDs
             return {topic["name"]: topic["message_thread_id"] for topic in response["topics"]}
