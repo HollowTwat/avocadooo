@@ -413,13 +413,13 @@ async def run_assistant(thread, assistant_str):
 #     return {topic.name: topic.message_thread_id for topic in topics.topics}
 
 
-async def get_existing_topics(chat_id: int):
+async def get_existing_topics():
     """Fetch the list of existing topics in the chat using the raw API."""
     try:
         async with aiohttp.ClientSession() as session:
             # Call the getForumTopics API method
             url = f"{API_URL}/getForumTopics"
-            payload = {"chat_id": chat_id}
+            payload = {"chat_id": CHAT_ID}
             async with session.post(url, json=payload) as response:
                 data = await response.json()
                 if data.get("ok") and data.get("result", {}).get("topics"):
