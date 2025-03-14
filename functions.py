@@ -23,6 +23,10 @@ from aiogram.types import Message, FSInputFile, InlineKeyboardButton, InlineKeyb
 from openai import AsyncOpenAI, OpenAI
 import shelve
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -33,6 +37,7 @@ ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
 CHAT_ID = os.getenv("LOGS_CHAT_ID")
 
 TOKEN = BOT_TOKEN
+API_URL = f'https://api.telegram.org/bot{TOKEN}'
 OPENAI_API_KEY = OPENAI_KEY
 openai.api_key = OPENAI_API_KEY
 
@@ -408,17 +413,23 @@ async def run_assistant(thread, assistant_str):
 #     return {topic.name: topic.message_thread_id for topic in topics.topics}
 
 
-async def get_existing_topics():
+async def get_existing_topics(chat_id: int):
     """Fetch the list of existing topics in the chat using the raw API."""
     try:
-        response = await bot.request("getForumTopics", {"chat_id": CHAT_ID})
-        if response and response.get("topics"):
-            return {topic["name"]: topic["message_thread_id"] for topic in response["topics"]}
-        else:
-            print("No topics found or invalid response.")
-            return {}
+        async with aiohttp.ClientSession() as session:
+            # Call the getForumTopics API method
+            url = f"{API_URL}/getForumTopics"
+            payload = {"chat_id": chat_id}
+            async with session.post(url, json=payload) as response:
+                data = await response.json()
+                if data.get("ok") and data.get("result", {}).get("topics"):
+                    # Extract topic names and their thread IDs
+                    return {topic["name"]: topic["message_thread_id"] for topic in data["result"]["topics"]}
+                else:
+                    logger.warning("No topics found or invalid response.")
+                    return {}
     except Exception as e:
-        print(f"Failed to fetch forum topics: {e}")
+        logger.error(f"Failed to fetch forum topics: {e}")
         return {}
     
 async def log_user_message(message):
