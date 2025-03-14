@@ -39,6 +39,7 @@ ANALYSIS_P_FACE_ASS = os.getenv("ANALYSIS_P_FACE_ASS")
 ANALYSIS_P_BODY_ASS = os.getenv("ANALYSIS_P_BODY_ASS")
 ANALYSIS_P_HAIR_ASS = os.getenv("ANALYSIS_P_HAIR_ASS")
 
+
 USER_ANAL_ASS = os.getenv("USER_INFO_AND_GOALS_ASS")
 
 TOKEN = BOT_TOKEN
@@ -122,6 +123,7 @@ checkbox_states = {
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
+    await log_user_message(message)
     await state.update_data(full_sequence=False)
     # buttons = [
     #     [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],

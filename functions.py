@@ -29,6 +29,7 @@ OPENAI_KEY = os.getenv("OPENAI_KEY")
 ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 ASSISTANT_ID_2 = os.getenv("ASSISTANT_ID_2")
 ANALYSIS_ASS = os.getenv("ANALYSIS_ASS")
+CHAT_ID = os.getenv("LOGS_CHAT_ID")
 
 TOKEN = BOT_TOKEN
 OPENAI_API_KEY = OPENAI_KEY
@@ -400,3 +401,66 @@ async def run_assistant(thread, assistant_str):
     except Exception as e:
         print(f"An error occurred: {e}")
         return f"exception: {e}"
+    
+async def get_existing_topics():
+    topics = await bot.get_forum_topics(CHAT_ID)
+    return {topic.name: topic.message_thread_id for topic in topics.topics}
+    
+async def log_user_message(message):
+
+    existing_topics = await get_existing_topics()
+    user_id = message.from_user.id
+
+    if str(user_id) not in existing_topics:
+        topic = await bot.create_forum_topic(CHAT_ID, name=str(user_id))
+        existing_topics[str(user_id)] = topic.message_thread_id
+
+    if message.text:
+        content = message.text
+    elif message.photo:
+        photo = message.photo[-1]
+        content = f"📷 Photo: {photo.file_id}"
+    elif message.voice:
+        content = f"🎤 Voice: {message.voice.file_id}"
+    elif message.document:
+        content = f"📄 Document: {message.document.file_id}"
+    elif message.video:
+        content = f"🎥 Video: {message.video.file_id}"
+    elif message.audio:
+        content = f"🎵 Audio: {message.audio.file_id}"
+    else:
+        content = "Unsupported message type"
+
+    await bot.send_message(
+        chat_id=CHAT_ID,
+        text=f"User {user_id} sent:\n{content}",
+        message_thread_id=existing_topics[str(user_id)]
+    )
+
+async def log_user_callback(callback_query):
+
+    existing_topics = await get_existing_topics()
+    user_id = callback_query.from_user.id
+
+    if str(user_id) not in existing_topics:
+        topic = await bot.create_forum_topic(CHAT_ID, name=str(user_id))
+        existing_topics[str(user_id)] = topic.message_thread_id
+
+    await bot.send_message(
+        chat_id=CHAT_ID,
+        text=f"callback:{callback_query.data}",
+        message_thread_id=existing_topics[str(user_id)]
+    )
+
+async def log_bot_response(text, user_id):
+    existing_topics = await get_existing_topics()
+
+    if str(user_id) not in existing_topics:
+        topic = await bot.create_forum_topic(CHAT_ID, name=str(user_id))
+        existing_topics[str(user_id)] = topic.message_thread_id
+
+    await bot.send_message(
+        chat_id=CHAT_ID,
+        text=text,
+        message_thread_id=existing_topics[str(user_id)]
+    )
