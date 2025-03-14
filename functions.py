@@ -413,7 +413,6 @@ async def get_existing_topics():
     try:
         response = await bot.request("getForumTopics", {"chat_id": CHAT_ID})
         if response and response.get("topics"):
-            print({topic["name"]: topic["message_thread_id"] for topic in response["topics"]})
             return {topic["name"]: topic["message_thread_id"] for topic in response["topics"]}
         else:
             print("No topics found or invalid response.")
@@ -425,6 +424,7 @@ async def get_existing_topics():
 async def log_user_message(message):
 
     existing_topics = await get_existing_topics()
+    print(existing_topics)
     user_id = message.from_user.id
 
     if str(user_id) not in existing_topics:
