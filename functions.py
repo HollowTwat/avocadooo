@@ -5,7 +5,6 @@ import asyncio
 import aiohttp
 import asyncio
 import aiogram
-import logging
 from aiogram import Bot, Dispatcher, types
 import openai
 import datetime
@@ -24,8 +23,6 @@ from aiogram.types import Message, FSInputFile, InlineKeyboardButton, InlineKeyb
 from openai import AsyncOpenAI, OpenAI
 import shelve
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -420,10 +417,10 @@ async def get_existing_topics():
             # Extract topic names and their thread IDs
             return {topic["name"]: topic["message_thread_id"] for topic in response["topics"]}
         else:
-            logger.warning("No topics found or invalid response.")
+            print("No topics found or invalid response.")
             return {}
     except Exception as e:
-        logger.error(f"Failed to fetch forum topics: {e}")
+        print(f"Failed to fetch forum topics: {e}")
         return {}
     
 async def log_user_message(message):
