@@ -1326,6 +1326,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
 
         # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
+        await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
@@ -1346,7 +1347,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             text = "Нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
-            await log_bot_response(f"{extracted_list[:5]}", message.from_user.id)
+            await log_bot_response(f"{extracted_list}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1361,6 +1362,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await generate_response(transcribed_text, us_id, ASSISTANT_ID)
+        await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
         await sticker_message.delete()
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
@@ -1382,7 +1384,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             text = "Нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
-            await log_bot_response(f"{extracted_list[:5]}", message.from_user.id)
+            await log_bot_response(f"{extracted_list}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1399,6 +1401,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await process_url(file_url, us_id, ASSISTANT_ID)
+        await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
         await sticker_message.delete()
         # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
 
@@ -1439,7 +1442,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
-            await log_bot_response(f"{extracted_list[:5]}", message.from_user.id)
+            await log_bot_response(f"{extracted_list}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
