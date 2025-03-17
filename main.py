@@ -504,7 +504,7 @@ async def process_water_intake(callback_query: types.CallbackQuery, state: FSMCo
         ]
     )
     await state.set_state(Questionnaire.stress)
-    await callback_query.message.edit_text("9) КВаши нервные клетки успевают восстановиться? Как бы вы описали уровень стресса в своей жизни?", reply_markup=keyboard)
+    await callback_query.message.edit_text("9) Ваши нервные клетки успевают восстановиться? Как бы вы описали уровень стресса в своей жизни?", reply_markup=keyboard)
     await callback_query.answer()
 
 @router.callback_query(StateFilter(Questionnaire.stress), lambda c: c.data.startswith("stress_"))
@@ -531,7 +531,7 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
     #     ]
     # )
     await state.set_state(Questionnaire.habits)
-    await callback_query.message.answer("10) КУ каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   \n\n<i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
+    await callback_query.message.answer("10) У каждого из нас есть свои маленькие слабости. Какие из перечисленных привычек вам знакомы? Не переживайте, здесь нет осуждения — только забота и понимание.   \n\n1 — Курение \n2 — Употребление алкоголя \n3 — Нет вредных привычек   \n\n<i>Можете выбрать несколько. Укажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
     await callback_query.answer()
 
 @router.message(StateFilter(Questionnaire.habits), lambda c: True)
