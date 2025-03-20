@@ -411,7 +411,7 @@ async def run_assistant(thread, assistant_str):
     
 
 
-DATABASE_FILE = "topics.db"
+DATABASE_FILE = os.path.abspath("topics.db")
     
 def init_db():
     """Initialize the SQLite database and create the topics table if it doesn't exist."""
