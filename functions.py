@@ -1,18 +1,15 @@
 import os
 import re
 import json
-import asyncio
 import aiohttp
 import asyncio
 import aiogram
 import sqlite3
-from aiogram import Bot, Dispatcher, types
 import openai
 import datetime
 import base64
-# from auth import OPENAI_KEY, ASSISTANT_ID, BOT_TOKEN
 import requests
-from aiogram import Bot, Dispatcher, html, Router, BaseMiddleware
+from aiogram import Bot, Dispatcher, html, Router, BaseMiddleware, types
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
@@ -458,27 +455,75 @@ async def log_user_message(message):
         save_thread_id(user_id, thread_id)
         logger.info(f"Created new topic for user {user_id} with thread ID {thread_id}")
 
+    # if message.text:
+    #     content = message.text
+    # elif message.photo:
+    #     photo = message.photo[-1]
+    #     content = f"📷 Photo: {photo.file_id}"
+    # elif message.voice:
+    #     content = f"🎤 Voice: {message.voice.file_id}"
+    # elif message.document:
+    #     content = f"📄 Document: {message.document.file_id}"
+    # elif message.video:
+    #     content = f"🎥 Video: {message.video.file_id}"
+    # elif message.audio:
+    #     content = f"🎵 Audio: {message.audio.file_id}"
+    # else:
+    #     content = "Unsupported message type"
+
+    # await bot.send_message(
+    #     chat_id=CHAT_ID,
+    #     text=f"User {user_id} sent:\n{content}",
+    #     message_thread_id=thread_id
+    # )
     if message.text:
-        content = message.text
+        await bot.send_message(
+            chat_id=CHAT_ID,
+            text=f"User {user_id} sent:\n{message.text}",
+            message_thread_id=thread_id
+        )
     elif message.photo:
         photo = message.photo[-1]
-        content = f"📷 Photo: {photo.file_id}"
+        await bot.send_photo(
+            chat_id=CHAT_ID,
+            photo=photo.file_id,
+            caption=f"User {user_id} sent a photo.",
+            message_thread_id=thread_id
+        )
     elif message.voice:
-        content = f"🎤 Voice: {message.voice.file_id}"
+        await bot.send_voice(
+            chat_id=CHAT_ID,
+            voice=message.voice.file_id,
+            caption=f"User {user_id} sent a voice message.",
+            message_thread_id=thread_id
+        )
     elif message.document:
-        content = f"📄 Document: {message.document.file_id}"
+        await bot.send_document(
+            chat_id=CHAT_ID,
+            document=message.document.file_id,
+            caption=f"User {user_id} sent a document.",
+            message_thread_id=thread_id
+        )
     elif message.video:
-        content = f"🎥 Video: {message.video.file_id}"
+        await bot.send_video(
+            chat_id=CHAT_ID,
+            video=message.video.file_id,
+            caption=f"User {user_id} sent a video.",
+            message_thread_id=thread_id
+        )
     elif message.audio:
-        content = f"🎵 Audio: {message.audio.file_id}"
+        await bot.send_audio(
+            chat_id=CHAT_ID,
+            audio=message.audio.file_id,
+            caption=f"User {user_id} sent an audio file.",
+            message_thread_id=thread_id
+        )
     else:
-        content = "Unsupported message type"
-
-    await bot.send_message(
-        chat_id=CHAT_ID,
-        text=f"User {user_id} sent:\n{content}",
-        message_thread_id=thread_id
-    )
+        await bot.send_message(
+            chat_id=CHAT_ID,
+            text=f"User {user_id} sent an unsupported message type.",
+            message_thread_id=thread_id
+        )
 
 async def log_user_callback(callback_query):
 
