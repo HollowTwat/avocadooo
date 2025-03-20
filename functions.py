@@ -414,15 +414,21 @@ async def run_assistant(thread, assistant_str):
 DATABASE_FILE = "topics.db"
     
 def init_db():
+    """Initialize the SQLite database and create the topics table if it doesn't exist."""
+    db_exists = os.path.exists(DATABASE_FILE)
     with sqlite3.connect(DATABASE_FILE) as conn:
         cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS topics (
-                user_id INTEGER PRIMARY KEY,
-                thread_id INTEGER
-            )
-        """)
-        conn.commit()
+        if not db_exists:
+            cursor.execute("""
+                CREATE TABLE topics (
+                    user_id INTEGER PRIMARY KEY,
+                    thread_id INTEGER
+                )
+            """)
+            conn.commit()
+            logger.info("Database file created and topics table initialized.")
+        else:
+            logger.info("Database file already exists. Skipping table creation.")
 
 def get_thread_id(user_id: int) -> int:
     with sqlite3.connect(DATABASE_FILE) as conn:
