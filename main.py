@@ -24,6 +24,7 @@ import shelve
 import json
 
 from functions import *
+from longtexts import *
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_KEY = os.getenv("OPENAI_KEY")
@@ -187,6 +188,7 @@ async def menu_handler(message: Message, state: FSMContext) -> None:
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
         [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
         [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -200,11 +202,30 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
         [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
         [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Меню"
     await callback_query.message.edit_text(step0txt, reply_markup=keyboard)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @router.message(Command("devmenu"))
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
@@ -237,6 +258,22 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
 async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_text("indev")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################################## QUESTIONNAIRE
 @router.message(StateFilter(Questionnaire.name))
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)
@@ -1534,6 +1571,45 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
         await callback_query.message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await state.set_state(UserState.yapp)
 
+@router.callback_query(lambda c: c.data == 'markings')
+async def process_markings(callback_query: CallbackQuery, state: FSMContext):
+    us_id = callback_query.from_user.id
+    buttons = [
+        [InlineKeyboardButton(text="Срок годности и хранение", callback_data="markings_1")],
+        [InlineKeyboardButton(text="Информация о составе", callback_data="markings_2")],
+        [InlineKeyboardButton(text="Экологические и этические обозначения", callback_data="markings_3")],
+        [InlineKeyboardButton(text="Стандарты и сертификация", callback_data="markings_4")],
+        [InlineKeyboardButton(text="Предупреждающие знаки", callback_data="markings_5")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "На упаковках косметических средств можно встретить множество символов и значков 🔃, которые информируют о составе продукта, его безопасности 🚫, способах использования и утилизации♻️.\n\nПонимание этих обозначений поможет сделать осознанный выбор и правильно использовать продукцию.\n\nНиже представлены основные символы, их изображения и расшифровки.\n\nКакой раздел вам интересен?"
+    await callback_query.message.edit_text(text, reply_markup=keyboard)
+
+@router.callback_query(lambda c: c.data.startswith('markings_'))
+async def process_markingstext(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer()
+    parts = callback_query.data.split('_')
+    markings_num = parts[1]
+    markings_matr = {
+        '1': markings_1,
+        '2': markings_2,
+        '3': markings_3,
+        '4': markings_4,
+        '5': markings_5,
+    }
+    markings_text = markings_matr.get(markings_num)
+    buttons = [[InlineKeyboardButton(text=arrow_back, callback_data="markings"), InlineKeyboardButton(text=arrow_menu, callback_data="menu")]]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await callback_query.message.answer(markings_text, reply_markup=keyboard)
+    return
+
+
+
+
+
+
+
 @router.callback_query(lambda c: c.data == 'settings')
 async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
@@ -1555,22 +1631,6 @@ async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(lambda c: c.data == 'settings_sub')
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
-    # subtype, repayment_time = await get_user_sub_info(callback_query.from_user.id)
-
-    # message = "Твой текущий тариф:\n\n"
-    # if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
-    #     message += "☑️ Подписка на сервис Нутри навсегда"
-    # elif subtype == "Подписка на 1 год":
-    #     message += "☑️ Подписка на сервис Нутри на 1 год"
-    # elif subtype == "Подписка на 3 месяца" or subtype == "Тариф на 3 месяца":
-    #     message += f"☑️ Подписка на сервис Нутри на 3 месяца\n"
-    #     message += f"☑️ Дата автоматического продления: {repayment_time}"
-    # elif subtype == "Тариф Бесплатный доступ":
-    #     message += "☑️ Тариф Бесплатный доступ"
-    # else:
-    #     message += "☑️ Неизвестный тариф"
-
-
     buttons = [
         [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
         [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
