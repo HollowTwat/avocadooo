@@ -1601,7 +1601,7 @@ async def process_markingstext(callback_query: CallbackQuery, state: FSMContext)
     markings_text = markings_matr.get(markings_num)
     buttons = [[InlineKeyboardButton(text=arrow_back, callback_data="markings"), InlineKeyboardButton(text=arrow_menu, callback_data="menu")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    await callback_query.message.answer(markings_text, reply_markup=keyboard)
+    await callback_query.message.edit_text(markings_text, reply_markup=keyboard)
     return
 
 
