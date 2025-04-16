@@ -44,8 +44,8 @@ ANALYSIS_P_HAIR_ASS = os.getenv("ANALYSIS_P_HAIR_ASS")
 USER_ANAL_ASS = os.getenv("USER_INFO_AND_GOALS_ASS")
 
 TOKEN = BOT_TOKEN
-arrow_back = "⬅️"
-arrow_menu = "⏏️" #🆕
+arrow_back = "Назад ⬅️" #⬅️
+arrow_menu = "В меню 🔼" #🆕⏏️
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(
     parse_mode=ParseMode.HTML))
@@ -187,7 +187,8 @@ async def menu_handler(message: Message, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
-        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Мой Avocado Box  💚", callback_data="avo_box_menu")],
+        [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp")],
         [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
         [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
         ]
@@ -201,7 +202,7 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(full_sequence=False)
     buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
-        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp")],
         [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
         [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
         ]
@@ -227,26 +228,37 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
 
 
 
-@router.message(Command("devmenu"))
-async def devmenu_handler(message: Message, state: FSMContext) -> None:
+# @router.message(Command("devmenu"))
+# async def devmenu_handler(message: Message, state: FSMContext) -> None:
+#     await state.update_data(full_sequence=False)
+#     buttons = [
+#         [InlineKeyboardButton(text="Мой Avocado Box  💚", callback_data="avo_box")],
+#         [InlineKeyboardButton(text="Промокоды 💥", callback_data="avo_promo")],
+#         ]
+#     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+#     step0txt = "В этом разделе мы собрали все скидки, созданные специально для вас! 😍 \nС чего начнем?"
+#     await message.answer(step0txt, reply_markup=keyboard)
+
+@router.callback_query(lambda c: c.data == 'avo_box_menu')
+async def devmenu_handler_cb(callback_query: CallbackQuery, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
     buttons = [
-        [InlineKeyboardButton(text="My Avocado Box AI 💚", callback_data="avo_box")],
+        [InlineKeyboardButton(text="Avocado Box 🥑", callback_data="avo_box")],
         [InlineKeyboardButton(text="Промокоды 💥", callback_data="avo_promo")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    step0txt = "Привет"
-    await message.answer(step0txt, reply_markup=keyboard)
+    step0txt = "В этом разделе мы собрали все скидки, созданные специально для вас! 😍 \nС чего начнем?"
+    await callback_query.message.edit_text(step0txt, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'avo_box')
 async def process_avo_box(callback_query: CallbackQuery, state: FSMContext):
-    buttons = [[InlineKeyboardButton(text="Урвать бокс", callback_data="avo_box_2")]]
+    buttons = [[InlineKeyboardButton(text="Хочу", callback_data="avo_box_2")]]
     text = "Соберите свой идеальный My Avocado Box AI!\n\nВыбирайте только то, что действительно хочется.\n\nРегулярные подборки премиальной натуральной косметики со скидками до 50% – тестируйте лучшие продукты по суперценам.\n\nГарантия безопасности и качества от Авокадской Конторы 💚\n\nНикаких случайных баночек – только идеальный бьюти-бокс, который подходит именно вашей коже!"
     await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'avo_promo')
 async def process_avo_promo(callback_query: CallbackQuery, state: FSMContext):
-    buttons = [[InlineKeyboardButton(text="Воспользоваться скидкой", callback_data="avo_promo_2")]]
+    buttons = [[InlineKeyboardButton(text="Получить промокоды", callback_data="avo_promo_2")]]
     text = "Скидки, созданные специально для вас!\n\nМы объединили все лучшие эко-бренды – друзей My Avocado Box, чтобы у вас всегда был доступ к безопасной косметике по самой приятной цене. \n\n🌿Лучшие бренды готовы радовать тебя натуральными и проверенными продуктами.\n\n💚Постоянные скидки 15-20% – эксклюзивно для наших подписчиков.\n\n✨ Лучшее из мира эко-косметики всегда доступно в один клик.\n\nВыбирайте, пробуйте, влюбляйтесь – с Avocado Bot вы всегда в выигрыше!"
     await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
@@ -1534,14 +1546,14 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp)
     await callback_query.answer("yapp_state_set")
-    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>\n Я всегда готов помочь! 🥑"
+    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>"#\n Я всегда готов помочь! 🥑
     await callback_query.message.answer(text)
 
 @router.callback_query(lambda c: c.data == 'yapp_with_extra_info')
 async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp_with_xtra)
     await callback_query.answer()
-    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>\n Я всегда готов помочь! 🥑"
+    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>"#\n Я всегда готов помочь! 🥑
     await callback_query.message.answer(text)
 
 @router.callback_query(lambda c: c.data.startswith('setstate_yapp_transfer_'))
@@ -1626,13 +1638,14 @@ async def process_markingstext(callback_query: CallbackQuery, state: FSMContext)
 async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     buttons = [
-        [InlineKeyboardButton(text="Инструкция по применению Avocado Bot 🔖", callback_data="explain_4")],
-        [InlineKeyboardButton(text="Обновить анкету 📖", callback_data="settings_questionaire")],
-        [InlineKeyboardButton(text="Подписка", callback_data="settings_sub")],
+        [InlineKeyboardButton(text="🔖 Как пользоваться ботом", callback_data="explain_4")],
+        [InlineKeyboardButton(text="📖 Обновить анкету", callback_data="settings_questionaire")],
+        [InlineKeyboardButton(text="💰Условия подписки:", callback_data="settings_sub")],
+        [InlineKeyboardButton(text="🆘Служба заботы :", url="t.me/nutri_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    text = "Настройки"
+    text = "Настройки ⚙️:"
     await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'explain_4')
@@ -1982,7 +1995,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     if message.text:
         buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
-        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp_transfer_txt")],
+        [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp_transfer_txt")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await state.update_data(transfer_text = message.text)
@@ -1990,7 +2003,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     if message.voice:
         buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
-        [InlineKeyboardButton(text="Спросить у Avocado Bot 🥑", callback_data="setstate_yapp_transfer_voice")],
+        [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp_transfer_voice")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await state.update_data(transfer_voice = message.voice.file_id)
