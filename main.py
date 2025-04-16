@@ -1575,15 +1575,16 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
 async def process_markings(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
     buttons = [
-        [InlineKeyboardButton(text="Срок годности и хранение", callback_data="markings_1")],
-        [InlineKeyboardButton(text="Информация о составе", callback_data="markings_2")],
-        [InlineKeyboardButton(text="Экологические и этические обозначения", callback_data="markings_3")],
-        [InlineKeyboardButton(text="Стандарты и сертификация", callback_data="markings_4")],
-        [InlineKeyboardButton(text="Предупреждающие знаки", callback_data="markings_5")],
+        [InlineKeyboardButton(text="Экологические и этические обозначения 🐰", callback_data="markings_1")],
+        [InlineKeyboardButton(text="Срок годности и хранение 📅", callback_data="markings_2")],
+        [InlineKeyboardButton(text="Утилизация ♻️", callback_data="markings_3")],
+        [InlineKeyboardButton(text="Стандарты и сертификация ✅", callback_data="markings_4")],
+        [InlineKeyboardButton(text="Прямоугольники на тубе 🛑", callback_data="markings_5")],
+        [InlineKeyboardButton(text="Как проверить состав🔍", callback_data="markings_6")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    text = "На упаковках косметических средств можно встретить множество символов и значков 🔃, которые информируют о составе продукта, его безопасности 🚫, способах использования и утилизации♻️.\n\nПонимание этих обозначений поможет сделать осознанный выбор и правильно использовать продукцию.\n\nНиже представлены основные символы, их изображения и расшифровки.\n\nКакой раздел вам интересен?"
+    text = "<blockquote>На упаковках косметических средств можно встретить множество символов и значков 🔃, которые информируют о составе продукта, его безопасности 🚫, способах использования и утилизации♻️.</blockquote>\n\nПонимание этих обозначений поможет сделать осознанный выбор и правильно использовать продукцию.\n\nНиже представлены основные символы, их изображения и расшифровки.\n\nКакой раздел вам интересен?"
     await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data.startswith('markings_'))
@@ -1597,11 +1598,22 @@ async def process_markingstext(callback_query: CallbackQuery, state: FSMContext)
         '3': markings_3,
         '4': markings_4,
         '5': markings_5,
+        '6': markings_6,
     }
+    media_group_matr = {
+        '1': markings_mg_1,
+        '2': markings_mg_2,
+        '3': markings_mg_3,
+        '4': markings_mg_4,
+        '5': markings_mg_5,
+        '6': markings_mg_6,
+    }
+    media_gr = media_group_matr.get(markings_num)
     markings_text = markings_matr.get(markings_num)
     buttons = [[InlineKeyboardButton(text=arrow_back, callback_data="markings"), InlineKeyboardButton(text=arrow_menu, callback_data="menu")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    await callback_query.message.edit_text(markings_text, reply_markup=keyboard)
+    await callback_query.message.answer_media_group(media=media_gr)
+    await callback_query.message.answer("Сюда надо бы текст", reply_markup=keyboard)
     return
 
 
