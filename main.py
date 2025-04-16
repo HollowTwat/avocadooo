@@ -270,12 +270,12 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
     text3 = ""
     # await callback_query.message.edit_text("indev")
     await callback_query.message.edit_text(text1)
-    await callback_query.message.answer(avo_box_text_long_2, link_preview_options=False)
-    await callback_query.message.answer(avo_box_text_long_3, link_preview_options=False)
+    await callback_query.message.answer(avo_box_text_long_2, disable_web_page_preview=True)
+    await callback_query.message.answer(avo_box_text_long_3, disable_web_page_preview=True)
 
 @router.callback_query(lambda c: c.data == 'avo_promo_2')
 async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text(promo_text, link_preview_options=False)
+    await callback_query.message.edit_text(promo_text, disable_web_page_preview=True)
 
 
 
