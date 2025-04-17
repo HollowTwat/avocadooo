@@ -1415,7 +1415,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
-            text = f"Определила средство как:{med_name}\n В базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            text = f"Определила средство как: {med_name}\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
@@ -1922,7 +1922,10 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await bot.send_message(us_id, "Хотите узнать подходит ли это средство именно <b>вам</b>?", reply_markup=keyboard)
     await log_bot_response(analysis_result, callback_query.from_user.id)
 
-    await callback_query.answer()
+    try:
+        await callback_query.answer()
+    except Exception as e:
+        print("cb_timeout")
 
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
