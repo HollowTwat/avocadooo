@@ -1904,12 +1904,11 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
 
     buttons = [
-        # InlineKeyboardButton(text="Да, хочу 📊", callback_data=f'personal_{analysis_type}_{item_id}'),
         [InlineKeyboardButton(text="Да, хочу добавить", callback_data="analysis")],
         [InlineKeyboardButton(text="Подробный анализ этого 🧴", callback_data=f"extra_analy_{item_id}")],
         [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
     ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     analys_mssg = await callback_query.message.answer("Анализирую 🔍")
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
