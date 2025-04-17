@@ -1388,10 +1388,11 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
     if message.text:
-
+        info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await generate_response(message.text, us_id, ASSISTANT_ID)
         await sticker_message.delete()
+        await info_message.edit_text("Ищу в базе🔍")
 
 
         # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
@@ -1400,6 +1401,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         await sticker_message1.delete()
+        await info_message.delete()
 
         extracted_list = await extract_list_from_input(response1)
         if extracted_list:
@@ -1428,15 +1430,18 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
-        
+
+        info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await generate_response(transcribed_text, us_id, ASSISTANT_ID)
         await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
         await sticker_message.delete()
+        await info_message.edit_text("Ищу в базе🔍")
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         await sticker_message1.delete()
+        await info_message.delete()
 
         extracted_list = await extract_list_from_input(response1)
         if extracted_list:
@@ -1467,17 +1472,19 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
-
+        info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await process_url(file_url, us_id, ASSISTANT_ID)
         await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
         await sticker_message.delete()
+        await info_message.edit_text("Ищу в базе🔍")
         # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
         # response = await remove_json_block(response1)
         await sticker_message1.delete()
+        await info_message.delete()
         # await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
         
