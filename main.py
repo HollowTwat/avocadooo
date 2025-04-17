@@ -32,6 +32,7 @@ ASSISTANT_ID = os.getenv("RECOGNIZE_MAKEUP_ASS")
 ASSISTANT_ID_2 = os.getenv("FIND_PRODUCT_ASS")
 YAPP_ASS = os.getenv("YAPP_ASS")
 
+GENERAL_ANALYSIS_ASS = os.getenv("GENERAL_ANALYSIS_ASS")
 ANALYSIS_G_FACE_ASS = os.getenv("ANALYSIS_G_FACE_ASS")
 ANALYSIS_G_BODY_ASS = os.getenv("ANALYSIS_G_BODY_ASS")
 ANALYSIS_G_HAIR_ASS = os.getenv("ANALYSIS_G_HAIR_ASS")
@@ -186,7 +187,7 @@ async def menu_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(UserState.menu)
     await state.update_data(full_sequence=False)
     buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
         [InlineKeyboardButton(text="Мой Avocado Box  💚", callback_data="avo_box_menu")],
         [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp")],
         [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
@@ -201,7 +202,8 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.menu)
     await state.update_data(full_sequence=False)
     buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+        [InlineKeyboardButton(text="Мой Avocado Box  💚", callback_data="avo_box_menu")],
         [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp")],
         [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
         [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
@@ -1294,7 +1296,7 @@ async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext
     await callback_query.message.answer(
         "Вот и все пора начинать! С чего хотите начать?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Анализ состава", callback_data="analysis"), InlineKeyboardButton(text="Спросить Avocado Bot ❔", callback_data="setstate_yapp")]
+            [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis"), InlineKeyboardButton(text="Спросить Avocado Bot ❔", callback_data="setstate_yapp")]
         ])
     )
     await state.clear()
@@ -1382,7 +1384,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
 async def recognition_handler(message: Message, state: FSMContext) -> None:
     await log_user_message(message)
     user_data = await state.get_data()
-    product_type = user_data.get("product_type")
+    # product_type = user_data.get("product_type")    
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
     if message.text:
@@ -1407,7 +1409,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [
                 InlineKeyboardButton(
                     text=product.get('FullName'),
-                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
+                    callback_data=f"item_{product.get('Identifier')}"
                 )
             ]
         )
@@ -1444,7 +1446,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [
                 InlineKeyboardButton(
                     text=product.get('FullName'),
-                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
+                    callback_data=f"item_{product.get('Identifier')}"
                 )
             ]
         )
@@ -1500,7 +1502,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [
                 InlineKeyboardButton(
                     text=product.get('FullName'),
-                    callback_data=f"item_{product_type}_{product.get('Identifier')}"
+                    callback_data=f"item_{product.get('Identifier')}"
                 )
             ]
         )
@@ -1524,15 +1526,10 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 @router.callback_query(lambda c: c.data == 'analysis')
 async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
-    text = "Давайте уточним, к какой категории относится баночка, которую мы проверяем на безопасность? \n\nЯ всё проверю и дам честную оценку!🥑"
-    buttons = [
-        [InlineKeyboardButton(text="Для лица", callback_data="product_type_face")],
-        [InlineKeyboardButton(text="Для тела и рук", callback_data="product_type_body")],
-        [InlineKeyboardButton(text="Для волос и кожи головы", callback_data="product_type_hair")],
-    ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    await callback_query.message.edit_text(text, reply_markup=keyboard)
-    await callback_query.answer()
+    text = "Отправьте в чат фото 📸 , <u>ссылку</u>, <i>текст</i> или аудио 🎤 вашего средства. \nНапример:\n<i>Weleda Skin food, крем для лица</i>\n\nВ моей базе пока только средства для лица, тела и волос. "
+    await callback_query.message.edit_text(text)
+    await state.set_state(UserState.recognition)
+    # await callback_query.answer()
 
 @router.callback_query(lambda c: c.data.startswith('product_type_'))
 async def process_product_type(callback_query: CallbackQuery, state: FSMContext):
@@ -1894,35 +1891,23 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await log_user_callback(callback_query)
     await callback_query.answer()
     parts = callback_query.data.split('_')
-    analysis_type = parts[1]
-    item_id = parts[2]
-
-    analysis_matrix = {
-        'face': ANALYSIS_G_FACE_ASS,
-        'body': ANALYSIS_G_BODY_ASS,
-        'hair': ANALYSIS_G_HAIR_ASS,
-    }
-
-    analysis_var = analysis_matrix.get(analysis_type)
-    print(f"analysing using {analysis_var}")
-
-    if not analysis_var:
-        await callback_query.answer("Invalid analysis type.", show_alert=True)
-        return
+    item_id = parts[1]
 
     chat_id = callback_query.message.chat.id
     us_id = callback_query.from_user.id
 
     buttons = [
-        InlineKeyboardButton(text="Да, хочу 📊", callback_data=f'personal_{analysis_type}_{item_id}'),
-        InlineKeyboardButton(text="Нет, не хочу", callback_data='menu')
+        # InlineKeyboardButton(text="Да, хочу 📊", callback_data=f'personal_{analysis_type}_{item_id}'),
+        [InlineKeyboardButton(text="Да, хочу добавить", callback_data="analysis")],
+        [InlineKeyboardButton(text="Подробный анализ этого 🧴", callback_data=f"extra_analy_{item_id}")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=[buttons])
 
     analys_mssg = await callback_query.message.answer("Анализирую 🔍")
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
-    analysis_result1 = await no_thread_ass(str(db_info), analysis_var)
+    analysis_result1 = await no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS)
     analysis_result = remove_tags(analysis_result1)
     await analys_mssg.delete()
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
@@ -1932,6 +1917,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await log_bot_response(analysis_result, callback_query.from_user.id)
 
     await callback_query.answer()
+
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
 async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
@@ -2003,7 +1989,7 @@ async def handle_image_upload(message: types.Message, state: FSMContext):
 async def default_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(UserState.transfer)
     if message.photo:
-        button = [[InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")]]
+        button = [[InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")]]
         await message.answer("Если ты хочешь опознать баночку надо сначала выбрать к какой категории она относится", reply_markup=InlineKeyboardMarkup(inline_keyboard=button))
         # file_id = message.photo[-1].file_id
         # await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
@@ -2012,7 +1998,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
 
     if message.text:
         buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
         [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp_transfer_txt")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -2020,7 +2006,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
         await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
     if message.voice:
         buttons = [
-        [InlineKeyboardButton(text="Анализ состава 🔍 на безопасность", callback_data="analysis")],
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
         [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp_transfer_voice")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
