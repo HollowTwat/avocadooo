@@ -269,13 +269,24 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
     text1 = "Весенний выпуск Avocado Box 🌷\n\n16 идеальных продуктов от безопасных брендов со скидкой до -50%"
     text3 = ""
     # await callback_query.message.edit_text("indev")
+    buttons = [
+        [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/nutri_care")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
     await callback_query.message.edit_text(text1)
-    await callback_query.message.answer(avo_box_text_long_2, disable_web_page_preview=True)
-    await callback_query.message.answer(avo_box_text_long_3, disable_web_page_preview=True)
+    # await callback_query.message.answer(avo_box_text_long_2, disable_web_page_preview=True)
+    # await callback_query.message.answer(avo_box_text_long_3, disable_web_page_preview=True)
+    await callback_query.message.answer_media_group(avo_box_media_gr_1, disable_web_page_preview=True)
+    await callback_query.message.answer_media_group(avo_box_media_gr_2, disable_web_page_preview=True)
+    await callback_query.message.answer("Что делаем?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'avo_promo_2')
 async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text(promo_text, disable_web_page_preview=True)
+    buttons = [
+        [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/nutri_care")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
+    await callback_query.message.edit_text(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 
 
