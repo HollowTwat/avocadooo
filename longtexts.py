@@ -45,7 +45,7 @@ avo_box_text_long_3 = "9) 🫧 Yodometics, Органик вуаль для ум
 promo_text = "<b>Ваши персональные скидки от -15 %</b> ❤️\n\n<blockquote>Не забудьте добавить промокод — тогда ваша скидка применится автоматически</blockquote>\n\n\n\n1) By sadova\n💰-15%\n🎟 Промокод: АВОКАДОБОКС \n🔗 https://sadova.co/ \n\n🌿 Бесплатная доставка при сумме заказа от 3000р по России, а также в Беларусь, Казахстан и Киргизию \n\n2) Zaharova\n💰-15%\n🎟 Промокод: AVOBOT\n🔗 https://www.zaharova.shop/\n\n\n3) TRAWA\n💰-10%\n🎟 Промокод: TRAWAAVO\n🔗 https://trawaoil.ru/\n\n\n4) Море дома\n💰-15%\n🎟 Промокод: AVBOX\n🔗 https://more-doma.ru/ \n\n🌿 Скидки на серию «Магний+», эфирные масла и экстракты."
 
 avo_box_media_gr_1 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZRWgAAUPHd4hxQqstYdIQpyw2rW6_0wACZ-4xGzFqAUgZy6dX3t3PBwEAAwIAA3kAAzYE", caption=avo_box_text_long_2),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIZRWgAAUPHd4hxQqstYdIQpyw2rW6_0wACZ-4xGzFqAUgZy6dX3t3PBwEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZSWgAAUPSUGYHAdXQ1FuRC9lfI-8t4gACaO4xGzFqAUiQ-hykZW1MkwEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZTWgAAUPbleR0x_PS9Xtwo2DtLrc94AACae4xGzFqAUiQLa7URxS5zQEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZUWgAAUPjLiQ9qsownSnPjJfksOf6YAACau4xGzFqAUirqyKt9zqewgEAAwIAA3kAAzYE"),
@@ -56,7 +56,7 @@ avo_box_media_gr_1 = [
         ]
 
 avo_box_media_gr_2 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZZWgAAUQhMHUlbFgBpsYckta2-JGLMQACb-4xGzFqAUiQAfbor9FmxgEAAwIAA3kAAzYE", caption=avo_box_text_long_3),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIZZWgAAUQhMHUlbFgBpsYckta2-JGLMQACb-4xGzFqAUiQAfbor9FmxgEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZaWgAAUQsvJ8FsPFdnm2hXQABGxrDZbwAAnDuMRsxagFICDEZgndYFe8BAAMCAAN5AAM2BA"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZbWgAAUQ1mQ2C7miAi-i985ZTEpIlnAACce4xGzFqAUgvGogM77TPbgEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZcWgAAUQ-_Az3S9MYT27T59jmFnUDqQACcu4xGzFqAUjaeiiYHQVb1AEAAwIAA3kAAzYE"),
