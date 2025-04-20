@@ -33,6 +33,12 @@ ASSISTANT_ID_2 = os.getenv("FIND_PRODUCT_ASS")
 YAPP_ASS = os.getenv("YAPP_ASS")
 
 GENERAL_ANALYSIS_ASS = os.getenv("GENERAL_ANALYSIS_ASS")
+
+CONSIST_ANALYSIS_ASS = os.getenv("CONSIST_ANALYSIS_ASS")
+ETHICS_ANALYSIS_ASS = os.getenv("ETHICS_ANALYSIS_ASS")
+ACTIVE_ANALYSIS_ASS = os.getenv("ACTIVE_ANALYSIS_ASS")
+FUNCTIONS_ANALYSIS_ASS = os.getenv("FUNCTIONS_ANALYSIS_ASS")
+
 ANALYSIS_G_FACE_ASS = os.getenv("ANALYSIS_G_FACE_ASS")
 ANALYSIS_G_BODY_ASS = os.getenv("ANALYSIS_G_BODY_ASS")
 ANALYSIS_G_HAIR_ASS = os.getenv("ANALYSIS_G_HAIR_ASS")
@@ -1899,13 +1905,14 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
     parts = callback_query.data.split('_')
     item_id = parts[1]
+    await state.set_data(current_item_id=item_id)
 
     chat_id = callback_query.message.chat.id
     us_id = callback_query.from_user.id
 
     buttons = [
         [InlineKeyboardButton(text="Да, хочу добавить", callback_data="analysis")],
-        [InlineKeyboardButton(text="Подробный анализ этого 🧴", callback_data=f"extra_analy_{item_id}")],
+        [InlineKeyboardButton(text="Подробный анализ этого 🧴", callback_data=f"extra_analysis")],
         [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -1913,6 +1920,8 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     analys_mssg = await callback_query.message.answer("Анализирую 🔍")
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
+    product_name = db_info["Name"]
+    await state.set_data(current_item_name=product_name)
     analysis_result1 = await no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS)
     analysis_result = remove_tags(analysis_result1)
     await analys_mssg.delete()
@@ -1926,6 +1935,95 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
         await callback_query.answer()
     except Exception as e:
         print("cb_timeout")
+
+
+@router.callback_query(lambda c: c.data == 'extra_analysis')
+async def process_extra_analysis_menu(callback_query: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    product_name = state_data['current_item_name']
+    buttons = [
+        [InlineKeyboardButton(text="Состав 🔬", callback_data="analysis_consist")],
+        [InlineKeyboardButton(text="Свойства 💧", callback_data="analysis_functions")],
+        [InlineKeyboardButton(text="Активные компоненты 🧬", callback_data="analysis_active")],
+        [InlineKeyboardButton(text="Этичность 🌱", callback_data="analysis_ethics")],
+    ]
+    await callback_query.message.edit_text(f"<b>Подробный анализ средства:</b>\n\n<i>{product_name}</i>\n\nЧто вы хотите узнать глубже?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(lambda c: c.data == 'analysis_consist')
+async def process_analysis_consist(callback_query: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    product_id = state_data['current_item_id']
+    buttons = [
+        [InlineKeyboardButton(text=arrow_back, callback_data="extra_analysis")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
+    ]
+    analys_mssg = await callback_query.message.answer("Анализирую 🔍")
+    sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
+    db_info = await fetch_product_details(product_id)
+    analysis_result1 = await no_thread_ass(str(db_info), CONSIST_ANALYSIS_ASS)
+    analysis_result = remove_tags(analysis_result1)
+    await analys_mssg.delete()
+    await sticker_message.delete()
+
+    await callback_query.message.answer(analysis_result)
+    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(lambda c: c.data == 'analysis_functions')
+async def process_analysis_functions(callback_query: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    product_id = state_data['current_item_id']
+    buttons = [
+        [InlineKeyboardButton(text=arrow_back, callback_data="extra_analysis")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
+    ]
+    analys_mssg = await callback_query.message.answer("Анализирую 🔍")
+    sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
+    db_info = await fetch_product_details(product_id)
+    analysis_result1 = await no_thread_ass(str(db_info), FUNCTIONS_ANALYSIS_ASS)
+    analysis_result = remove_tags(analysis_result1)
+    await analys_mssg.delete()
+    await sticker_message.delete()
+
+    await callback_query.message.answer(analysis_result)
+    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(lambda c: c.data == 'analysis_active')
+async def process_analysis_active(callback_query: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    product_id = state_data['current_item_id']
+    buttons = [
+        [InlineKeyboardButton(text=arrow_back, callback_data="extra_analysis")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
+    ]
+    analys_mssg = await callback_query.message.answer("Анализирую 🔍")
+    sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
+    db_info = await fetch_product_details(product_id)
+    analysis_result1 = await no_thread_ass(str(db_info), ACTIVE_ANALYSIS_ASS)
+    analysis_result = remove_tags(analysis_result1)
+    await analys_mssg.delete()
+    await sticker_message.delete()
+
+    await callback_query.message.answer(analysis_result)
+    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(lambda c: c.data == 'analysis_ethics')
+async def process_analysis_ethics(callback_query: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    product_id = state_data['current_item_id']
+    buttons = [
+        [InlineKeyboardButton(text=arrow_back, callback_data="extra_analysis")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
+    ]
+    analys_mssg = await callback_query.message.answer("Анализирую 🔍")
+    sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
+    db_info = await fetch_product_details(product_id)
+    analysis_result1 = await no_thread_ass(str(db_info), ETHICS_ANALYSIS_ASS)
+    analysis_result = remove_tags(analysis_result1)
+    await analys_mssg.delete()
+    await sticker_message.delete()
+
+    await callback_query.message.answer(analysis_result)
+    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
