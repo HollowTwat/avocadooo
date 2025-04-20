@@ -1965,8 +1965,8 @@ async def process_analysis_consist(callback_query: CallbackQuery, state: FSMCont
     await analys_mssg.delete()
     await sticker_message.delete()
 
-    await callback_query.message.answer(analysis_result)
-    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.edit_text(analysis_result)
+    await callback_query.message.answer("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'analysis_functions')
 async def process_analysis_functions(callback_query: CallbackQuery, state: FSMContext):
@@ -1984,8 +1984,8 @@ async def process_analysis_functions(callback_query: CallbackQuery, state: FSMCo
     await analys_mssg.delete()
     await sticker_message.delete()
 
-    await callback_query.message.answer(analysis_result)
-    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.edit_text(analysis_result)
+    await callback_query.message.answer("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'analysis_active')
 async def process_analysis_active(callback_query: CallbackQuery, state: FSMContext):
@@ -2003,8 +2003,8 @@ async def process_analysis_active(callback_query: CallbackQuery, state: FSMConte
     await analys_mssg.delete()
     await sticker_message.delete()
 
-    await callback_query.message.answer(analysis_result)
-    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.edit_text(analysis_result)
+    await callback_query.message.answer("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'analysis_ethics')
 async def process_analysis_ethics(callback_query: CallbackQuery, state: FSMContext):
@@ -2022,8 +2022,8 @@ async def process_analysis_ethics(callback_query: CallbackQuery, state: FSMConte
     await analys_mssg.delete()
     await sticker_message.delete()
 
-    await callback_query.message.answer(analysis_result)
-    await callback_query.message.edit_text("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.edit_text(analysis_result)
+    await callback_query.message.answer("Что делаем дальше?", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
