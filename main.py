@@ -1421,7 +1421,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
-            text = f"Определила средство как: {med_name}\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
