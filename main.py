@@ -1905,7 +1905,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
     parts = callback_query.data.split('_')
     item_id = parts[1]
-    await state.set_data(current_item_id=item_id)
+    await state.update_data(current_item_id=item_id)
 
     chat_id = callback_query.message.chat.id
     us_id = callback_query.from_user.id
@@ -1921,7 +1921,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     sticker_message = await bot.send_sticker(chat_id=callback_query.message.chat.id, sticker=random.choice(STICKERLIST))
     db_info = await fetch_product_details(item_id)
     product_name = db_info["Name"]
-    await state.set_data(current_item_name=product_name)
+    await state.update_data(current_item_name=product_name)
     analysis_result1 = await no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS)
     analysis_result = remove_tags(analysis_result1)
     await analys_mssg.delete()
