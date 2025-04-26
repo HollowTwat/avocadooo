@@ -6,13 +6,13 @@ markings_4 = "<b>КАЧЕСТВО И СЕРТИФИКАЦИЯ</b>\n\n✅ <b>EAC 
 markings_5 = "НЕ НАШЕЛ СООТВЕТСТВИЯ В ФАЙЛЕ"
 markings_6 = "placeholder_text"
 markings_mg_1 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYtWgAATXKeBSK41ugs70qYMp0ZSJNqgACNO4xGzFqAUj2y89bE3TroAEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIYtWgAATXKeBSK41ugs70qYMp0ZSJNqgACNO4xGzFqAUj2y89bE3TroAEAAwIAA3kAAzYE", caption="Тут про ключевые знаки, виды пластика и как правильно сдавать тару в переработку ♻️"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYuWgAATXQ-hE5AmhTNAkKv9_rj9aF5QACNe4xGzFqAUiPzqDM57sR4QEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYvWgAATXW686m8Ar95xvUZH4ltZUTrwACNu4xGzFqAUjJU--tnzQ_YwEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYwWgAATXbePqwPtA7P3meTAy0whJSiAACN-4xGzFqAUiPEGu3-Cc8twEAAwIAA3kAAzYE")
         ]
 markings_mg_2 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYxWgAATZTtutyNeuAyqQoIIlIYxT4agACOe4xGzFqAUiH0OvBH4-oOAEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIYxWgAATZTtutyNeuAyqQoIIlIYxT4agACOe4xGzFqAUiH0OvBH4-oOAEAAwIAA3kAAzYE", caption="Что означают ключевые показатели по срокам годности?  📅"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYyWgAATZs07-W8RbEJFnBr1jcK0oR1gACOu4xGzFqAUgbiDTxOyHWiAEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYzWgAATZ4URpEJpBpeaPgGEojTnvLvAACO-4xGzFqAUiSbXYqAAEbLngBAAMCAAN5AAM2BA"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY0WgAATaDS_z5WHh2VzUotIJkycf0kgACPO4xGzFqAUjJslFN6CqfuwEAAwIAA3kAAzYE"),
@@ -21,22 +21,22 @@ markings_mg_2 = [
         InputMediaPhoto(media="AgACAgIAAxkBAAIY32gAATarPUzLLo45HfhLOMXyBuEWGgACP-4xGzFqAUiD2FBBBFNQoAEAAwIAA3kAAzYE"),
         ]
 markings_mg_3 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY42gAATbYA0gkG7-4Mam3MwUQ0c6N0gACQe4xGzFqAUgnOWFa1sv80gEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIY42gAATbYA0gkG7-4Mam3MwUQ0c6N0gACQe4xGzFqAUgnOWFa1sv80gEAAwIAA3kAAzYE", caption="Что означают ключевые показатели по утилизации и безопасности? 👇"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY52gAATbndgH49ye5PJ9q23UPNBAhUgACQu4xGzFqAUgzykC3t3LsRAEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY62gAATbwVtnkzbpwGc7rg5G5EOjhOwACQ-4xGzFqAUj4lEd6Z4kI-QEAAwIAA3kAAzYE"),
         ]
 markings_mg_4 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY72gAATcczMFIaKMAAYTFw54bvqUsw1cAAkTuMRsxagFIYXo-xGP2IwgBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIY72gAATcczMFIaKMAAYTFw54bvqUsw1cAAkTuMRsxagFIYXo-xGP2IwgBAAMCAAN5AAM2BA", caption="Качество и сертификация, как это отследить? 👇"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY82gAATdS14_nLTRSiMCGRdMrUatQNAACRe4xGzFqAUhD-d67yl206QEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY92gAATdZFWLCSSa7z4VmI_HLImoHEAACRu4xGzFqAUgT4_4xCB2fEQEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY-2gAATdgeCPEKoUd_RSfMDovsL7c6AACR-4xGzFqAUh0Qg7A0uhXnAEAAwIAA3kAAzYE"),
         ]
 markings_mg_5 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY_2gAATeIChnU59WnAZSB9Exg50nAlwACSO4xGzFqAUgBB1V_TrufpAEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIY_2gAATeIChnU59WnAZSB9Exg50nAlwACSO4xGzFqAUgBB1V_TrufpAEAAwIAA3kAAzYE", caption="Что означают разноцветные полоски на тубах? 😇"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZA2gAATeMLacqFk8brlsmE5LzpWSKmQACSe4xGzFqAUgNbxsYRw_dqAEAAwIAA3kAAzYE"),
         ]
 markings_mg_6 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZB2gAATefH6A_DBITYclkoQX7beuAugACSu4xGzFqAUi76q16H46PegEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIZB2gAATefH6A_DBITYclkoQX7beuAugACSu4xGzFqAUi76q16H46PegEAAwIAA3kAAzYE", caption="Для особо внимательных. Чек-лист по проверке косметики 😇"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIZC2gAATelaONX2fSwXtqKZGfdsFbjogACS-4xGzFqAUgkG4vSesULZwEAAwIAA3kAAzYE"),
         ]
 
