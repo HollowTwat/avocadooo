@@ -1652,6 +1652,7 @@ async def process_markingstext(callback_query: CallbackQuery, state: FSMContext)
     markings_text = markings_matr.get(markings_num)
     buttons = [[InlineKeyboardButton(text=arrow_back, callback_data="markings"), InlineKeyboardButton(text=arrow_menu, callback_data="menu")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await callback_query.message.delete()
     await callback_query.message.answer_media_group(media=media_gr)
     await callback_query.message.answer("Сюда надо бы текст", reply_markup=keyboard)
     return
