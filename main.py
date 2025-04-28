@@ -281,7 +281,7 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/nutri_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
-    await callback_query.message.answer_photo(text1, photo="AgACAgIAAxkBAAIdT2gPewzR0cZkwm0DFUMVfpRCfdSEAAKf8TEbMzh5SCdH0IjenjmfAQADAgADeQADNgQ")
+    await callback_query.message.answer_photo(caption=text1, photo="AgACAgIAAxkBAAIdT2gPewzR0cZkwm0DFUMVfpRCfdSEAAKf8TEbMzh5SCdH0IjenjmfAQADAgADeQADNgQ")
     await callback_query.message.answer_media_group(avo_box_media_gr_1)
     await callback_query.message.answer(avo_box_text_long_2, disable_web_page_preview=True)
     await callback_query.message.answer_media_group(avo_box_media_gr_2)
