@@ -278,7 +278,7 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
     text3 = ""
     # await callback_query.message.edit_text("indev")
     buttons = [
-        [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/nutri_care")],
+        [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/ai_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     await callback_query.message.answer_photo(caption=text1, photo="AgACAgIAAxkBAAIdT2gPewzR0cZkwm0DFUMVfpRCfdSEAAKf8TEbMzh5SCdH0IjenjmfAQADAgADeQADNgQ")
@@ -290,7 +290,7 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(lambda c: c.data == 'avo_promo_2')
 async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
-        [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/nutri_care")],
+        [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/ai_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     await callback_query.message.edit_text(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
@@ -1669,7 +1669,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="🔖 Как пользоваться ботом", callback_data="explain_4")],
         [InlineKeyboardButton(text="📖 Обновить анкету", callback_data="settings_questionaire")],
         [InlineKeyboardButton(text="💰Условия подписки:", callback_data="settings_sub")],
-        [InlineKeyboardButton(text="🆘Служба заботы :", url="t.me/nutri_care")],
+        [InlineKeyboardButton(text="🆘Служба заботы :", url="t.me/ai_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)

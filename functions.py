@@ -354,7 +354,8 @@ async def audio_file(file_id: str) -> str:
 
 
 async def generate_response(message_body, usr_id, assistant):
-    thread_id = await check_if_thread_exists(usr_id)
+    # thread_id = await check_if_thread_exists(usr_id)
+    thread_id = None
     print(message_body, thread_id)
 
     if thread_id is None:
