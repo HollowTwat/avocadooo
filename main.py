@@ -1421,6 +1421,8 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             ]
         )
             text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            # first_in_list_name = extracted_list[0].get('FullName')
+            # text = f"Найдено:\n{first_in_list_name}\n\nВсе верно?\nЕсли нет, выберете средство из списка"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
@@ -1460,7 +1462,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                 )
             ]
         )
-            text = "Нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            # first_in_list_name = extracted_list[0].get('FullName')
+            # text = f"Найдено:\n{first_in_list_name}\n\nВсе верно?\nЕсли нет, выберете средство из списка"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
@@ -1519,7 +1523,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             ]
         )
             # combined_message = "\n".join(product_messages)
-            text = "Нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            # first_in_list_name = extracted_list[0].get('FullName')
+            # text = f"Найдено:\n{first_in_list_name}\n\nВсе верно?\nЕсли нет, выберете средство из списка"
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
