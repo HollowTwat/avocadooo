@@ -1432,7 +1432,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
                 ]
             )
-            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
+            await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
             await log_bot_response("Не распознали", message.from_user.id)
     elif message.voice:
 
@@ -1474,7 +1474,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
                 ]
             )
-            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
+            await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
             await log_bot_response(f"Не распознали", message.from_user.id)
     elif message.photo:
 
