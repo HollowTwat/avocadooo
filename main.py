@@ -1306,6 +1306,35 @@ async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext
     )
     await state.clear()
 
+async def process_about_avocado_2(callback_query: CallbackQuery, state: FSMContext):
+    img1="AgACAgIAAxkBAAIT0WfJez-CUdI7K-YyJ2DOgB09f2fsAAIq7TEbHPJQSkz1NGZe4-1hAQADAgADeQADNgQ"
+    img2="AgACAgIAAxkBAAIT32fJgsrNicPTNe3MkMYFOta84KfwAAKr5zEb2yZISgOzt2HHU-QuAQADAgADeQADNgQ"
+    img3="AgACAgIAAxkBAAIT42fJgs50ZHa4wZYm9YqgModbejwMAAKr7TEbHPJQSrcij3OQ5vXcAQADAgADeQADNgQ"
+    img4="AgACAgIAAxkBAAIT52fJgtJkjavpJcfoWLEH1wWm-b_1AAKs7TEbHPJQSnbl_XDr-QPTAQADAgADeQADNgQ"
+    img5="AgACAgIAAxkBAAIT62fJgtaNuzrEJWlwEQ6W4R0rSUYRAAKt7TEbHPJQSjJovcexbR6jAQADAgADeQADNgQ"
+    img6="AgACAgIAAxkBAAIT72fJgto4vNT0Fxazxtq_9qmU6lw9AAKu7TEbHPJQSqRC7d5pVGQ4AQADAgADeQADNgQ"
+    media_files = [
+        InputMediaPhoto(media=img1),
+        InputMediaPhoto(media=img2),
+        InputMediaPhoto(media=img3),
+        InputMediaPhoto(media=img4),
+        InputMediaPhoto(media=img5),
+        InputMediaPhoto(media=img6)
+    ]
+    await callback_query.message.answer_media_group(media=media_files)
+    buttons = [
+        [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
+        [InlineKeyboardButton(text="Мой Avocado Box  💚", callback_data="avo_box_menu")],
+        [InlineKeyboardButton(text="Спросить Avocado Ai🥑", callback_data="setstate_yapp")],
+        [InlineKeyboardButton(text="Маркировка 🔍", callback_data="markings")],
+        [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
+        ]
+    await callback_query.message.answer(
+        "Вот и все пора начинать! С чего хотите начать?",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
+    )
+    await state.clear()
+
 
 @router.message(StateFilter(UserState.yapp))
 async def yapp_handler(message: Message, state: FSMContext) -> None:
@@ -1686,7 +1715,7 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
     text = "Инструкция по применению Avocado Bot 🔖\nДавайте покажу, что я умею 🙌"
     await callback_query.message.edit_text(text, reply_markup=None)
-    await process_about_avocado(callback_query, state)
+    await process_about_avocado_2(callback_query, state)
 
 @router.callback_query(lambda c: c.data == 'settings_sub')
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
