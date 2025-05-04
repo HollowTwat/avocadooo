@@ -1712,20 +1712,21 @@ async def process_settings(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_text(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'explain_4')
-async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
+async def process_explain_four(callback_query: CallbackQuery, state: FSMContext):
     text = "Инструкция по применению Avocado Bot 🔖\nДавайте покажу, что я умею 🙌"
     await callback_query.message.edit_text(text, reply_markup=None)
     await process_about_avocado_2(callback_query, state)
 
 @router.callback_query(lambda c: c.data == 'settings_sub')
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
+    subtype, repayment_time = await get_user_sub_info(callback_query.from_user.id)
     buttons = [
         [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
         [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
         [InlineKeyboardButton(text=arrow_back, callback_data="settings"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    text = "Ваш текущий тариф: X   \n\nВаша подписка истекает ДАТА, не забудьте продлить \n\n<i>Ожидает подписок для перепроверки метода для инфы</i>"
+    text = f"Ваш текущий тариф: {subtype}   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
     
     await callback_query.message.edit_text(text, reply_markup=keyboard)
 
