@@ -567,6 +567,7 @@ async def get_user_sub_info(id):
         try:
             async with session.get(url=url) as response:
                 data = await response.text()
+                print(f"Никитин ответ: {data}")
                 data1 = json.loads(data)
                 type_value = data1["type"]
                 date_update = data1["dateUpdate"]
