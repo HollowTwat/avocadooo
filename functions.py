@@ -48,6 +48,16 @@ dp = Dispatcher(storage=storage)
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
+class UserState(StatesGroup):
+    info_coll = State()
+    recognition = State()
+    yapp = State()
+    menu = State()
+    yapp_with_xtra = State()
+    transfer = State()
+    mail = State()
+
+
 async def get_user_sub_info(id):
     url = f"https://avocado-production.up.railway.app/api/Subscription/GetUserSubDetail?tgId={id}"
     async with aiohttp.ClientSession() as session:
@@ -575,3 +585,33 @@ async def get_user_sub_info(id):
                 return type_value, formatted_date_update
         except aiohttp.ClientError as e:
             return False, e
+        
+async def process_mail(message, state):
+    answer = await check_mail(message.from_user.id, message.text)
+    print(answer)
+    if answer == "true":
+        text = "Поздравляю!\nУ тебя есть подписка на Нутри 🥂"
+        buttons = [
+        [InlineKeyboardButton(text="Начать урок 1", callback_data="lesson_0_done")],
+        [InlineKeyboardButton(text="В меню ⏏️", callback_data="menu_back")],
+        ]
+        keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        await message.answer(text, reply_markup=keyboard)
+        await state.set_state(UserState.menu)
+    elif answer == "false":
+        # await state.clear()
+        text = "Кажется, у тебя еще нет подписки на Нутри. \nХочешь оформить сейчас с супер скидкой -70%?"
+        buttons = [
+        [InlineKeyboardButton(text="Да, купить со скидкой -70%", callback_data="send_purchase_add")], #url="https://nutri-ai.ru/?promo=nutribot&utm_medium=referral&utm_source=telegram&utm_campaign=nutribot"
+        [InlineKeyboardButton(text="Попробовать еще раз", callback_data="retry_mail")],
+        [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
+        ]
+        keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        await message.answer(text, reply_markup=keyboard)
+
+async def check_mail(id, mail):
+    link = f"https://avocado-production.up.railway.app/api/Subscription/ActivateUser?userTgId={id}&userEmail={mail}"
+    # headers = {"accept": "text/plain"}
+    response = requests.post(
+        link)
+    return response.text

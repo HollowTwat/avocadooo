@@ -76,6 +76,7 @@ class UserState(StatesGroup):
     menu = State()
     yapp_with_xtra = State()
     transfer = State()
+    mail = State()
 
 class ImageUploadState(StatesGroup):
     waiting_for_image = State()
@@ -220,8 +221,19 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
 
 
 
+@router.message(Command("mail_input_debug"))
+async def devmenu_handler(message: Message, state: FSMContext) -> None:
+    await state.set_state(UserState.mail)
+    await message.answer("Пиши почту")
 
 
+@router.message(StateFilter(UserState.mail))
+async def main_process_mail(message: Message, state: FSMContext):
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if re.match(pattern, message.text):
+        await process_mail(message, state)
+    else:
+        await message.answer("Какая у тебя электронная почта?\nПожалуйста введи ту же почту, что и при оплате 🙏")
 
 
 
