@@ -1970,7 +1970,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
 
     await bot.send_message(us_id, analysis_result)
-    await bot.send_message(us_id, "✅ Анализ завершён\n\nХотите проверить еще одно средство?<b>вам</b>?", reply_markup=keyboard)
+    await bot.send_message(us_id, "✅ Анализ завершён\n\nХотите проверить еще одно средство?", reply_markup=keyboard)
     await log_bot_response(analysis_result, callback_query.from_user.id)
 
     try:
