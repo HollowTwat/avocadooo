@@ -251,14 +251,14 @@ async def devmenu_handler_cb(callback_query: CallbackQuery, state: FSMContext) -
 @router.callback_query(lambda c: c.data == 'avo_box')
 async def process_avo_box(callback_query: CallbackQuery, state: FSMContext):
     buttons = [[InlineKeyboardButton(text="Хочу", callback_data="avo_box_2")]]
-    text="Соберите свой идеальный Avocado Box прямо сейчас!\n\nМожно купить все продукты сразу или по-отдельности;\n\nРегулярные подборки премиальной натуральной косметики со скидками до 50% – тестируйте лучшие продукты по суперценам.\n\nГарантия безопасности и качества от Авокадской Конторы 💚\n\n Никаких случайных баночек – только идеальный бьюти-бокс, который подходит именно вашей коже!"
+    text="<b>Соберите свой идеальный Avocado Box прямо сейчас!</b>\n\nМожно купить все продукты сразу или по-отдельности;\n\nРегулярные подборки премиальной натуральной косметики со скидками до 50% – тестируйте лучшие продукты по суперценам.\n\nГарантия безопасности и качества от Авокадской Конторы 💚\n\n Никаких случайных баночек – только идеальный бьюти-бокс, который подходит именно вашей коже!"
     # text = "Соберите свой идеальный My Avocado Box AI!\n\nВыбирайте только то, что действительно хочется.\n\nРегулярные подборки премиальной натуральной косметики со скидками до 50% – тестируйте лучшие продукты по суперценам.\n\nГарантия безопасности и качества от Авокадской Конторы 💚\n\nНикаких случайных баночек – только идеальный бьюти-бокс, который подходит именно вашей коже!"
     await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'avo_promo')
 async def process_avo_promo(callback_query: CallbackQuery, state: FSMContext):
     buttons = [[InlineKeyboardButton(text="Получить промокоды", callback_data="avo_promo_2")]]
-    text = "Мы объединили все лучшие эко-бренды – друзей My Avocado Box, чтобы у вас всегда был доступ к безопасной косметике по самой приятной цене.\n\n\n 🌿 Бренды готовы радовать тебя натуральными и проверенными продуктами.\n\n 💚Постоянные скидки 15-20% – эксклюзивно для наших подписчиков.\n\n ✨ Лучшее из мира эко-косметики всегда доступно в один клик.\n\nВыбирайте, пробуйте, влюбляйтесь – с Avocado Bot вы всегда в выигрыше!"
+    text = "<b>Мы объединили все лучшие эко-бренды – друзей My Avocado Box, чтобы у вас всегда был доступ к безопасной косметике по самой приятной цене.</b>\n\n 🌿 Бренды готовы радовать тебя натуральными и проверенными продуктами.\n\n 💚Постоянные скидки 15-20% – эксклюзивно для наших подписчиков.\n\n ✨ Лучшее из мира эко-косметики всегда доступно в один клик.\n\nВыбирайте, пробуйте, влюбляйтесь – с Avocado Bot вы всегда в выигрыше!"
     # text = "Скидки, созданные специально для вас!\n\nМы объединили все лучшие эко-бренды – друзей My Avocado Box, чтобы у вас всегда был доступ к безопасной косметике по самой приятной цене. \n\n🌿Лучшие бренды готовы радовать тебя натуральными и проверенными продуктами.\n\n💚Постоянные скидки 15-20% – эксклюзивно для наших подписчиков.\n\n✨ Лучшее из мира эко-косметики всегда доступно в один клик.\n\nВыбирайте, пробуйте, влюбляйтесь – с Avocado Bot вы всегда в выигрыше!"
     await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
@@ -1332,6 +1332,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     user_data = await state.get_data()
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
+    thinking_mssg = await message.answer("Анализирую 🔍 ")
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
     buttons = [
@@ -1340,18 +1341,20 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     if message.text:
         response_1 = await generate_response(message.text, us_id, YAPP_ASS)
         response = remove_tags(response_1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await thinking_mssg.delete()
+        await sticker_message.delete()
         await message.answer(f"{response}")
-        await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await log_bot_response(f"{response}", message.from_user.id)
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
         response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
         response = remove_tags(response_1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await thinking_mssg.delete()
+        await sticker_message.delete()
         await message.answer(f"{response}")
-        await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await log_bot_response(f"{response}", message.from_user.id)
     elif message.photo:
         file = await bot.get_file(message.photo[-1].file_id)
@@ -1359,9 +1362,10 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
         url_response_1 = await process_url(file_url, us_id, YAPP_ASS)
         url_response = remove_tags(url_response_1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await thinking_mssg.delete()
+        await sticker_message.delete()
         await message.answer(f"{response}")
-        await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await log_bot_response(f"{response}", message.from_user.id)
 
 
@@ -1376,23 +1380,26 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     buttons = [
         [InlineKeyboardButton(text="Меню", callback_data="menu")],
     ]
+    thinking_mssg = await message.answer("Анализирую 🔍 ")
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
     if message.text:
         response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {message.text} ", us_id, YAPP_ASS)
         response = remove_tags(response_1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await thinking_mssg.delete()
+        await sticker_message.delete()
         await message.answer(response)
-        await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await log_bot_response(response, message.from_user.id)
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
         response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {trainscription}", us_id, YAPP_ASS)
         response = remove_tags(response_1)
-        await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+        await thinking_mssg.delete()
+        await sticker_message.delete()
         await message.answer(response)
-        await message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await log_bot_response(response, message.from_user.id)
     elif message.photo:
         await message.answer("Введи текст или надиктуй голосом")
@@ -1448,7 +1455,8 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
+                    [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
+                    [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
                 ]
             )
             await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
@@ -1490,7 +1498,8 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
+                    [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
+                    [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
                 ]
             )
             await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
@@ -1552,7 +1561,8 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
+                    [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
+                    [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
                 ]
             )
             await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
@@ -1598,14 +1608,14 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp)
     await callback_query.answer("yapp_state_set")
-    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>"#\n Я всегда готов помочь! 🥑
+    text = "<b>Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос!</b> \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: Как использовать сыворотку с ретинолом? или Можно ли использовать крем с мочевиной для рук – на тело?"#\n Я всегда готов помочь! 🥑
     await callback_query.message.answer(text)
 
 @router.callback_query(lambda c: c.data == 'yapp_with_extra_info')
 async def process_yapp_with_extra_info(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp_with_xtra)
     await callback_query.answer()
-    text = "Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос! \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: <i>Как использовать сыворотку с ретинолом?</i> или <i>Можно ли использовать крем с мочевиной для рук – на тело?</i>"#\n Я всегда готов помочь! 🥑
+    text = "<b>Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос!</b> \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: Как использовать сыворотку с ретинолом? или Можно ли использовать крем с мочевиной для рук – на тело?"#\n Я всегда готов помочь! 🥑
     await callback_query.message.answer(text)
 
 @router.callback_query(lambda c: c.data.startswith('setstate_yapp_transfer_'))
@@ -1616,23 +1626,26 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
     buttons = [
         [InlineKeyboardButton(text="Меню", callback_data="menu")],
     ]
+    thinking_mssg = await callback_query.message.answer("Анализирую 🔍 ")
     sticker_message = await callback_query.message.answer_sticker(random.choice(STICKERLIST))
     if transfer_type == "txt":
         txt = user_data['transfer_text']
         response_1 = await generate_response(txt, us_id, YAPP_ASS)
         response = remove_tags(response_1)
+        await thinking_mssg.delete()
         await sticker_message.delete()
         await callback_query.message.answer(f"{response}")
-        await callback_query.message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await callback_query.message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await state.set_state(UserState.yapp)
     elif transfer_type == "voice":
         voice = user_data['transfer_voice']
         trainscription = await audio_file(voice)
         response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
         response = remove_tags(response_1)
+        await thinking_mssg.delete()
         await sticker_message.delete()
         await callback_query.message.answer(f"{response}")
-        await callback_query.message.answer("<i>Можете спросить что-то ещё или вернуться в меню 💚</i>", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await callback_query.message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await state.set_state(UserState.yapp)
 
 @router.callback_query(lambda c: c.data == 'markings')
