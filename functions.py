@@ -7,6 +7,7 @@ import aiogram
 import sqlite3
 import openai
 import datetime
+from datetime import datetime
 import base64
 import requests
 from aiogram import Bot, Dispatcher, html, Router, BaseMiddleware, types
