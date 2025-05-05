@@ -64,11 +64,12 @@ async def get_user_sub_info(id):
         try:
             async with session.get(url=url) as response:
                 data = await response.text()
-                print(f"Никитин ответ: {data}")
+                # print(f"Никитин ответ: {data}")
                 data1 = json.loads(data)
                 type_value = data1["type"]
                 date_update = data1["dateUpdate"]
                 formatted_date_update = datetime.fromisoformat(date_update).strftime("%Y-%m-%d")
+                print(type_value, formatted_date_update)
                 return type_value, formatted_date_update
         except aiohttp.ClientError as e:
             return False, e
