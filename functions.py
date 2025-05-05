@@ -59,7 +59,7 @@ class UserState(StatesGroup):
 
 
 async def get_user_sub_info(id):
-    url = f"https://avocado-production.up.railway.app//api/Subscription/GetUserSubDetail?tgId={id}"
+    url = f"https://avocado-production.up.railway.app/api/Subscription/GetUserSubDetail?tgId={id}"
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url=url) as response:
