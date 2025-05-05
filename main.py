@@ -1715,10 +1715,26 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
         [InlineKeyboardButton(text=arrow_back, callback_data="settings"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
+    if subtype == False:
+        bttns = [[InlineKeyboardButton(text="Хочу оплатить", url="https://nutri-ai.ru/?promo=COMMUNITY&utm_medium=referral&utm_source=telegram&utm_campaign=COMMUNITY")], [InlineKeyboardButton(text=" 🆘 Помощь", url="t.me/ai_care")], [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]]
+        await callback_query.message.answer("У тебя нету подписки или произошла ошибка при получении информации о ней \n\n Если ты не вводил почту, то твоя подписка не привязана к аккаунту", reply_markup=InlineKeyboardMarkup(inline_keyboard=bttns))
+        return
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    text = f"Ваш текущий тариф: {subtype}   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
+    # message = f"Ваш текущий тариф: {subtype}   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
+    message = "Твой текущий тариф:\n\n"
+    if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
+        message += "☑️ Подписка на сервис Нутри навсегда"
+    elif subtype == "Подписка на 1 год":
+        message += "☑️ Подписка на сервис Нутри на 1 год"
+    elif subtype == "Подписка на 3 месяца" or subtype == "Тариф на 3 месяца":
+        message += f"☑️ Подписка на сервис Нутри на 3 месяца\n"
+        message += f"☑️ Дата автоматического продления: {repayment_time}"
+    elif subtype == "Тариф Бесплатный доступ":
+        message += "☑️ Тариф Бесплатный доступ"
+    else:
+        message += "☑️ Неизвестный тариф"
     
-    await callback_query.message.edit_text(text, reply_markup=keyboard)
+    await callback_query.message.edit_text(message, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 're_sub')
 async def process_re_sub(callback_query: CallbackQuery, state: FSMContext):
