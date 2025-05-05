@@ -59,11 +59,12 @@ class UserState(StatesGroup):
 
 
 async def get_user_sub_info(id):
-    url = f"https://avocado-production.up.railway.app/api/Subscription/GetUserSubDetail?tgId={id}"
+    url = f"https://avocado-production.up.railway.app//api/Subscription/GetUserSubDetail?tgId={id}"
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url=url) as response:
                 data = await response.text()
+                print(f"Никитин ответ: {data}")
                 data1 = json.loads(data)
                 type_value = data1["type"]
                 date_update = data1["dateUpdate"]
@@ -571,20 +572,6 @@ async def log_bot_response(text, user_id):
     )
     logger.info(f"Logged bot response for user {user_id} in topic {thread_id}")
 
-async def get_user_sub_info(id):
-    url = f"https://avocado-production.up.railway.app//api/Subscription/GetUserSubDetail?tgId={id}"
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(url=url) as response:
-                data = await response.text()
-                print(f"Никитин ответ: {data}")
-                data1 = json.loads(data)
-                type_value = data1["type"]
-                date_update = data1["dateUpdate"]
-                formatted_date_update = datetime.fromisoformat(date_update).strftime("%Y-%m-%d")
-                return type_value, formatted_date_update
-        except aiohttp.ClientError as e:
-            return False, e
         
 async def process_mail(message, state):
     answer = await check_mail(message.from_user.id, message.text)
