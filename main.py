@@ -1720,19 +1720,19 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
         await callback_query.message.answer("У тебя нету подписки или произошла ошибка при получении информации о ней \n\n Если ты не вводил почту, то твоя подписка не привязана к аккаунту", reply_markup=InlineKeyboardMarkup(inline_keyboard=bttns))
         return
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    # message = f"Ваш текущий тариф: {subtype}   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
-    message = "Твой текущий тариф:\n\n"
-    if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
-        message += "☑️ Подписка на сервис Нутри навсегда"
-    elif subtype == "Подписка на 1 год":
-        message += "☑️ Подписка на сервис Нутри на 1 год"
-    elif subtype == "Подписка на 3 месяца" or subtype == "Тариф на 3 месяца":
-        message += f"☑️ Подписка на сервис Нутри на 3 месяца\n"
-        message += f"☑️ Дата автоматического продления: {repayment_time}"
-    elif subtype == "Тариф Бесплатный доступ":
-        message += "☑️ Тариф Бесплатный доступ"
-    else:
-        message += "☑️ Неизвестный тариф"
+    message = f"Ваш текущий тариф: {subtype}   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
+    # message = "Твой текущий тариф:\n\n"
+    # if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
+    #     message += "☑️ Подписка на сервис Авокадо навсегда"
+    # elif subtype == "Подписка на 1 год":
+    #     message += "☑️ Подписка на сервис Авокадо на 1 год"
+    # elif subtype == "Подписка на 3 месяца" or subtype == "Тариф на 3 месяца":
+    #     message += f"☑️ Подписка на сервис Авокадо на 3 месяца\n"
+    #     message += f"☑️ Дата автоматического продления: {repayment_time}"
+    # elif subtype == "Тариф Бесплатный доступ":
+    #     message += "☑️ Тариф Бесплатный доступ"
+    # else:
+    #     message += "☑️ Неизвестный тариф"
     
     await callback_query.message.edit_text(message, reply_markup=keyboard)
 
