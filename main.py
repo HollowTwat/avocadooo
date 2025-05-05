@@ -167,26 +167,10 @@ async def start(message: types.Message):
     await message.answer("Выберите опции:", reply_markup=keyboard)
 
 # Обработчик для переключения чекбоксов
-@router.callback_query(lambda c: c.data.startswith("toggle_"))
-async def handle_checkbox(callback_query: types.CallbackQuery):
-    option = callback_query.data.replace("toggle_", "")  # Получаем название опции
-    checkbox_states[option] = not checkbox_states[option]  # Меняем состояние
-    
-    # Обновляем сообщение с новым состоянием кнопок
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(
-            text=f"✅ Опция 1" if checkbox_states["option_1"] else "☐ Опция 1",
-            callback_data="toggle_option_1"
-        )],
-        [InlineKeyboardButton(
-            text=f"✅ Опция 2" if checkbox_states["option_2"] else "☐ Опция 2",
-            callback_data="toggle_option_2"
-        )],
-        [InlineKeyboardButton(text="Подтвердить", callback_data="confirm")]
-    ])
-    
-    await callback_query.message.edit_text("Выберите опции:", reply_markup=keyboard)
-    await callback_query.answer()
+@router.message(Command("mail_input_debug"))
+async def devmenu_handler(message: Message, state: FSMContext) -> None:
+    await state.set_state(UserState.mail)
+    await message.answer("Пиши почту")
 
 
 @router.message(Command("menu"))
@@ -219,12 +203,6 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
     step0txt = "Меню"
     await callback_query.message.edit_text(step0txt, reply_markup=keyboard)
 
-
-
-@router.message(Command("mail_input_debug"))
-async def devmenu_handler(message: Message, state: FSMContext) -> None:
-    await state.set_state(UserState.mail)
-    await message.answer("Пиши почту")
 
 
 @router.message(StateFilter(UserState.mail))
