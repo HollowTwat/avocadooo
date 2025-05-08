@@ -1440,12 +1440,12 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
             product_list = "\n".join(
             f"{idx + 1} — {product.get('FullName')}" 
-            for idx, product in enumerate(extracted_list[:5]))
+            for idx, product in enumerate(extracted_list[:4]))
             buttons = [
                 [InlineKeyboardButton(
                     text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
-                ) for idx, product in enumerate(extracted_list[:5])],
+                ) for idx, product in enumerate(extracted_list[:4])],
                 [InlineKeyboardButton(
                     text="Попробовать еще", 
                     callback_data="analysis")]
@@ -1488,12 +1488,12 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
             product_list = "\n".join(
             f"{idx + 1} — {product.get('FullName')}" 
-            for idx, product in enumerate(extracted_list[:5]))
+            for idx, product in enumerate(extracted_list[:4]))
             buttons = [
                 [InlineKeyboardButton(
                     text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
-                ) for idx, product in enumerate(extracted_list[:5])],
+                ) for idx, product in enumerate(extracted_list[:4])],
                 [InlineKeyboardButton(
                     text="Попробовать еще", 
                     callback_data="analysis")]
@@ -1555,12 +1555,12 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
             product_list = "\n".join(
             f"{idx + 1} — {product.get('FullName')}" 
-            for idx, product in enumerate(extracted_list[:5]))
+            for idx, product in enumerate(extracted_list[:4]))
             buttons = [
                 [InlineKeyboardButton(
                     text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
-                ) for idx, product in enumerate(extracted_list[:5])],
+                ) for idx, product in enumerate(extracted_list[:4])],
                 [InlineKeyboardButton(
                     text="Попробовать еще", 
                     callback_data="analysis")]
