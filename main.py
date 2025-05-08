@@ -1437,19 +1437,24 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         extracted_list = await extract_list_from_input(response1)
         if extracted_list:
-            buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
-            for product in extracted_list[:5]:
-                buttons.append(
-                    [
-                InlineKeyboardButton(
-                    text=product.get('FullName'),
+
+            product_list = "\n".join(
+            f"{idx + 1} — {product.get('FullName')}" 
+            for idx, product in enumerate(extracted_list[:5]))
+            buttons = [
+                [InlineKeyboardButton(
+                    text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
-                )
+                ) for idx, product in enumerate(extracted_list[:5])],
+                [InlineKeyboardButton(
+                    text="Попробовать еще", 
+                    callback_data="analysis")]
             ]
-        )
-            text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
-            # first_in_list_name = extracted_list[0].get('FullName')
-            # text = f"Найдено:\n{first_in_list_name}\n\nВсе верно?\nЕсли нет, выберете средство из списка"
+            text = (
+                f"Найдено несколько похожих средств 🔎\n"
+                f"{product_list}\n\n"
+                f"Какое анализируем?"
+            )
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
@@ -1480,22 +1485,42 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
         extracted_list = await extract_list_from_input(response1)
         if extracted_list:
-            buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
-            for product in extracted_list[:5]:
-                buttons.append(
-                    [
-                InlineKeyboardButton(
-                    text=product.get('FullName'),
+
+            product_list = "\n".join(
+            f"{idx + 1} — {product.get('FullName')}" 
+            for idx, product in enumerate(extracted_list[:5]))
+            buttons = [
+                [InlineKeyboardButton(
+                    text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
-                )
+                ) for idx, product in enumerate(extracted_list[:5])],
+                [InlineKeyboardButton(
+                    text="Попробовать еще", 
+                    callback_data="analysis")]
             ]
-        )
-            text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
-            # first_in_list_name = extracted_list[0].get('FullName')
-            # text = f"Найдено:\n{first_in_list_name}\n\nВсе верно?\nЕсли нет, выберете средство из списка"
+            text = (
+                f"Найдено несколько похожих средств 🔎\n"
+                f"{product_list}\n\n"
+                f"Какое анализируем?"
+            )
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
+        # if extracted_list:
+        #     buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
+        #     for product in extracted_list[:5]:
+        #         buttons.append(
+        #             [
+        #         InlineKeyboardButton(
+        #             text=product.get('FullName'),
+        #             callback_data=f"item_{product.get('Identifier')}"
+        #         )
+        #     ]
+        # )
+        #     text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
+            # keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+            # await message.answer(text, reply_markup=keyboard)
+            # await log_bot_response(f"{extracted_list}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
@@ -1526,38 +1551,27 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         # await message.answer(f"Вот информация по продукту в базе: {response}")
         extracted_list = await extract_list_from_input(response1)
         
-        # if extracted_list:
-            # db_info = await fetch_product_details(extracted_list[0].get('Identifier'))
-            # Name = db_info.get("Name")
-            # Type = db_info.get("Type")
-            # Brand = db_info.get("Brand")
-            # Country = db_info.get("Country")
-            # text = f"<b>Найдено:</b>   \n\n-{Name} \n-{Brand} \n-{Type} \n-Страна производитель: {Country}  \n\nВсё верно 💚?"
-            # buttons = [
-            #     [InlineKeyboardButton(text="Да, проанализировать", callback_data=f"item_{product_type}_{extracted_list[0].get('Identifier')}")],
-            #     [InlineKeyboardButton(text="Нет, попробовать снова", callback_data=f"product_type_{product_type}")]
-            # ]
-            # await message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         if extracted_list:
-            buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
-            # product_messages = []
-            for product in extracted_list[:5]:
-                # product_messages.append(f"id: {product.get('Identifier')}, name: {product.get('FullName')}")
-                buttons.append(
-                    [
-                InlineKeyboardButton(
-                    text=product.get('FullName'),
+
+            product_list = "\n".join(
+            f"{idx + 1} — {product.get('FullName')}" 
+            for idx, product in enumerate(extracted_list[:5]))
+            buttons = [
+                [InlineKeyboardButton(
+                    text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
-                )
+                ) for idx, product in enumerate(extracted_list[:5])],
+                [InlineKeyboardButton(
+                    text="Попробовать еще", 
+                    callback_data="analysis")]
             ]
-        )
-            # combined_message = "\n".join(product_messages)
-            text = f"Определила средство как: <code>{med_name}</code>\nВ базе нашла несколько похожих средств.\n\nКакое нужно проанализировать?"
-            # first_in_list_name = extracted_list[0].get('FullName')
-            # text = f"Найдено:\n{first_in_list_name}\n\nВсе верно?\nЕсли нет, выберете средство из списка"
+            text = (
+                f"Найдено несколько похожих средств 🔎\n"
+                f"{product_list}\n\n"
+                f"Какое анализируем?"
+            )
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
-            # await message.answer(f"Выбери один из товаров \n{combined_message}", reply_markup=keyboard)
             await log_bot_response(f"{extracted_list}", message.from_user.id)
         else:
             keyboard = InlineKeyboardMarkup(
