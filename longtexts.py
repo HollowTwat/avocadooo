@@ -6,12 +6,6 @@ markings_4 = "<b>КАЧЕСТВО И СЕРТИФИКАЦИЯ</b>\n\n✅ <b>EAC 
 markings_5 = "НЕ НАШЕЛ СООТВЕТСТВИЯ В ФАЙЛЕ"
 markings_6 = "placeholder_text"
 markings_mg_1 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYtWgAATXKeBSK41ugs70qYMp0ZSJNqgACNO4xGzFqAUj2y89bE3TroAEAAwIAA3kAAzYE", caption="Тут про ключевые знаки, виды пластика и как правильно сдавать тару в переработку ♻️"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYuWgAATXQ-hE5AmhTNAkKv9_rj9aF5QACNe4xGzFqAUiPzqDM57sR4QEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYvWgAATXW686m8Ar95xvUZH4ltZUTrwACNu4xGzFqAUjJU--tnzQ_YwEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYwWgAATXbePqwPtA7P3meTAy0whJSiAACN-4xGzFqAUiPEGu3-Cc8twEAAwIAA3kAAzYE")
-        ]
-markings_mg_2 = [
         InputMediaPhoto(media="AgACAgIAAxkBAAIYxWgAATZTtutyNeuAyqQoIIlIYxT4agACOe4xGzFqAUiH0OvBH4-oOAEAAwIAA3kAAzYE", caption="Что означают ключевые показатели по срокам годности?  📅"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYyWgAATZs07-W8RbEJFnBr1jcK0oR1gACOu4xGzFqAUgbiDTxOyHWiAEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIYzWgAATZ4URpEJpBpeaPgGEojTnvLvAACO-4xGzFqAUiSbXYqAAEbLngBAAMCAAN5AAM2BA"),
@@ -19,6 +13,12 @@ markings_mg_2 = [
         InputMediaPhoto(media="AgACAgIAAxkBAAIY02gAATaOW2SYJSy6MulGd04wQP3nzAACPe4xGzFqAUg12fmKs0VA_AEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY22gAATahNNKpqeh_VSDeQrgg2Eb0bAACPu4xGzFqAUh0d5fthTgUdQEAAwIAA3kAAzYE"),
         InputMediaPhoto(media="AgACAgIAAxkBAAIY32gAATarPUzLLo45HfhLOMXyBuEWGgACP-4xGzFqAUiD2FBBBFNQoAEAAwIAA3kAAzYE"),
+        ]
+markings_mg_2 = [
+        InputMediaPhoto(media="AgACAgIAAxkBAAIYtWgAATXKeBSK41ugs70qYMp0ZSJNqgACNO4xGzFqAUj2y89bE3TroAEAAwIAA3kAAzYE", caption="Тут про ключевые знаки, виды пластика и как правильно сдавать тару в переработку ♻️"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIYuWgAATXQ-hE5AmhTNAkKv9_rj9aF5QACNe4xGzFqAUiPzqDM57sR4QEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIYvWgAATXW686m8Ar95xvUZH4ltZUTrwACNu4xGzFqAUjJU--tnzQ_YwEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAIYwWgAATXbePqwPtA7P3meTAy0whJSiAACN-4xGzFqAUiPEGu3-Cc8twEAAwIAA3kAAzYE")
         ]
 markings_mg_3 = [
         InputMediaPhoto(media="AgACAgIAAxkBAAIY42gAATbYA0gkG7-4Mam3MwUQ0c6N0gACQe4xGzFqAUgnOWFa1sv80gEAAwIAA3kAAzYE", caption="Что означают ключевые показатели по утилизации и безопасности? 👇"),
