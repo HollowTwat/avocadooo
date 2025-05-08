@@ -736,7 +736,7 @@ async def process_face_skin_condition(callback_query: CallbackQuery, state: FSMC
 @router.message(StateFilter(QuestionnaireFace.skin_issues))
 async def process_face_skin_issues(message: types.Message, state: FSMContext):
     if re.match(
-        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:(?:[1-9](?:[ ,]+[1-9])*)|10)$',  
+        r'^(?!.*\b(\d+)\b.*\b\1\b)(?:(?:[1-9]|10)(?:[ ,]+(?:[1-9]|10))*$',
         message.text,
         flags=re.ASCII
         ):
@@ -778,7 +778,7 @@ async def process_face_skin_issues(message: types.Message, state: FSMContext):
 @router.message(StateFilter(QuestionnaireFace.skin_goals))
 async def process_face_skin_goals(message: types.Message, state: FSMContext):
     if re.match(
-        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:(?:[1-9](?:[ ,]+[1-9])*)|10)$',  
+        r'^(?!.*\b(\d+)\b.*\b\1\b)(?:(?:[1-9]|10)(?:[ ,]+(?:[1-9]|10))*$',
         message.text,
         flags=re.ASCII
         ):
@@ -952,7 +952,7 @@ async def process_body_attention_areas(callback_query: CallbackQuery, state: FSM
 @router.message(StateFilter(QuestionnaireBody.body_goals))
 async def process_body_goals(message: types.Message, state: FSMContext):
     if re.match(
-        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:[1-9]|1[0-3])(?:[ ,]+(?:[1-9]|1[0-3]))*$',  
+        r'^(?!.*\b(\d+)\b.*\b\1\b)(?:(?:[1-9]|1[0-3])(?:[ ,]+(?:[1-9]|1[0-3]))*$',
         message.text,
         flags=re.ASCII
         ):
@@ -1091,7 +1091,7 @@ async def process_hair_condition(callback_query: CallbackQuery, state: FSMContex
 @router.message(StateFilter(QuestionnaireHair.hair_goals))
 async def process_hair_goals(message: types.Message, state: FSMContext):
     if re.match(
-        r'^(?:(?!(?:.*\b(\d+)\b.*\b\1\b)))(?:[1-9]|1[0-1])(?:[ ,]+(?:[1-9]|1[0-1]))*$',  
+        r'^(?!.*\b(\d+)\b.*\b\1\b)(?:(?:[1-9]|1[0-3])(?:[ ,]+(?:[1-9]|1[0-1]))*$',
         message.text,
         flags=re.ASCII
         ):
