@@ -601,11 +601,12 @@ async def process_stress(callback_query: types.CallbackQuery, state: FSMContext)
 @router.message(StateFilter(Questionnaire.habits), lambda c: True)
 async def process_habits(message: types.Message, state: FSMContext):
     if re.match(
-        r'^(?:(?!.*\b(\d+)\b.*\b\1\b))(?:(1|2)(?:[ ,]+(1|2))?|3)$',  
+        r'^\s*(?:(?!.*\b(\d+)\b.*\b\1\b))[1-3](?:\s*[ ,]\s*[1-3])*\s*$',  
         message.text,
         flags=re.ASCII
         ):
-        products = [int(x) for x in message.text.replace(",", " ").split()]
+        # Normalize input by replacing commas with spaces and splitting
+        products = [int(x) for x in re.split(r'[ ,]+', message.text.strip())]
         products_descriptions = {
             1 : "Курение",
             2 : "Употребление алкоголя",
