@@ -210,14 +210,6 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
 
 
 
-@router.message(StateFilter(UserState.mail))
-async def main_process_mail(message: Message, state: FSMContext):
-    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    if re.match(pattern, message.text):
-        await process_mail(message, state)
-    else:
-        await message.answer("Какая у тебя электронная почта?\nПожалуйста введи ту же почту, что и при оплате 🙏")
-
 
 
 
