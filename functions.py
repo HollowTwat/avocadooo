@@ -575,11 +575,11 @@ async def process_mail(message, state):
         user_data = await state.get_data()
         text = f"Приятно познакомиться, {user_data['name']}!  🌿 \nЯ здесь, чтобы помочь вам с анализом состава косметики и рассказать, что именно в ней содержится и как работает.\n"    
         "На основе информации о вашей коже и образе жизни я подберу те средства, которые подойдут именно <b>вам</b>.  Могу порекомендовать, какие продукты стоит попробовать, а какие лучше оставить на полке.  Всё просто — вместе мы сделаем выбор безопасным и эффективным и подходящим именно вам!"
-        buttons = [
-        [InlineKeyboardButton(text="Начать урок 1", callback_data="lesson_0_done")],
-        [InlineKeyboardButton(text="В меню ⏏️", callback_data="menu_back")],
-        ]
-        keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Как ты работаешь, Avocado?", callback_data="what_do_you_do")]
+            ]
+        )
         await message.answer(text, reply_markup=keyboard)
         await state.set_state(Questionnaire.intro)
     elif answer == "false":
