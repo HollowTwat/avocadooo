@@ -76,13 +76,13 @@ class UserState(StatesGroup):
     menu = State()
     yapp_with_xtra = State()
     transfer = State()
-    mail = State()
 
 class ImageUploadState(StatesGroup):
     waiting_for_image = State()
 
 class Questionnaire(StatesGroup):
     name = State()
+    mail = State()
     intro = State()
     age = State()
     gender = State()
@@ -169,8 +169,13 @@ async def start(message: types.Message):
 # Обработчик для переключения чекбоксов
 @router.message(Command("mail_input_debug"))
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
-    await state.set_state(UserState.mail)
+    await state.set_state(Questionnaire.mail)
     await message.answer("Пиши почту")
+
+@router.callback_query(lambda c: c.data == 'retry_mail')
+async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    await state.set_state(Questionnaire.mail)
+    await callback_query.message.answer("Пиши почту")
 
 
 @router.message(Command("menu"))
@@ -309,12 +314,21 @@ async def process_name(message: types.Message, state: FSMContext):
                 [InlineKeyboardButton(text="Как ты работаешь, Avocado?", callback_data="what_do_you_do")]
             ]
         )
-    await state.set_state(Questionnaire.intro)
+    await state.set_state(Questionnaire.mail)
     await message.answer(
         f"Приятно познакомиться, {message.text}!  🌿 \nЯ здесь, чтобы помочь вам с анализом состава косметики и рассказать, что именно в ней содержится и как работает.\n"    
         "На основе информации о вашей коже и образе жизни я подберу те средства, которые подойдут именно <b>вам</b>.  Могу порекомендовать, какие продукты стоит попробовать, а какие лучше оставить на полке.  Всё просто — вместе мы сделаем выбор безопасным и эффективным и подходящим именно вам!"
         , reply_markup=keyboard
     )
+
+@router.message(StateFilter(Questionnaire.mail))
+async def main_process_mail(message: Message, state: FSMContext):
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if re.match(pattern, message.text):
+        await process_mail(message, state)
+    else:
+        await message.answer("Какая у тебя электронная почта?\nПожалуйста введи ту же почту, что и при оплате 🙏")
+
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'what_do_you_do')
 async def process_questionnaire_yapp(callback_query: CallbackQuery, state: FSMContext):

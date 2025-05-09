@@ -49,14 +49,7 @@ dp = Dispatcher(storage=storage)
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
-class UserState(StatesGroup):
-    info_coll = State()
-    recognition = State()
-    yapp = State()
-    menu = State()
-    yapp_with_xtra = State()
-    transfer = State()
-    mail = State()
+from main import Questionnaire, UserState
 
 
 async def get_user_sub_info(id):
@@ -579,17 +572,19 @@ async def process_mail(message, state):
     answer = await check_mail(message.from_user.id, message.text)
     print(answer)
     if answer == "true":
-        text = "Поздравляю!\nУ тебя есть подписка на Нутри 🥂"
+        user_data = await state.get_data()
+        text = f"Приятно познакомиться, {user_data['name']}!  🌿 \nЯ здесь, чтобы помочь вам с анализом состава косметики и рассказать, что именно в ней содержится и как работает.\n"    
+        "На основе информации о вашей коже и образе жизни я подберу те средства, которые подойдут именно <b>вам</b>.  Могу порекомендовать, какие продукты стоит попробовать, а какие лучше оставить на полке.  Всё просто — вместе мы сделаем выбор безопасным и эффективным и подходящим именно вам!"
         buttons = [
         [InlineKeyboardButton(text="Начать урок 1", callback_data="lesson_0_done")],
         [InlineKeyboardButton(text="В меню ⏏️", callback_data="menu_back")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await message.answer(text, reply_markup=keyboard)
-        await state.set_state(UserState.menu)
+        await state.set_state(Questionnaire.intro)
     elif answer == "false":
         # await state.clear()
-        text = "Кажется, у тебя еще нет подписки на Нутри. \nХочешь оформить сейчас с супер скидкой -70%?"
+        text = "К сожалению, я не нашла эту почту.\n\nНапишите пожалуйста в тех поддержку\nsupport@myavocadobox.ru"
         buttons = [
         [InlineKeyboardButton(text="Да, купить со скидкой -70%", callback_data="send_purchase_add")], #url="https://nutri-ai.ru/?promo=nutribot&utm_medium=referral&utm_source=telegram&utm_campaign=nutribot"
         [InlineKeyboardButton(text="Попробовать еще раз", callback_data="retry_mail")],
