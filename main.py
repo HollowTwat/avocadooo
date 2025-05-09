@@ -306,6 +306,7 @@ async def process_name(message: types.Message, state: FSMContext):
         "Какая у вас электронная почта?\nПожалуйста введите ту же почту, что и при оплате — это важно"
     )
 
+
 @router.message(StateFilter(Questionnaire.mail))
 async def main_process_mail(message: Message, state: FSMContext):
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -623,8 +624,8 @@ async def process_habits(message: types.Message, state: FSMContext):
         #     ]
         # )
         await state.set_state(Questionnaire.ethics)
-        await message.answer("11) Этические принципы: что для вас наиболее важно при выборе косметики?   \n\n1 — Натуральный со﻿став \n2 — Не тестируется на животн﻿ых \n3 — Перерабатываемая упаковка \n4 — Локальное прои﻿зводство \n5 — Социальная ответственность   \n\n<i>Можете выбрать несколько вариантов.  \nУкажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
-        await message.answer()
+        await message.answer("11) Этичные принципы: что для вас наиболее важно при выборе косметики?\n\n1 — Натуральный состав\n2 — Не тестируется на животных\n3 — Перерабатываемая упаковка\n4 — Локальное производство\n5 — Социальная ответственность\n\n<i>Можете выбрать несколько вариантов. Укажите ответ через запятую, например: 1, 2</i>")#, reply_markup=keyboard)
+        # await message.answer()
     else:
         await message.answer("Не поняла. Попробуй ввести еще раз.")
 
