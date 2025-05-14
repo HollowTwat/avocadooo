@@ -149,7 +149,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     #     ]
     buttons = [[InlineKeyboardButton(text="Пройти опросник", callback_data="all_questionnaires")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    step0txt = f"Привет, я задам тебе пару вопросов чтобы составить твой профиль  {datetime.now().date()}"
+    step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
     await message.answer(step0txt, reply_markup=keyboard)
 
 @router.message(Command("checkbox"))
