@@ -35,6 +35,7 @@ ASSISTANT_ID_2 = os.getenv("FIND_PRODUCT_ASS")
 YAPP_ASS = os.getenv("YAPP_ASS")
 
 GENERAL_ANALYSIS_ASS = os.getenv("GENERAL_ANALYSIS_ASS")
+NOT_FOUND_ASS = os.getenv("NOT_FOUND_ASS")
 
 CONSIST_ANALYSIS_ASS = os.getenv("CONSIST_ANALYSIS_ASS")
 ETHICS_ANALYSIS_ASS = os.getenv("ETHICS_ANALYSIS_ASS")
@@ -74,6 +75,7 @@ class StateMiddleware(BaseMiddleware):
 class UserState(StatesGroup):
     info_coll = State()
     recognition = State()
+    recognition_2 = State()
     yapp = State()
     menu = State()
     yapp_with_xtra = State()
@@ -174,6 +176,11 @@ async def start(message: types.Message):
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(Questionnaire.mail)
     await message.answer("Пиши почту")
+
+@router.message(Command("recog_2_test"))
+async def devmenu_handler(message: Message, state: FSMContext) -> None:
+    await state.set_state(UserState.recognition_2)
+    await message.answer("Упс, не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
 
 @router.callback_query(lambda c: c.data == 'retry_mail')
 async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
@@ -1433,9 +1440,34 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         # await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
         # await message.answer(url_response)
 
+@router.message(StateFilter(UserState.recognition_2))
+async def recognition_2_handler(message: Message, state: FSMContext) -> None:
+    asyncio.create_task(log_user_message(message))
+    us_id = str(message.from_user.id)
+    chat_id = message.chat.id
+    if message.text:
+        info_message = await message.answer("Анализирую 🔍")
+        sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
+        response = await generate_response(message.text, us_id, NOT_FOUND_ASS)
+        await sticker_message.delete()
+        await info_message.delete()
+
+        await message.answer(response)
+        asyncio.create_task(log_bot_response(response, us_id))
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Да, проверить еще", callback_data="analysis")],
+                [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+            ])
+        await message.answer("Хотите проверить еще одно средство?", reply_markup=keyboard)
+    else:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Тык", callback_data="analysis")]])
+        message.answer("Я пока принимаю только текст при ожидании состава, если хочешь распознать средство тыкай тут")
+
+            
 @router.message(StateFilter(UserState.recognition))
 async def recognition_handler(message: Message, state: FSMContext) -> None:
-    await log_user_message(message)
+    asyncio.create_task(log_user_message(message))
     user_data = await state.get_data()
     # product_type = user_data.get("product_type")    
     us_id = str(message.from_user.id)
@@ -1449,7 +1481,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 
 
         # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
-        await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
+        asyncio.create_task(log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id))
 
         sticker_message1 = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response1 = await no_thread_ass(med_name, ASSISTANT_ID_2)
@@ -1478,16 +1510,11 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             )
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
-            await log_bot_response(f"{extracted_list}", message.from_user.id)
+            asyncio.create_task(log_bot_response(f"{extracted_list}", message.from_user.id))
         else:
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
-                    [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
-                ]
-            )
-            await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
-            await log_bot_response("Не распознали", message.from_user.id)
+            await message.answer("Упс, не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
+            await state.set_state(UserState.recognition_2)
+            asyncio.create_task(log_bot_response("Не распознали", message.from_user.id))
     elif message.voice:
 
         transcribed_text = await audio_file(message.voice.file_id)
@@ -1495,7 +1522,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await generate_response(transcribed_text, us_id, ASSISTANT_ID)
-        await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
+        asyncio.create_task(log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id))
         await sticker_message.delete()
         await info_message.edit_text("Ищу в базе🔍")
 
@@ -1526,7 +1553,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             )
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
-            await log_bot_response(f"{extracted_list}", message.from_user.id)
+            asyncio.create_task(log_bot_response(f"{extracted_list}", message.from_user.id))
         # if extracted_list:
         #     buttons = [[InlineKeyboardButton(text="Все не то, попробовать снова", callback_data=f"analysis")],]
         #     for product in extracted_list[:5]:
@@ -1543,14 +1570,16 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             # await message.answer(text, reply_markup=keyboard)
             # await log_bot_response(f"{extracted_list}", message.from_user.id)
         else:
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
-                    [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
-                ]
-            )
-            await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
-            await log_bot_response(f"Не распознали", message.from_user.id)
+        #     keyboard = InlineKeyboardMarkup(
+        #         inline_keyboard=[
+        #             [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
+        #             [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+        #         ]
+        #     )
+            await message.answer("Упс, не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
+            await state.set_state(UserState.recognition_2)
+            # await message.answer("К сожалению, этого товара нет в наличии! 🥲\nПришлите нам ссылку на товар в любом интернет-магазине.\n\nМы его добавим и сразу сообщим 💚", reply_markup=keyboard)
+            asyncio.create_task(log_bot_response(f"Не распознали", message.from_user.id))
     elif message.photo:
 
         file = await bot.get_file(message.photo[-1].file_id)
@@ -1559,7 +1588,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
         info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         med_name = await process_url(file_url, us_id, ASSISTANT_ID)
-        await log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id)
+        asyncio.create_task(log_bot_response(f"бот определил продукт как: {med_name}", message.from_user.id))
         await sticker_message.delete()
         await info_message.edit_text("Ищу в базе🔍")
         # await message.answer(f"Я определил продукт как: {med_name}, сейчас найду в базе и дам аналитику")
@@ -1593,16 +1622,11 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
             )
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             await message.answer(text, reply_markup=keyboard)
-            await log_bot_response(f"{extracted_list}", message.from_user.id)
+            asyncio.create_task(log_bot_response(f"{extracted_list}", message.from_user.id))
         else:
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text="Еще раз", callback_data="analysis")],
-                    [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
-                ]
-            )
-            await message.answer("Упс, что-то не получилось распознать этот продукт!  Попробуйте ввести название текстом 🌟 \n Пример:\n<i>Weleda, крем для лица Skin food</i>", reply_markup=keyboard)
-            await log_bot_response(f"Не распознали", message.from_user.id)
+            await message.answer("Упс, не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
+            await state.set_state(UserState.recognition_2)
+            asyncio.create_task(log_bot_response(f"Не распознали", message.from_user.id))
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
