@@ -248,7 +248,7 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
 async def devmenu_handler_cb(callback_query: CallbackQuery, state: FSMContext) -> None:
     await state.update_data(full_sequence=False)
     buttons = [
-        [InlineKeyboardButton(text="Avocado Box 🥑", callback_data="avo_box")],
+        [InlineKeyboardButton(text="Digital Avocado Box 🥑", callback_data="avo_box")],
         [InlineKeyboardButton(text="Промокоды 💥", callback_data="avo_promo")],
         ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
