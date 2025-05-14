@@ -312,6 +312,7 @@ async def process_name(message: types.Message, state: FSMContext):
 
 @router.callback_query(StateFilter(Questionnaire.annoying_shit), lambda c: c.data.startswith("annoying"))
 async def process_annoying_1(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer()
     if callback_query.data == "annoying_1":
         await callback_query.message.answer("Если нужно, я могу подробнее рассказать, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе. 🧖‍♀️\n\nAvocado всегда радо поделиться всеми секретами красоты и ухода — просто дайте знать!")
         await process_about_avocado(callback_query, state)
@@ -337,7 +338,7 @@ async def main_process_mail(message: Message, state: FSMContext):
 
 @router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'annoying_5')
 async def process_questionnaire_yapp(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text(
+    await callback_query.message.answer(
         "Чтобы проанализировать состав баночки максимально точно, мне нужно немного больше узнать о вас! \n"
         "🤔 Давайте заполним подробную анкету — это поможет мне лучше понять ваши потребности и подобрать самые подходящие продукты именно вам. Готовы?",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
