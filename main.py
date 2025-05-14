@@ -1449,11 +1449,13 @@ async def recognition_2_handler(message: Message, state: FSMContext) -> None:
         info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response = await generate_response(message.text, us_id, NOT_FOUND_ASS)
+        response_clean = await remove_tags(response)
+
         await sticker_message.delete()
         await info_message.delete()
 
-        await message.answer(response)
-        asyncio.create_task(log_bot_response(response, us_id))
+        await message.answer(response_clean)
+        asyncio.create_task(log_bot_response(response_clean, us_id))
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Да, проверить еще", callback_data="analysis")],
