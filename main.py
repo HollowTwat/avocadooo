@@ -2178,7 +2178,7 @@ async def handle_image_upload(message: types.Message, state: FSMContext):
         await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
                             "You can use this file_id to send the image in your bot.")
     elif message.video:
-        file_id = message.video.file_id
+        file_id = message.video[-1].file_id
         await message.answer(f"Here is the file_id of your vid:\n\n<code>{file_id}</code>\n\n"
                             "You can use this file_id to send the vid in your bot.")
 
