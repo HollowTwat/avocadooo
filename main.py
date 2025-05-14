@@ -1449,7 +1449,7 @@ async def recognition_2_handler(message: Message, state: FSMContext) -> None:
         info_message = await message.answer("Анализирую 🔍")
         sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
         response = await generate_response(message.text, us_id, NOT_FOUND_ASS)
-        response_clean = await remove_tags(response)
+        response_clean = remove_tags(response)
 
         await sticker_message.delete()
         await info_message.delete()
