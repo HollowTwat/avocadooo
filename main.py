@@ -82,6 +82,7 @@ class ImageUploadState(StatesGroup):
 
 class Questionnaire(StatesGroup):
     name = State()
+    annoying_shit = State()
     mail = State()
     intro = State()
     age = State()
@@ -301,11 +302,29 @@ async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
 @router.message(StateFilter(Questionnaire.name))
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)
-    await state.set_state(Questionnaire.mail)
-    await message.answer(
-        "Какая у вас электронная почта?\nПожалуйста введите ту же почту, что и при оплате — это важно"
-    )
+    text = f"Приятно познакомиться, {message.text}!  🌿 \nЯ здесь, чтобы помочь вам с анализом состава косметики и рассказать, что именно в ней содержится и как работает.\n"    
+    "На основе информации о вашей коже и образе жизни я подберу те средства, которые подойдут именно <b>вам</b>.  Могу порекомендовать, какие продукты стоит попробовать, а какие лучше оставить на полке.  Всё просто — вместе мы сделаем выбор безопасным и эффективным и подходящим именно вам!"
+    keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Как ты работаешь, Avocado?", callback_data="annoying_1")]])
+    await state.set_state(Questionnaire.annoying_shit)
+    await message.answer(text, reply_markup=keyboard)
 
+@router.callback_query(StateFilter(Questionnaire.annoying_shit), lambda c: c.data.startswith("annoying"))
+async def process_annoying_1(callback_query: CallbackQuery, state: FSMContext):
+    if callback_query.data == "annoying_1":
+        await callback_query.message.answer("Если нужно, я могу подробнее рассказать, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе. 🧖‍♀️\n\nAvocado всегда радо поделиться всеми секретами красоты и ухода — просто дайте знать!")
+        await process_about_avocado(callback_query, state)
+    elif callback_query.data == "annoying_2":
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Хочу", callback_data="annoying_3")]])
+        await callback_query.message.answer_video(video=video_1, caption=vid_text_1, reply_markup=keyboard)
+    elif callback_query.data == "annoying_3":
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Вау!", callback_data="annoying_4")]])
+        await callback_query.message.answer_video(video=video_2, caption=vid_text_2, reply_markup=keyboard)
+    elif callback_query.data == "annoying_4":
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Скорее начать", callback_data="annoying_5")]])
+        await state.set_state(Questionnaire.intro)
+        await callback_query.message.answer_video(video=video_3, caption=vid_text_3, reply_markup=keyboard)
 
 @router.message(StateFilter(Questionnaire.mail))
 async def main_process_mail(message: Message, state: FSMContext):
@@ -316,7 +335,7 @@ async def main_process_mail(message: Message, state: FSMContext):
         await message.answer("Какая у тебя электронная почта?\nПожалуйста введи ту же почту, что и при оплате 🙏")
 
 
-@router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'what_do_you_do')
+@router.callback_query(StateFilter(Questionnaire.intro), lambda c: c.data == 'annoying_5')
 async def process_questionnaire_yapp(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_text(
         "Чтобы проанализировать состав баночки максимально точно, мне нужно немного больше узнать о вас! \n"
@@ -1257,9 +1276,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
                 "styling_tools": f"Термоукладочные приборы: {user_data['styling_tools']}",
             }
     response = await send_user_data(us_id, user_hair_data, "SetUserHairData", "user_hair_data")
-    buttons = [
-        [InlineKeyboardButton(text="Меню", callback_data="menu")]
-    ]
+
     # await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await bot.send_message(us_id,"Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴")
     sticker_mssg = await callback_query.message.answer_sticker(sticker=random.choice(STICKERLIST))
@@ -1269,8 +1286,10 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     await sticker_mssg.delete()
     # await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocado Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  \т\тВаша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊<b>Голова и волос {user_data['hair_scalp_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
     await callback_query.message.answer(gpt_resp)
-    await bot.send_message(us_id,"Если нужно, я могу подробнее рассказать, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе. 🧖‍♀️\n\nAvocado всегда радо поделиться всеми секретами красоты и ухода — просто дайте знать!")
-    await process_about_avocado(callback_query, state)
+    await state.set_state(Questionnaire.mail)
+    await callback_query.message.answer(
+        "Какая у вас электронная почта?\nПожалуйста введите ту же почту, что и при оплате — это важно"
+    )
 
 
 async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext):
@@ -1290,12 +1309,12 @@ async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext
     ]
     await callback_query.message.answer_media_group(media=media_files)
     await callback_query.message.answer(
-        "Вот и все пора начинать! С чего хотите начать?",
+        "СКОЛЬКО РАЗ МОЖНО ГОВОРИТЬ, ЧТО КНОПКИ ПРИКРЕПЛЯЮТСЯ ТОЛЬКО С ТЕКСТОМ...",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis"), InlineKeyboardButton(text="Спросить Avocado Bot ❔", callback_data="setstate_yapp")]
+            [InlineKeyboardButton(text="Как ты работаешь, Avocado?", callback_data="annoying_2")]
         ])
     )
-    await state.clear()
+    # await state.clear()
 
 async def process_about_avocado_2(callback_query: CallbackQuery, state: FSMContext):
     img1="AgACAgIAAxkBAAIT0WfJez-CUdI7K-YyJ2DOgB09f2fsAAIq7TEbHPJQSkz1NGZe4-1hAQADAgADeQADNgQ"
@@ -2154,12 +2173,17 @@ async def message_info(message: types.Message, state: FSMContext):
 
 @router.message(ImageUploadState.waiting_for_image, lambda message: message.photo)
 async def handle_image_upload(message: types.Message, state: FSMContext):
-    file_id = message.photo[-1].file_id
-
-    await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
-                         "You can use this file_id to send the image in your bot.")
+    if message.photo:
+        file_id = message.photo[-1].file_id
+        await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
+                            "You can use this file_id to send the image in your bot.")
+    elif message.video:
+        file_id = message.video.file_id
+        await message.answer(f"Here is the file_id of your vid:\n\n<code>{file_id}</code>\n\n"
+                            "You can use this file_id to send the vid in your bot.")
 
     await state.set_state(UserState.menu)
+    
 
 
 @router.message()
