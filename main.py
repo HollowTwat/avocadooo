@@ -9,7 +9,7 @@ import openai
 import asyncio
 import logging
 import sys
-import datetime
+# import datetime
 from datetime import datetime
 from aiogram import Bot, Dispatcher, html, Router, BaseMiddleware, types
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -149,7 +149,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     #     ]
     buttons = [[InlineKeyboardButton(text="Пройти опросник", callback_data="all_questionnaires")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
+    step0txt = f"Привет, я задам тебе пару вопросов чтобы составить твой профиль  {datetime.now().date()}"
     await message.answer(step0txt, reply_markup=keyboard)
 
 @router.message(Command("checkbox"))
@@ -1204,7 +1204,6 @@ async def process_current_products(message: types.Message, state: FSMContext):
              [InlineKeyboardButton(text="Не имеет значения, главное — результат", callback_data="any")],
         ])
         )
-        await message.answer()
     else:
         await message.answer("Не поняла. Попробуй ввести еще раз.")
 
@@ -1284,7 +1283,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     await bot.send_message(us_id,"Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴")
     sticker_mssg = await callback_query.message.answer_sticker(sticker=random.choice(STICKERLIST))
     user_data = await state.get_data()
-    gpt_response = await no_thread_ass(f"{str(user_data)}, today_date: {datetime.date.today()}", USER_ANAL_ASS)
+    gpt_response = await no_thread_ass(f"{str(user_data)}, today_date: {datetime.now().date()}", USER_ANAL_ASS)
     gpt_resp = remove_tags(gpt_response)
     await sticker_mssg.delete()
     # await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocado Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  \т\тВаша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊<b>Голова и волос {user_data['hair_scalp_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
