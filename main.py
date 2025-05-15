@@ -929,7 +929,6 @@ async def process_body_skin_condition(message: Message, state: FSMContext):
                 [InlineKeyboardButton(text="Все отлично, проблем нет", callback_data="no_problems")]
             ])
         )
-        await message.answer()
     else:
         await message.answer("Не поняла. Попробуй ввести еще раз.")
 
@@ -1635,7 +1634,7 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
 @router.callback_query(lambda c: c.data == 'analysis')
 async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
     us_id = callback_query.from_user.id
-    text = "Отправьте в чат фото 📸 , <u>ссылку</u>, <i>текст</i> или аудио 🎤 вашего средства.\nНапример:\n<i>Weleda Skin food, крем для лица</i>\n\nВ моей базе пока только средства для лица, тела и волос. "
+    text = "Отправьте в чат фото 📸, <i>текст</i> или аудио 🎤 вашего средства.\nНапример:\n<i>Weleda Skin food, крем для лица</i>\n\nВ моей базе пока только средства для лица, тела и волос. "
     await callback_query.message.edit_text(text)
     await state.set_state(UserState.recognition)
     # await callback_query.answer()
@@ -1646,7 +1645,7 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
     product_type = callback_query.data.split('_')[2]
     await state.update_data(product_type=product_type)
     us_id = callback_query.from_user.id
-    text = "Отправьте  в чат фото 📸 или <u>ссылку</u> на средство.\nЕще можно написать текстом или надиктовать название 🎤 в формате:\n<i>Weleda, крем для лица Skin food</i>"
+    text = "Отправьте в чат фото 📸 , текст или аудио 🎤 вашего средства.\nНапример:\n<i>Weleda, крем для лица Skin food</i>\nВ моей базе пока только средства для лица, тела и волос."
     await state.set_state(UserState.recognition)
     await callback_query.message.edit_text(text)
     await callback_query.answer()
