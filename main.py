@@ -2242,7 +2242,7 @@ async def default_handler(message: Message, state: FSMContext) -> None:
         await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
     if message.sticker:
         sticker_id = message.sticker.file_id
-        await message.answer(f"{sticker_id}")
+        await message.answer(f"<code>{sticker_id}</code>")
     else: 
         await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
 
