@@ -6,38 +6,38 @@ markings_4 = "<b>КАЧЕСТВО И СЕРТИФИКАЦИЯ</b>\n\n✅ <b>EAC 
 markings_5 = "НЕ НАШЕЛ СООТВЕТСТВИЯ В ФАЙЛЕ"
 markings_6 = "placeholder_text"
 markings_mg_1 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYxWgAATZTtutyNeuAyqQoIIlIYxT4agACOe4xGzFqAUiH0OvBH4-oOAEAAwIAA3kAAzYE", caption="Что означают ключевые показатели по срокам годности?  📅"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYyWgAATZs07-W8RbEJFnBr1jcK0oR1gACOu4xGzFqAUgbiDTxOyHWiAEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYzWgAATZ4URpEJpBpeaPgGEojTnvLvAACO-4xGzFqAUiSbXYqAAEbLngBAAMCAAN5AAM2BA"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY0WgAATaDS_z5WHh2VzUotIJkycf0kgACPO4xGzFqAUjJslFN6CqfuwEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY02gAATaOW2SYJSy6MulGd04wQP3nzAACPe4xGzFqAUg12fmKs0VA_AEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY22gAATahNNKpqeh_VSDeQrgg2Eb0bAACPu4xGzFqAUh0d5fthTgUdQEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY32gAATarPUzLLo45HfhLOMXyBuEWGgACP-4xGzFqAUiD2FBBBFNQoAEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANwaCecY3ZpSWTBkRJHtfIqDCuBA4IAAnslMhuJjEBJzVtJT5XX01QBAAMCAAN5AAM2BA", caption="Тут про ключевые знаки, виды пластика и как правильно сдавать тару в переработку ♻️"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAN0aCeccBxyt1h1Z-FY4btOUIwnSHoAAnwlMhuJjEBJhe_HIGWrBt0BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAN4aCechxUGwfS3pBlxJKhSaw8BQgQAAn0lMhuJjEBJkfmFdpzai6oBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAN8aCecj7GgFALWj9DBNWMgr7ej4JIAAn4lMhuJjEBJ5ESzScx_pI8BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOAaCecmijSG44byAhbZrs_1JmtZFEAAn8lMhuJjEBJKuH9VR_7duYBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOEaCecplLGNhtdgCxwukgAAcD9Qo8XAAKCJTIbiYxASRKvWcW2FeBRAQADAgADeQADNgQ"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOIaCecqykWnavmaxKkiHx5-wVjKeAAAgj7MRsgqzlJM8iOIc4xP58BAAMCAAN5AAM2BA"),
         ]
 markings_mg_2 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYtWgAATXKeBSK41ugs70qYMp0ZSJNqgACNO4xGzFqAUj2y89bE3TroAEAAwIAA3kAAzYE", caption="Тут про ключевые знаки, виды пластика и как правильно сдавать тару в переработку ♻️"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYuWgAATXQ-hE5AmhTNAkKv9_rj9aF5QACNe4xGzFqAUiPzqDM57sR4QEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYvWgAATXW686m8Ar95xvUZH4ltZUTrwACNu4xGzFqAUjJU--tnzQ_YwEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIYwWgAATXbePqwPtA7P3meTAy0whJSiAACN-4xGzFqAUiPEGu3-Cc8twEAAwIAA3kAAzYE")
+        InputMediaPhoto(media="AgACAgIAAxkBAAOMaCec1oQFy680GDnzTw8sD0-siXAAAoMlMhuJjEBJ2-apHH3whFUBAAMCAAN5AAM2BA", caption="Что означают ключевые показатели по срокам годности?  📅"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOQaCec2x9CWB1IOcIKjYrN-r5ympcAAoQlMhuJjEBJhRE7PYNdHoQBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOUaCec-3KO20629k9dvsRAQZgyxL0AAoUlMhuJjEBJLnW3rD72WBIBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOYaCedAeWDDwZ-Dyvq2NsHG8xDjsAAAoclMhuJjEBJJwWhLY6dInUBAAMCAAN5AAM2BA")
         ]
 markings_mg_3 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY42gAATbYA0gkG7-4Mam3MwUQ0c6N0gACQe4xGzFqAUgnOWFa1sv80gEAAwIAA3kAAzYE", caption="Что означают ключевые показатели по утилизации и безопасности? 👇"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY52gAATbndgH49ye5PJ9q23UPNBAhUgACQu4xGzFqAUgzykC3t3LsRAEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY62gAATbwVtnkzbpwGc7rg5G5EOjhOwACQ-4xGzFqAUj4lEd6Z4kI-QEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOcaCedMtM3zOv7_T46VBQ5yJmo0UMAAh_sMRuC60FJc1pyqreg3sEBAAMCAAN5AAM2BA", caption="Что означают ключевые показатели по утилизации и безопасности? 👇"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOgaCedNpkn75MAAeGHB7lgzHGwaSUpAAKJJTIbiYxASR5r9wABm-HWEgEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOkaCedUdmQ7fbhGwV6YYap0iDXuhcAAoolMhuJjEBJbiXrm0N--10BAAMCAAN5AAM2BA"),
         ]
 markings_mg_4 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY72gAATcczMFIaKMAAYTFw54bvqUsw1cAAkTuMRsxagFIYXo-xGP2IwgBAAMCAAN5AAM2BA", caption="Качество и сертификация, как это отследить? 👇"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY82gAATdS14_nLTRSiMCGRdMrUatQNAACRe4xGzFqAUhD-d67yl206QEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY92gAATdZFWLCSSa7z4VmI_HLImoHEAACRu4xGzFqAUgT4_4xCB2fEQEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY-2gAATdgeCPEKoUd_RSfMDovsL7c6AACR-4xGzFqAUh0Qg7A0uhXnAEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOoaCedf3EbjotlpZpI5hA4qH0QFPIAAowlMhuJjEBJanbUlHzDziUBAAMCAAN5AAM2BA", caption="Качество и сертификация, как это отследить? 👇"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOsaCediu_9LP5bapc08K_rUYlV-SkAAo0lMhuJjEBJN8N06rhzPVwBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAOwaCednDhS6CiWhHKRN4zygExDbL8AAo4lMhuJjEBJM512xahx6zoBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAO0aCedqZH49Nx1JkucJuUC_wPJXvQAAo8lMhuJjEBJctYYsxyeOmkBAAMCAAN5AAM2BA"),
         ]
 markings_mg_5 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIY_2gAATeIChnU59WnAZSB9Exg50nAlwACSO4xGzFqAUgBB1V_TrufpAEAAwIAA3kAAzYE", caption="Что означают разноцветные полоски на тубах? 😇"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZA2gAATeMLacqFk8brlsmE5LzpWSKmQACSe4xGzFqAUgNbxsYRw_dqAEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAO4aCedymjjTZcQ1CwN7FdihHshzrQAApAlMhuJjEBJ3-IRnJiWnMUBAAMCAAN5AAM2BA", caption="Что означают разноцветные полоски на тубах? 😇"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAO8aCed0if3Q2EDosp21xRrgwABVH10AAKRJTIbiYxASfmrW9r4VfZNAQADAgADeQADNgQ"),
         ]
 markings_mg_6 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZB2gAATefH6A_DBITYclkoQX7beuAugACSu4xGzFqAUi76q16H46PegEAAwIAA3kAAzYE", caption="Для особо внимательных. Чек-лист по проверке косметики 😇"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZC2gAATelaONX2fSwXtqKZGfdsFbjogACS-4xGzFqAUgkG4vSesULZwEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAO4aCedymjjTZcQ1CwN7FdihHshzrQAApAlMhuJjEBJ3-IRnJiWnMUBAAMCAAN5AAM2BA", caption="Для особо внимательных. Чек-лист по проверке косметики 😇"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAO8aCed0if3Q2EDosp21xRrgwABVH10AAKRJTIbiYxASfmrW9r4VfZNAQADAgADeQADNgQ"),
         ]
 
 avo_box_text_long_2 ="1) 🦷 LiMa, Минеральная зубная паста с мятой и кокосом \n📦 75 мл \n💰Полная стоимость: <s> 825₽</s>, цена со скидкой -50%: 413 ₽ \n🎟 Промокод: MINT \n🔗 <a href=\'https://limatooth.ru/\'>Перейти на сайт</a>\n🌿 Без фтора, SLS и химии. Мягко очищает, укрепляет десны. Подходит для всей семьи и освежает дыхание надолго\n\n\n2)🛁 Море дома, Морская соль для ванн «Релакс» с эфирными маслами\n 📦 1 кг\n💰Полная стоимость <s>590 ₽</s>, цена со скидкой -50%: 295 ₽\n 🎟 Промокод: RELAX50\n 🔗 <a href=\'https://more-doma.ru/product/relaks-s-efirnymi-maslami-seriya-%E2%84%966/\'>Перейти на сайт</a>\n🌿 Расслабляет тело и ум, снимает напряжение, помогает восстановиться после стрессов и перегрузок\n\n\n3)👁 Everyday For Future, Тушь «Удлинение» с экстрактом авокадо\n 📦 10 мл\n 💰Полная стоимость <s>1292 ₽</s>, цена со скидкой -50%: 646 ₽\n 🎟 Промокод: EFF5\n 🔗 <a href=\'https://vimnaturae.ru/catalog/makiyazh/3940/?ysclid=m8iream5zu585706511\'>Перейти на сайт</a>\n🌿 Веганская формула с маслами и ячменной водой. Питает, удлиняе\n\n\n4)💅 Vimbio, Набор для маникюра «Укрепление и уход»\n 📦 50 мл\n 💰Полная стоимость <s>1775 ₽</s>, цена со скидкой -50%: 888 ₽\n 🎟 Промокод: VIMBIO50\n 🔗 <a href=\'https://vimnaturae.ru/catalog/manikyur/4631/\'>Перейти на сайт</a>\n🌿 11-Free формула, витамины и водоросли. Укрепляет и восстанавливает ногти в 2 этапа. Безопасно и эффективно в домашних условиях.\n\n\n5)🍍 Feel Nature, Фруктовая энзимная маска\n 📦 50 мл\n 💰Полная стоимость<s> 1.976 ₽</s>, цена со скидкой -50%: 988 ₽\n 🎟 Промокод: FEEL50\n 🔗 <a href=\'https://feelnature.ru/shop/lizo/fruktovaja-jenzimnaja-maska-2/?ysclid=m8iraw7z2p17529505\'>Перейти на сайт</a>\n🌿 Щадящий энзимный пилинг. Очищает, сужает поры, борется с пигментацией и акне. Подходит даже для чувствительной кожи.\n\n\n6) 🧴 Sibirbotaniq, Увлажняющий флюид для тела\n 📦 200 мл\n 💰 Полная стоимость <s>1.800 ₽</s>, цена со скидкой -50%: 900 ₽\n 🎟 Промокод: FLUID50\n 🔗 <a href=\'https://sibirbotaniq.com/catalog/dlya-tela/flyuidy-i-krema/\'>Перейти на сайт</a>\n🌿 Легкая текстура, глубокое увлажнение и питание. С аллантоином и пантенолом — для мягкой, бархатистой кожи.  \n💐 В 3 ароматах: родиола + гранат (цитрусово-мускусный), хлопок + гинкго (цветочно-пряный) и мальва + календула (фруктово-жасминовый)\n\n\n7) 💋 Eco Make, Оттеночный бальзам для губ 2в1\n 📦 2,5 г\n 💰Полная стоимость <s>670 ₽</s>, цена со скидкой -50%: 335 ₽\n 🎟 Промокод: ECOMAKELIPS\n 🔗 <a href=\'https://ecomake.ru/catalog/ottenochnyy-balzam-dlya-gub-2v1/\'>Перейти на сайт</a>\n🌿 Увлажняет, питает и заживляет. Без липкости, с натуральными маслами и витамином Е.\n 🎨 В 3 оттенках: Карамельный янтарь, Малиновый кварц, Вишнёвый аметист\n\n8) ✨ Angel Lab, Флюид «Деликатный»\n 📦 30 мл\n 💰 Полная стоимость <s>3.360 ₽</s>, цена со скидкой -50%: 1.680 ₽\n 🎟 Промокод: ANGEL50\n 🔗 <a href=\'https://angellab.pro/catalog/flyuid-delikatnyj\'>Перейти на сайт</a>\n🌿 Питает, увлажняет и восстанавливает барьер кожи. Без эмульгаторов и ПАВов. Подходит даже для самой чувствительной кожи."
@@ -45,30 +45,30 @@ avo_box_text_long_3 = "9) 🫧 Yodometics, Органик вуаль для ум
 promo_text = "<b>Ваши персональные скидки от -15 %</b> ❤️\n\n<blockquote>Не забудьте добавить промокод — тогда ваша скидка применится автоматически</blockquote>\n\n\n\n1) By sadova\n💰-15%\n🎟 Промокод: АВОКАДОБОКС \n🔗 https://sadova.co/ \n\n🌿 Бесплатная доставка при сумме заказа от 3000р по России, а также в Беларусь, Казахстан и Киргизию \n\n2) Zaharova\n💰-15%\n🎟 Промокод: AVOBOT\n🔗 https://www.zaharova.shop/\n\n\n3) TRAWA\n💰-10%\n🎟 Промокод: TRAWAAVO\n🔗 https://trawaoil.ru/\n\n\n4) Море дома\n💰-15%\n🎟 Промокод: AVBOX\n🔗 https://more-doma.ru/ \n\n🌿 Скидки на серию «Магний+», эфирные масла и экстракты.\n\n5) Feel Nature\n💰-15%\n🎟 Промокод: AVOBOT15\n🔗 https://more-doma.ru/ \n🌿 Cкидки нельзя применять с другими купонами и применять к товарам со скидкой"
 
 avo_box_media_gr_1 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZRWgAAUPHd4hxQqstYdIQpyw2rW6_0wACZ-4xGzFqAUgZy6dX3t3PBwEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZSWgAAUPSUGYHAdXQ1FuRC9lfI-8t4gACaO4xGzFqAUiQ-hykZW1MkwEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZTWgAAUPbleR0x_PS9Xtwo2DtLrc94AACae4xGzFqAUiQLa7URxS5zQEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZUWgAAUPjLiQ9qsownSnPjJfksOf6YAACau4xGzFqAUirqyKt9zqewgEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZVWgAAUPtxUQC_wSvju4gbb-KXrCf3AACa-4xGzFqAUjrntQeCS3blQEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZWWgAAUP0F5YiRieCjqaTB2rrIJg02QACbO4xGzFqAUh8gDX5NJ1VsQEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZXWgAAUP9vYlnLYV4257dGJJOuIhvBwACbe4xGzFqAUhs9PX2VsEP0wEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZYWgAAUQGLV0gbRySPjXxMfGiCrvdeQACbu4xGzFqAUj7Os0Usy2fUwEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAMkaCeZ6u9qO_vLanc1QSH3Arg8-rUAAjwlMhuJjEBJSHEv9Z9i1T4BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAMoaCeZ9MF13aNuU3PMvu_1Xu4ULSMAAj0lMhuJjEBJ3DdnKsiBRocBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAMsaCeaBST_Ido8zuhxxyunvdobaCIAAgzsMRuC60FJWixCdGQ1zu0BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAMwaCeaDMfnq2XgYHXCRdmpYfiVq9QAAg3sMRuC60FJ0PvNolRmtwEBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAM0aCeaIvV_obBPiOAKyhtOxIJQFI0AAkAlMhuJjEBJgAKb0TFv8mMBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAM4aCeaLWfqvTG74DmKB2THp-UoQlQAAkElMhuJjEBJ1JV6NdV9yVcBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAAM8aCeaZmmtu8bo06k6Ds93jb5CodcAAkIlMhuJjEBJREv3eAzzCG0BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANAaCead5y-6LdljQilz9JKA-FLKgkAAkMlMhuJjEBJNr-xHOkshzgBAAMCAAN5AAM2BA"),
         ]
 
 avo_box_media_gr_2 = [
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZZWgAAUQhMHUlbFgBpsYckta2-JGLMQACb-4xGzFqAUiQAfbor9FmxgEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZaWgAAUQsvJ8FsPFdnm2hXQABGxrDZbwAAnDuMRsxagFICDEZgndYFe8BAAMCAAN5AAM2BA"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZbWgAAUQ1mQ2C7miAi-i985ZTEpIlnAACce4xGzFqAUgvGogM77TPbgEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZcWgAAUQ-_Az3S9MYT27T59jmFnUDqQACcu4xGzFqAUjaeiiYHQVb1AEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZdWgAAURLRPuozG-fGR7dNkrT0yyjbgACc-4xGzFqAUhjD9ypzzln9QEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZeWgAAURSHSFdaQ8cg84mDrTV_0y8swACdO4xGzFqAUjfsh81pKGl8wEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZfWgAAURaqw7p8o0OHoZbLqe5HC_DGgACde4xGzFqAUhvH2F45xquWwEAAwIAA3kAAzYE"),
-        InputMediaPhoto(media="AgACAgIAAxkBAAIZgWgAAURit76Z9vBlEqeaRYiyaoOSOQACdu4xGzFqAUhACO_57rlOAwEAAwIAA3kAAzYE"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANEaCeakrToPkcEem2XJ7jDcXqTrBAAAkQlMhuJjEBJhAhY3bgTHXwBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANIaCeawbIgqq1jEm8SyPR7USlFQA8AAkYlMhuJjEBJGP4-kddpc88BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANMaCea1585U2hxtRN777kswhyzo_wAAkclMhuJjEBJGDqEvXC-mWQBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANQaCea8VMlLygxl0kEiwVoMhB7sGAAAkglMhuJjEBJIYbxXSzdcO8BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANUaCebLtTTPZIkl714aotnQzPvP9MAAkslMhuJjEBJYGKjmcLksY8BAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANYaCebPfIcGGDYC8Od73s-RGeL2lEAAkwlMhuJjEBJTsi5ZkVSs-MBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANcaCebUqgQPN6djHuzCnWrUINu5gUAAk4lMhuJjEBJUWGHkKC0UUkBAAMCAAN5AAM2BA"),
+        InputMediaPhoto(media="AgACAgIAAxkBAANgaCebYU5B_KVi5zV96JHc_sjhb0EAAh3sMRuC60FJDUycXdZfCWABAAMCAAN5AAM2BA"),
         ]
 
-video_1 = "BAACAgIAAxkBAAIn1Ggk7-BITd2Ctf9HYAwuDze9L5OpAALidwACw0goSS3Byo4GC6gWNgQ"
-video_2 = "BAACAgIAAxkBAAIn2Ggk8AJDK9h35qUU7aQ6rCyOtteIAALtdwACw0goSWIxWK54Ts3rNgQ"
-video_3 = "BAACAgIAAxkBAAIn3Ggk8BPDzcEAAZoGQeX37JsczadaeAAC83cAAsNIKEnHMOKLO5kwVjYE"
+video_1 = "BAACAgIAAxkBAANkaCebheYntzi7_H_V2qjIxi72WU0AAnJ1AAKJjEBJ9UGw9UA9KaQ2BA"
+video_2 = "BAACAgIAAxkBAANoaCebkOZN_ChkPfxiDmt1cslSFQQAAnR1AAKJjEBJJoswr3BHcc02BA"
+video_3 = "BAACAgIAAxkBAANsaCebl9OQoMfbDdf0bWRQ52LyzMsAAnZ1AAKJjEBJhaVCFGPc4M82BA"
 
 vid_text_1 = "<b>Пришли фото своей баночки 📸</b>\nЯ разберу состав и подскажу, на что стоит обратить внимание.\n\nРасскажу, какие компоненты действительно работают, а какие могут вызывать раздражение или аллергию.\n\nПоясню, что безопасно, чего лучше избегать — и каких эффектов можно ожидать от средства.\n\nХочешь понять, что скрывается за сложными названиями на банке — и чувствовать себя увереннее в уходе?"
 vid_text_2 = "<b>Я помогу с любым вопросом об уходе, коже и безопасности 🌿</b>\n\nБуду твоей бьюти-википедией, к которой можно обратиться в любой момент — 24/7.\n\nТы можешь задать мне любой общий вопрос:\n\n<blockquote>— Что делать с кожей при смене сезона?\n— Почему нельзя сочетать кислоты и ретинол?\n— Обязательно ли SPF зимой?\n— Как подготовить волосы и кожу к морю?</blockquote>\nПросто напиши — и ответ у тебя. Теперь не стыдно чего-то не знать!"

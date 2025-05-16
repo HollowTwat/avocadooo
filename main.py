@@ -278,7 +278,7 @@ async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/ai_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
-    await callback_query.message.answer_photo(caption=text1, photo="AgACAgIAAxkBAAIdT2gPewzR0cZkwm0DFUMVfpRCfdSEAAKf8TEbMzh5SCdH0IjenjmfAQADAgADeQADNgQ")
+    await callback_query.message.answer_photo(caption=text1, photo="AgACAgIAAxkBAAMIaCeYc8Ex1KuJL3xB4q4cUPcUIcIAAiolMhuJjEBJ_yJ7wv_rgcIBAAMCAAN5AAM2BA")
     await callback_query.message.answer_media_group(avo_box_media_gr_1)
     await callback_query.message.answer(avo_box_text_long_2, disable_web_page_preview=True)
     await callback_query.message.answer_media_group(avo_box_media_gr_2)
@@ -1301,12 +1301,12 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
 
 
 async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext):
-    img1="AgACAgIAAxkBAAIT0WfJez-CUdI7K-YyJ2DOgB09f2fsAAIq7TEbHPJQSkz1NGZe4-1hAQADAgADeQADNgQ"
-    img2="AgACAgIAAxkBAAIT32fJgsrNicPTNe3MkMYFOta84KfwAAKr5zEb2yZISgOzt2HHU-QuAQADAgADeQADNgQ"
-    img3="AgACAgIAAxkBAAIT42fJgs50ZHa4wZYm9YqgModbejwMAAKr7TEbHPJQSrcij3OQ5vXcAQADAgADeQADNgQ"
-    img4="AgACAgIAAxkBAAIT52fJgtJkjavpJcfoWLEH1wWm-b_1AAKs7TEbHPJQSnbl_XDr-QPTAQADAgADeQADNgQ"
-    img5="AgACAgIAAxkBAAIT62fJgtaNuzrEJWlwEQ6W4R0rSUYRAAKt7TEbHPJQSjJovcexbR6jAQADAgADeQADNgQ"
-    img6="AgACAgIAAxkBAAIT72fJgto4vNT0Fxazxtq_9qmU6lw9AAKu7TEbHPJQSqRC7d5pVGQ4AQADAgADeQADNgQ"
+    img1="AgACAgIAAxkBAAMMaCeYzD72eqrJyBKNDhqSvQiciToAAislMhuJjEBJVEbBKvzHY3gBAAMCAAN5AAM2BA"
+    img2="AgACAgIAAxkBAAMQaCeY8SFTF8fBW94WkJq2WDnEnh4AAi0lMhuJjEBJ4UU_ElwWeWUBAAMCAAN5AAM2BA"
+    img3="AgACAgIAAxkBAAMUaCeZCvADuIhyjA9RIJcxRBWSDj8AAi4lMhuJjEBJbX4-xR58gYQBAAMCAAN5AAM2BA"
+    img4="AgACAgIAAxkBAAMYaCeZIoDUKrkPiICSdWRLnMiJPvMAAi8lMhuJjEBJLdjhcmh6p1IBAAMCAAN5AAM2BA"
+    img5="AgACAgIAAxkBAAMcaCeZPkEEY1qHDlEPBl1Y8lXCgNIAAjAlMhuJjEBJk7t92n2oy8EBAAMCAAN5AAM2BA"
+    img6="AgACAgIAAxkBAAMgaCeZUl1uVTMgRE1Rs4wmgKkNB5kAAjMlMhuJjEBJiWsF6uC24t0BAAMCAAN5AAM2BA"
     media_files = [
         InputMediaPhoto(media=img1),
         InputMediaPhoto(media=img2),
@@ -1325,12 +1325,12 @@ async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext
     # await state.clear()
 
 async def process_about_avocado_2(callback_query: CallbackQuery, state: FSMContext):
-    img1="AgACAgIAAxkBAAIT0WfJez-CUdI7K-YyJ2DOgB09f2fsAAIq7TEbHPJQSkz1NGZe4-1hAQADAgADeQADNgQ"
-    img2="AgACAgIAAxkBAAIT32fJgsrNicPTNe3MkMYFOta84KfwAAKr5zEb2yZISgOzt2HHU-QuAQADAgADeQADNgQ"
-    img3="AgACAgIAAxkBAAIT42fJgs50ZHa4wZYm9YqgModbejwMAAKr7TEbHPJQSrcij3OQ5vXcAQADAgADeQADNgQ"
-    img4="AgACAgIAAxkBAAIT52fJgtJkjavpJcfoWLEH1wWm-b_1AAKs7TEbHPJQSnbl_XDr-QPTAQADAgADeQADNgQ"
-    img5="AgACAgIAAxkBAAIT62fJgtaNuzrEJWlwEQ6W4R0rSUYRAAKt7TEbHPJQSjJovcexbR6jAQADAgADeQADNgQ"
-    img6="AgACAgIAAxkBAAIT72fJgto4vNT0Fxazxtq_9qmU6lw9AAKu7TEbHPJQSqRC7d5pVGQ4AQADAgADeQADNgQ"
+    img1="AgACAgIAAxkBAAMMaCeYzD72eqrJyBKNDhqSvQiciToAAislMhuJjEBJVEbBKvzHY3gBAAMCAAN5AAM2BA"
+    img2="AgACAgIAAxkBAAMQaCeY8SFTF8fBW94WkJq2WDnEnh4AAi0lMhuJjEBJ4UU_ElwWeWUBAAMCAAN5AAM2BA"
+    img3="AgACAgIAAxkBAAMUaCeZCvADuIhyjA9RIJcxRBWSDj8AAi4lMhuJjEBJbX4-xR58gYQBAAMCAAN5AAM2BA"
+    img4="AgACAgIAAxkBAAMYaCeZIoDUKrkPiICSdWRLnMiJPvMAAi8lMhuJjEBJLdjhcmh6p1IBAAMCAAN5AAM2BA"
+    img5="AgACAgIAAxkBAAMcaCeZPkEEY1qHDlEPBl1Y8lXCgNIAAjAlMhuJjEBJk7t92n2oy8EBAAMCAAN5AAM2BA"
+    img6="AgACAgIAAxkBAAMgaCeZUl1uVTMgRE1Rs4wmgKkNB5kAAjMlMhuJjEBJiWsF6uC24t0BAAMCAAN5AAM2BA"
     media_files = [
         InputMediaPhoto(media=img1),
         InputMediaPhoto(media=img2),
@@ -2240,14 +2240,12 @@ async def default_handler(message: Message, state: FSMContext) -> None:
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await state.update_data(transfer_voice = message.voice.file_id)
         await message.answer("Ты хочешь распознать это как баночку или задать вопрос авокадо?", reply_markup=keyboard)
-    # if not current_state:
-    #     if message.sticker:
-    #         sticker_id = message.sticker.file_id
-    #         await message.answer(f"{sticker_id}")
-    #     else: 
-    #         await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
-    # else:
-    #     await message.answer(f"Текущее состояние: {current_state}")
+    if message.sticker:
+        sticker_id = message.sticker.file_id
+        await message.answer(f"{sticker_id}")
+    else: 
+        await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
+
 
 
 async def main() -> None:
