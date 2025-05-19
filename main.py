@@ -195,6 +195,7 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
 async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
     isActive = await check_is_active_state(callback_query.message.from_user.id, state)
     if not isActive:
+        await callback_query.answer()
         bttns = [
             [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
@@ -2042,6 +2043,7 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
     isActive = await check_is_active_state(id, state)
     if not isActive:
+        await callback_query.answer()
         bttns = [
             [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
