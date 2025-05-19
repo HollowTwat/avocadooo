@@ -2017,6 +2017,13 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
+    isActive = await check_is_active_state(id, state)
+    if not isActive:
+        bttns = [
+            [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
+            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
+            ]
+        await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
     await log_user_callback(callback_query)
     await callback_query.answer()
     parts = callback_query.data.split('_')
