@@ -179,8 +179,32 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(Command("recog_2_test"))
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
+    isActive = await check_is_active_state(message.from_user.id, state)
+    if not isActive:
+        bttns = [
+            [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
+            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
+            ]
+        await message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
+        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", message.from_user.id))
+        return
     await state.set_state(UserState.recognition_2)
-    await message.answer("Упс, не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
+    await message.answer("Кажется у нас не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
+
+@router.callback_query(lambda c: c.data == 'recognition_2_start')
+async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    isActive = await check_is_active_state(callback_query.message.from_user.id, state)
+    if not isActive:
+        bttns = [
+            [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
+            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
+            ]
+        await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
+        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.message.from_user.id))
+        return
+    await state.set_state(UserState.recognition_2)
+    await callback_query.message.answer("Кажется у нас не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
+
 
 @router.callback_query(lambda c: c.data == 'retry_mail')
 async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
@@ -1500,9 +1524,8 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
                 ) for idx, product in enumerate(extracted_list[:4])],
-                [InlineKeyboardButton(
-                    text="Попробовать еще", 
-                    callback_data="analysis")]
+                [InlineKeyboardButton(text="Никакое, ввести свой состав", callback_data="recognition_2_start")],
+                [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
             ]
             text = (
                 f"Найдено несколько похожих средств 🔎\n"
