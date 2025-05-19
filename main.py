@@ -2024,6 +2024,8 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
             ]
         await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
+        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.message.from_user.id))
+        return
     await log_user_callback(callback_query)
     await callback_query.answer()
     parts = callback_query.data.split('_')
