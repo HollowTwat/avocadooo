@@ -614,12 +614,12 @@ async def check_is_active_state(id, state):
 
 async def fetch_is_active_from_db(id):
     url = f"https://avocado-production.up.railway.app/api/Subscription/IsActiveUser?userTgId={id}"
-    print(url)
+    # print(url)
     async with aiohttp.ClientSession() as session:
         async with session.post(url) as response:
             if response.status == 200:
                 data = await response.text()
-                print(f"ISACTIVE STATUS{data}")
+                # print(f"ISACTIVE STATUS{data}")
                 # return data.get('isActive', False)
                 is_active = data.strip().lower() == "true"
                 return is_active

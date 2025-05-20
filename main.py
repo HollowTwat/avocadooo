@@ -193,7 +193,7 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(lambda c: c.data == 'recognition_2_start')
 async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
-    isActive = await check_is_active_state(callback_query.message.from_user.id, state)
+    isActive = await check_is_active_state(callback_query.from_user.id, state)
     if not isActive:
         await callback_query.answer()
         bttns = [
@@ -201,7 +201,7 @@ async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> N
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
             ]
         await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
-        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.message.from_user.id))
+        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.from_user.id))
         return
     await state.set_state(UserState.recognition_2)
     await callback_query.message.answer("Кажется у нас не получилось распознать этот продукт. Введите полный состав через запятую \n\nПример:\n<i>aqua, parfum/fragrance, centaurea cyanus flower water,  hexyl cinnamal, glycerin, sodium benzoate, linalool, citric acid, potassium sorbate, vanilla planifolia fruit extract.</i>")
@@ -2041,7 +2041,7 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
-    isActive = await check_is_active_state(callback_query.message.from_user.id, state)
+    isActive = await check_is_active_state(callback_query.from_user.id, state)
     if not isActive:
         await callback_query.answer()
         bttns = [
@@ -2049,7 +2049,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
             ]
         await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
-        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.message.from_user.id))
+        asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.from_user.id))
         return
     await log_user_callback(callback_query)
     await callback_query.answer()
