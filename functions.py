@@ -613,7 +613,7 @@ async def check_is_active_state(id, state):
     return is_active
 
 async def fetch_is_active_from_db(id):
-    url = f"https://avocado-production.up.railway.app/api/Subscription/IsActiveUser?userTgId={id}"
+    url = f"https://avocado-production.up.railway.app/api/TypesCRUD/CheckUserSub?userTgId={id}"
     async with aiohttp.ClientSession() as session:
         async with session.post(url) as response:
             if response.status == 200:
