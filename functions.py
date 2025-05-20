@@ -618,6 +618,7 @@ async def fetch_is_active_from_db(id):
         async with session.post(url) as response:
             if response.status == 200:
                 data = await response.text()
+                print(f"ISACTIVE STATUS{data}")
                 # return data.get('isActive', False)
                 is_active = data.strip().lower() == "true"
                 return is_active
