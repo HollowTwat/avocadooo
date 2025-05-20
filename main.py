@@ -2041,7 +2041,7 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
-    isActive = await check_is_active_state(id, state)
+    isActive = await check_is_active_state(callback_query.message.from_user.id, state)
     if not isActive:
         await callback_query.answer()
         bttns = [
