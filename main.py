@@ -2277,8 +2277,8 @@ async def default_handler(message: Message, state: FSMContext) -> None:
     if message.sticker:
         sticker_id = message.sticker.file_id
         await message.answer(f"<code>{sticker_id}</code>")
-    else: 
-        await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
+    # else: 
+    #     await message.answer("Состояние не установлено. Используйте /start, чтобы начать, или выберите вариант из меню", reply_markup=keyboard)
 
 
 
