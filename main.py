@@ -182,10 +182,12 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
     isActive = await check_is_active_state(message.from_user.id, state)
     if not isActive:
         bttns = [
-            [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
-            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
+            [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")],
+            [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
+            [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]
             ]
-        await message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
+        await message.answer("Кажется, у вас еще нет подписки.\n\nКупить бота можно с супер скидкой -20% прямо сейчас", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
         asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", message.from_user.id))
         return
     await state.set_state(UserState.recognition_2)
@@ -197,10 +199,12 @@ async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> N
     if not isActive:
         await callback_query.answer()
         bttns = [
-            [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
-            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
+            [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")],
+            [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
+            [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]
             ]
-        await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
+        await callback_query.message.answer("Кажется, у вас еще нет подписки.\n\nКупить бота можно с супер скидкой -20% прямо сейчас", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
         asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.from_user.id))
         return
     await state.set_state(UserState.recognition_2)
@@ -2045,10 +2049,12 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     if not isActive:
         await callback_query.answer()
         bttns = [
-            [InlineKeyboardButton(text="🆘 Помощь", url="t.me/ai_care")],
-            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")]
+            [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")],
+            [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
+            [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]
             ]
-        await callback_query.message.answer("У тебя нету подписки", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
+        await callback_query.message.answer("Кажется, у вас еще нет подписки.\n\nКупить бота можно с супер скидкой -20% прямо сейчас", reply_markup=(InlineKeyboardMarkup(inline_keyboard=bttns)))
         asyncio.create_task(log_bot_response(f"СТАТУС ПОДПИСКИ {isActive}", callback_query.from_user.id))
         return
     await log_user_callback(callback_query)
