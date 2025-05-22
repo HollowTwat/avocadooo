@@ -1342,9 +1342,9 @@ async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext
     ]
     await callback_query.message.answer_media_group(media=media_files)
     await callback_query.message.answer(
-        "НЕЛЬЗЯ ПРИКРЕПЛЯТЬ КНОПКИ К СООБЩЕНИЯМ С БОЛЬШЕ ЧЕМ 1 ФОТО, В ВОЗДУХЕ ТОЖЕ НЕЛЬЗЯ ПОДВЕСИТЬ. НУЖЕН ТЕКСТ ТУТ",
+        "Рассказываю, что именно я умею, как подбираю рекомендации и какие магические формулы использую в своей работе 🧖‍♀️\n\nAvocado всегда радо поделиться всеми секретами красоты и ухода!",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Как ты работаешь, Avocado?", callback_data="annoying_2")]
+            [InlineKeyboardButton(text="Ух ты", callback_data="annoying_2")]
         ])
     )
     # await state.clear()
