@@ -248,15 +248,56 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_text(step0txt, reply_markup=keyboard)
 
 
+@router.message(Command("1"))
+async def handler_1(message: types.Message, state: FSMContext):
+    text = "Отправьте в чат фото 📸, <i>текст</i> или аудио 🎤 вашего средства.\nНапример:\n<i>Weleda Skin food, крем для лица</i>\n\nВ моей базе пока только средства для лица, тела и волос. "
+    await message.answer(text)
+    await state.set_state(UserState.recognition)
 
+@router.message(Command("2"))
+async def handler_2(message: types.Message, state: FSMContext):
+    await state.update_data(full_sequence=False)
+    buttons = [
+        [InlineKeyboardButton(text="Digital Avocado Box 🥑", callback_data="avo_box")],
+        [InlineKeyboardButton(text="Промокоды 💥", callback_data="avo_promo")],
+        ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    step0txt = "В этом разделе мы собрали все скидки, созданные специально для вас! 😍 \nС чего начнем?"
+    await message.answer(step0txt, reply_markup=keyboard)
 
+@router.message(Command("3"))
+async def handler_3(message: types.Message, state: FSMContext):
+    await state.set_state(UserState.yapp)
+    text = "<b>Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос!</b> \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: Как использовать сыворотку с ретинолом? или Можно ли использовать крем с мочевиной для рук – на тело?"#\n Я всегда готов помочь! 🥑
+    await message.answer(text)
 
+@router.message(Command("4"))
+async def handler_4(message: types.Message, state: FSMContext):
+    buttons = [
+        [InlineKeyboardButton(text="Экологические и этические обозначения 🐰", callback_data="markings_1")],
+        [InlineKeyboardButton(text="Срок годности и хранение 📅", callback_data="markings_2")],
+        [InlineKeyboardButton(text="Утилизация ♻️", callback_data="markings_3")],
+        [InlineKeyboardButton(text="Стандарты и сертификация ✅", callback_data="markings_4")],
+        [InlineKeyboardButton(text="Прямоугольники на тубе 🛑", callback_data="markings_5")],
+        [InlineKeyboardButton(text="Как проверить состав🔍", callback_data="markings_6")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "На упаковках косметических средств можно встретить множество символов и значков 🔃, которые информируют о составе продукта, его безопасности 🚫, способах использования и утилизации♻️.\n\nПонимание этих обозначений поможет сделать осознанный выбор и правильно использовать продукцию.\n\n<blockquote>Ниже представлены основные символы, их изображения и расшифровки.</blockquote>\n\nКакой раздел вам интересен?"
+    await message.answer(text, reply_markup=keyboard)
 
-
-
-
-
-
+@router.message(Command("5"))
+async def handler_5(message: types.Message, state: FSMContext):
+    buttons = [
+        [InlineKeyboardButton(text="🔖 Как пользоваться ботом", callback_data="explain_4")],
+        [InlineKeyboardButton(text="📖 Обновить анкету", callback_data="settings_questionaire")],
+        [InlineKeyboardButton(text="💰Условия подписки:", callback_data="settings_sub")],
+        [InlineKeyboardButton(text="🆘Служба заботы :", url="t.me/ai_care")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    text = "Настройки ⚙️:"
+    await message.answer(text, reply_markup=keyboard)
 
 
 
@@ -272,17 +313,6 @@ async def menu_cb_handler(callback_query: CallbackQuery, state: FSMContext):
 #     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 #     step0txt = "В этом разделе мы собрали все скидки, созданные специально для вас! 😍 \nС чего начнем?"
 #     await message.answer(step0txt, reply_markup=keyboard)
-
-@router.message(Command("2"))
-async def handler_2(message: types.Message, state: FSMContext):
-    await state.update_data(full_sequence=False)
-    buttons = [
-        [InlineKeyboardButton(text="Digital Avocado Box 🥑", callback_data="avo_box")],
-        [InlineKeyboardButton(text="Промокоды 💥", callback_data="avo_promo")],
-        ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    step0txt = "В этом разделе мы собрали все скидки, созданные специально для вас! 😍 \nС чего начнем?"
-    await message.answer(step0txt, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'avo_box_menu')
 async def devmenu_handler_cb(callback_query: CallbackQuery, state: FSMContext) -> None:
@@ -1670,12 +1700,6 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
     else:
         await message.answer("Я принимаю только текст голосовое или фото")
 
-@router.message(Command("1"))
-async def handler_1(message: types.Message, state: FSMContext):
-    text = "Отправьте в чат фото 📸, <i>текст</i> или аудио 🎤 вашего средства.\nНапример:\n<i>Weleda Skin food, крем для лица</i>\n\nВ моей базе пока только средства для лица, тела и волос. "
-    await message.answer(text)
-    await state.set_state(UserState.recognition)
-
 @router.callback_query(lambda c: c.data == 'analysis')
 async def process_analysis_cb(callback_query: CallbackQuery, state: FSMContext):
     text = "Отправьте в чат фото 📸, <i>текст</i> или аудио 🎤 вашего средства.\nНапример:\n<i>Weleda Skin food, крем для лица</i>\n\nВ моей базе пока только средства для лица, тела и волос. "
@@ -1708,12 +1732,6 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
     await callback_query.message.edit_text(text)
     await state.set_state(Questionnaire.name)
     await callback_query.answer()
-
-@router.message(Command("3"))
-async def handler_3(message: types.Message, state: FSMContext):
-    await state.set_state(UserState.yapp)
-    text = "<b>Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос!</b> \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: Как использовать сыворотку с ретинолом? или Можно ли использовать крем с мочевиной для рук – на тело?"#\n Я всегда готов помочь! 🥑
-    await message.answer(text)
 
 @router.callback_query(lambda c: c.data == 'setstate_yapp')
 async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
@@ -1759,20 +1777,6 @@ async def process_product_type(callback_query: CallbackQuery, state: FSMContext)
         await callback_query.message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await state.set_state(UserState.yapp)
 
-@router.message(Command("4"))
-async def handler_4(message: types.Message, state: FSMContext):
-    buttons = [
-        [InlineKeyboardButton(text="Экологические и этические обозначения 🐰", callback_data="markings_1")],
-        [InlineKeyboardButton(text="Срок годности и хранение 📅", callback_data="markings_2")],
-        [InlineKeyboardButton(text="Утилизация ♻️", callback_data="markings_3")],
-        [InlineKeyboardButton(text="Стандарты и сертификация ✅", callback_data="markings_4")],
-        [InlineKeyboardButton(text="Прямоугольники на тубе 🛑", callback_data="markings_5")],
-        [InlineKeyboardButton(text="Как проверить состав🔍", callback_data="markings_6")],
-        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
-    ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    text = "На упаковках косметических средств можно встретить множество символов и значков 🔃, которые информируют о составе продукта, его безопасности 🚫, способах использования и утилизации♻️.\n\nПонимание этих обозначений поможет сделать осознанный выбор и правильно использовать продукцию.\n\n<blockquote>Ниже представлены основные символы, их изображения и расшифровки.</blockquote>\n\nКакой раздел вам интересен?"
-    await message.answer(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'markings')
 async def process_markings(callback_query: CallbackQuery, state: FSMContext):
@@ -1824,18 +1828,6 @@ async def process_markingstext(callback_query: CallbackQuery, state: FSMContext)
 
 
 
-@router.message(Command("5"))
-async def handler_5(message: types.Message, state: FSMContext):
-    buttons = [
-        [InlineKeyboardButton(text="🔖 Как пользоваться ботом", callback_data="explain_4")],
-        [InlineKeyboardButton(text="📖 Обновить анкету", callback_data="settings_questionaire")],
-        [InlineKeyboardButton(text="💰Условия подписки:", callback_data="settings_sub")],
-        [InlineKeyboardButton(text="🆘Служба заботы :", url="t.me/ai_care")],
-        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
-    ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    text = "Настройки ⚙️:"
-    await message.answer(text, reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data == 'settings')
 async def process_settings(callback_query: CallbackQuery, state: FSMContext):
