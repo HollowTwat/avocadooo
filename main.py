@@ -1530,7 +1530,7 @@ async def recognition_2_handler(message: Message, state: FSMContext) -> None:
                 [InlineKeyboardButton(text="Да, проверить еще", callback_data="analysis")],
                 [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
             ])
-        await message.answer("Хотите проверить еще одно средство?", reply_markup=keyboard)
+        await message.answer("Спасибо, что помогаете нам улучшать нашу базу средств🌿\n\nСейчас у нас 110 000 баночек. Теперь  на +1 стало больше 😍\n\nПроверим что-то еще?", reply_markup=keyboard)
     else:
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Тык", callback_data="analysis")]])
         message.answer("Я пока принимаю только текст при ожидании состава, если хочешь распознать средство тыкай тут")
