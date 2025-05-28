@@ -589,7 +589,8 @@ async def process_mail(message, state):
         # await state.clear()
         text = "Кажется, у вас еще нет подписки.\n\nКупить бота можно с супер скидкой -20% прямо сейчас"
         buttons = [
-        [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],#callback_data="send_purchase_add")], #url="https://nutri-ai.ru/?promo=nutribot&utm_medium=referral&utm_source=telegram&utm_campaign=nutribot"
+        [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],#callback_data="send_purchase_add")], #url="https://nutri-ai.ru/?promo=nutribot&utm_medium=referral&utm_source=telegram&utm_campaign=nutribot"
+        [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],
         [InlineKeyboardButton(text="Попробовать еще раз", callback_data="retry_mail")],
         [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
         [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]

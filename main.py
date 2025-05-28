@@ -182,7 +182,8 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
     isActive = await check_is_active_state(message.from_user.id, state)
     if not isActive:
         bttns = [
-            [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")],
             [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
             [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]
@@ -199,7 +200,8 @@ async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> N
     if not isActive:
         await callback_query.answer()
         bttns = [
-            [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")],
             [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
             [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]
@@ -2092,7 +2094,8 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     if not isActive:
         await callback_query.answer()
         bttns = [
-            [InlineKeyboardButton(text="Да, хочу оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
+            [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],
             [InlineKeyboardButton(text="Уже оплачено, ввести почту", callback_data="retry_mail")],
             [InlineKeyboardButton(text="🆘 Написать в поддержку", url="t.me/ai_care")],
             [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")]
