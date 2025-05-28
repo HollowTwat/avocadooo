@@ -1528,6 +1528,7 @@ async def recognition_2_handler(message: Message, state: FSMContext) -> None:
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Да, проверить еще", callback_data="analysis")],
+                [InlineKeyboardButton(text="🆘Служба заботы", url="t.me/ai_care")],
                 [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
             ])
         await message.answer("Спасибо, что помогаете нам улучшать нашу базу средств🌿\n\nСейчас у нас 110 000 баночек. Теперь  на +1 стало больше 😍\n\nПроверим что-то еще?", reply_markup=keyboard)
@@ -1571,7 +1572,8 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     callback_data=f"item_{product.get('Identifier')}"
                 ) for idx, product in enumerate(extracted_list[:4])],
                 [InlineKeyboardButton(text="Никакое, ввести свой состав", callback_data="recognition_2_start")],
-                [InlineKeyboardButton(text="Попробовать еще", callback_data="analysis")]
+                [InlineKeyboardButton(text="🆘Служба заботы", url="t.me/ai_care")],
+                [InlineKeyboardButton(text=arrow_menu,callback_data="menu")]
             ]
             text = (
                 f"Найдено несколько похожих средств 🔎\n"
@@ -1612,9 +1614,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
                 ) for idx, product in enumerate(extracted_list[:4])],
-                [InlineKeyboardButton(
-                    text="Попробовать еще", 
-                    callback_data="analysis")]
+                [InlineKeyboardButton(text="Никакое, ввести свой состав", callback_data="recognition_2_start")],
+                [InlineKeyboardButton(text="🆘Служба заботы", url="t.me/ai_care")],
+                [InlineKeyboardButton(text=arrow_menu,callback_data="menu")]
             ]
             text = (
                 f"Найдено несколько похожих средств 🔎\n"
@@ -1681,9 +1683,9 @@ async def recognition_handler(message: Message, state: FSMContext) -> None:
                     text=str(idx + 1), 
                     callback_data=f"item_{product.get('Identifier')}"
                 ) for idx, product in enumerate(extracted_list[:4])],
-                [InlineKeyboardButton(
-                    text="Попробовать еще", 
-                    callback_data="analysis")]
+                [InlineKeyboardButton(text="Никакое, ввести свой состав", callback_data="recognition_2_start")],
+                [InlineKeyboardButton(text="🆘Служба заботы", url="t.me/ai_care")],
+                [InlineKeyboardButton(text=arrow_menu,callback_data="menu")]
             ]
             text = (
                 f"Найдено несколько похожих средств 🔎\n"
@@ -2297,14 +2299,15 @@ async def handle_image_upload(message: types.Message, state: FSMContext):
 @router.message()
 async def default_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(UserState.transfer)
+    await state.update_data(full_sequence=False)
     if message.photo:
-        button = [[InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")]]
-        await message.answer("Если ты хочешь опознать баночку надо сначала выбрать к какой категории она относится", reply_markup=InlineKeyboardMarkup(inline_keyboard=button))
+        await state.set_state(UserState.recognition)
+        await recognition_handler(message, state)
+        # button = [[InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")]]
+        # await message.answer("Если ты хочешь опознать баночку надо сначала выбрать к какой категории она относится", reply_markup=InlineKeyboardMarkup(inline_keyboard=button))
         # file_id = message.photo[-1].file_id
         # await message.answer(f"Here is the file_id of your image:\n\n<code>{file_id}</code>\n\n"
         #                     "You can use this file_id to send the image in your bot.")
-    await state.update_data(full_sequence=False)
-
     if message.text:
         buttons = [
         [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
