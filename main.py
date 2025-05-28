@@ -1434,7 +1434,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
     buttons = [
-        [InlineKeyboardButton(text="Меню", callback_data="menu")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
     ]
     if message.text:
         response_1 = await generate_response(message.text, us_id, YAPP_ASS)
@@ -1738,6 +1738,7 @@ async def process_questionaire2(callback_query: CallbackQuery, state: FSMContext
 @router.callback_query(lambda c: c.data == 'setstate_yapp')
 async def process_setstate_yapp(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.yapp)
+    await callback_query.answer()
     # await callback_query.answer("yapp_state_set")
     text = "<b>Хотите узнать больше о правильном уходе? \nЗадайте мне любой вопрос!</b> \nНапишите его текстом ✏️ или запишите голосовое сообщение 🎤.\n\n   Например: Как использовать сыворотку с ретинолом? или Можно ли использовать крем с мочевиной для рук – на тело?"#\n Я всегда готов помочь! 🥑
     await callback_query.message.answer(text)
