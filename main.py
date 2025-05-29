@@ -1434,11 +1434,9 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     #     'hair': "hair",
     # }
     # db_var = db_matrix.get(analysis_type)
-    # user_info_type = await fetch_user_data(us_id, db_var)
-    user_info_general = await fetch_user_data(us_id, "general")
-
-
+    # user_info_type = await fetch_user_data(us_id, db_var
     us_id = str(message.from_user.id)
+    user_info_general = await fetch_user_data(us_id, "general")
     chat_id = message.chat.id
     thinking_mssg = await message.answer("Анализирую 🔍 ")
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
