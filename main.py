@@ -174,7 +174,7 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
     isActive = int(isActive1)
     if isActive < 2:
         if isActive<1:
-            await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
+            await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод \n/start 💚")
             return
         bttns = [
             [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
@@ -196,7 +196,7 @@ async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> N
     if isActive < 2:
         await callback_query.answer()
         if isActive<1:
-            await callback_query.message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
+            await callback_query.message.answer("Пожалуйста, пройдите анкету с самого начала через ввод \n/start 💚")
             return
         bttns = [
             [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
@@ -1358,6 +1358,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
 
     # await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await bot.send_message(us_id,"Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴")
+    await state.clear()
     sticker_mssg = await callback_query.message.answer_sticker(sticker=random.choice(STICKERLIST))
     user_data = await state.get_data()
     gpt_response = await no_thread_ass(f"{str(user_data)}, today_date: {datetime.now().date()}", USER_ANAL_ASS)
@@ -2105,7 +2106,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     if isActive < 2:
         await callback_query.answer()
         if isActive<1:
-            await callback_query.message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
+            await callback_query.message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод \n/start 💚")
             return
         bttns = [
             [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
