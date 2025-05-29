@@ -137,18 +137,10 @@ checkbox_states = {
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
+    await ensure_user(message)
     await log_user_message(message)
+
     await state.update_data(full_sequence=False)
-    # buttons = [
-    #     [InlineKeyboardButton(text="Анализ состава 🔍", callback_data="analysis")],
-    #     [InlineKeyboardButton(text="Опросник_Начало", callback_data="questionaire2")],
-    #     [InlineKeyboardButton(text="Опросник_Лицо", callback_data="questionnaire_face")],
-    #     [InlineKeyboardButton(text="Опросник_Тело", callback_data="questionnaire_body")],
-    #     [InlineKeyboardButton(text="Опросник_Волосы", callback_data="questionnaire_hair")],
-    #     [InlineKeyboardButton(text="Фулл_вводная_версия", callback_data="all_questionnaires")],
-    #     [InlineKeyboardButton(text="Настройки ⚙️:", callback_data="settings")],
-    #     [InlineKeyboardButton(text="setstate_yapp", callback_data="setstate_yapp")],
-    #     ]
     buttons = [[InlineKeyboardButton(text="Пройти опросник", callback_data="all_questionnaires")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
@@ -156,7 +148,6 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(Command("checkbox"))
 async def start(message: types.Message):
-    # Создаём клавиатуру с чекбоксами
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(
             text=f"✅ Опция 1" if checkbox_states["option_1"] else "☐ Опция 1",
@@ -179,8 +170,12 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(Command("recog_2_test"))
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
-    isActive = await check_is_active_state(message.from_user.id, state)
-    if not isActive:
+    isActive1 = await check_is_active_state(message.from_user.id, state)
+    isActive = int(isActive1)
+    if isActive < 2:
+        if isActive<1:
+            await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
+            return
         bttns = [
             [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
             [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],
@@ -196,9 +191,13 @@ async def devmenu_handler(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(lambda c: c.data == 'recognition_2_start')
 async def devmenu_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
-    isActive = await check_is_active_state(callback_query.from_user.id, state)
-    if not isActive:
+    isActive1 = await check_is_active_state(callback_query.from_user.id, state)
+    isActive = int(isActive1)
+    if isActive < 2:
         await callback_query.answer()
+        if isActive<1:
+            await callback_query.message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
+            return
         bttns = [
             [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
             [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],
@@ -1430,6 +1429,17 @@ async def process_about_avocado_2(callback_query: CallbackQuery, state: FSMConte
 async def yapp_handler(message: Message, state: FSMContext) -> None:
     await log_user_message(message)
     user_data = await state.get_data()
+
+    # db_matrix = {
+    #     'face': "face",
+    #     'body': "body",
+    #     'hair': "hair",
+    # }
+    # db_var = db_matrix.get(analysis_type)
+    # user_info_type = await fetch_user_data(us_id, db_var)
+    user_info_general = await fetch_user_data(us_id, "general")
+
+
     us_id = str(message.from_user.id)
     chat_id = message.chat.id
     thinking_mssg = await message.answer("Анализирую 🔍 ")
@@ -1439,7 +1449,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
     ]
     if message.text:
-        response_1 = await generate_response(message.text, us_id, YAPP_ASS)
+        response_1 = await generate_response(f"Вопрос пользователя: {message.text}. Информация о пользователе: {user_info_general}", us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await thinking_mssg.delete()
         await sticker_message.delete()
@@ -2090,9 +2100,13 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
-    isActive = await check_is_active_state(callback_query.from_user.id, state)
-    if not isActive:
+    isActive1 = await check_is_active_state(callback_query.from_user.id, state)
+    isActive = int(isActive1)
+    if isActive < 2:
         await callback_query.answer()
+        if isActive<1:
+            await callback_query.message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
+            return
         bttns = [
             [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],
             [InlineKeyboardButton(text="-40% по Золотому билету", url="https://myavocadobot.ru/")],

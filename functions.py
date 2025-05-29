@@ -571,10 +571,7 @@ async def log_bot_response(text, user_id):
 async def process_mail(message, state):
     answer = await check_mail(message.from_user.id, message.text)
     print(answer)
-    if answer == "true":
-        user_data = await state.get_data()
-        # text = f"Приятно познакомиться, {user_data['name']}!  🌿 \nЯ здесь, чтобы помочь вам с анализом состава косметики и рассказать, что именно в ней содержится и как работает.\n"    
-        # "На основе информации о вашей коже и образе жизни я подберу те средства, которые подойдут именно <b>вам</b>.  Могу порекомендовать, какие продукты стоит попробовать, а какие лучше оставить на полке.  Всё просто — вместе мы сделаем выбор безопасным и эффективным и подходящим именно вам!"
+    if answer == "2":
         text = "Поздравляю!\nУ вас есть подписка на Авокадо бот 🥂\n\nВот и все!\nС чего хотите начать?"
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -585,8 +582,7 @@ async def process_mail(message, state):
         )
         await message.answer(text, reply_markup=keyboard)
         await state.set_state(UserState.menu)
-    elif answer == "false":
-        # await state.clear()
+    elif answer == "1":
         text = "Кажется, у вас еще нет подписки.\n\nКупить бота можно с супер скидкой -20% прямо сейчас"
         buttons = [
         [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],#callback_data="send_purchase_add")], #url="https://nutri-ai.ru/?promo=nutribot&utm_medium=referral&utm_source=telegram&utm_campaign=nutribot"
@@ -597,6 +593,8 @@ async def process_mail(message, state):
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await message.answer(text, reply_markup=keyboard)
+    elif answer == "1":
+        await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод /start 💚")
 
 async def check_mail(id, mail):
     link = f"https://avocado-production.up.railway.app/api/Subscription/ActivateUser?userTgId={id}&userEmail={mail}"
@@ -608,7 +606,7 @@ async def check_mail(id, mail):
 async def check_is_active_state(id, state):
     state_data = await state.get_data()
     is_active = state_data.get('isActive', False)
-    if not is_active:
+    if is_active == False:
         is_active = await fetch_is_active_from_db(id)
         await state.update_data(isActive=is_active)
     print(f"{id} isActive:{is_active}")
@@ -616,15 +614,22 @@ async def check_is_active_state(id, state):
 
 async def fetch_is_active_from_db(id):
     url = f"https://avocado-production.up.railway.app/api/Subscription/IsActiveUser?userTgId={id}"
-    # print(url)
     async with aiohttp.ClientSession() as session:
         async with session.post(url) as response:
             if response.status == 200:
-                data = await response.text()
-                # print(f"ISACTIVE STATUS{data}")
-                # return data.get('isActive', False)
-                is_active = data.strip().lower() == "true"
+                is_active = await response.text()
                 return is_active
             else:
                 print(f"Failed to fetch 'isActive' from the database: {response.status}")
                 return False
+            
+async def ensure_user(message):
+   async with aiohttp.ClientSession() as session:
+        url = f"https://avocado-production.up.railway.app/api/TypesCRUD/EnsureUserH?userTgId={message.from_user.id}&userName={message.from_user.username}"
+        try:
+            async with session.get(url=url) as response:
+                ensure_response = await response.text()
+                print(ensure_response)
+                return False, ensure_response
+        except aiohttp.ClientError as e:
+            return True, e
