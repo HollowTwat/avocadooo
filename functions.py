@@ -571,7 +571,7 @@ async def log_bot_response(text, user_id):
 async def process_mail(message, state):
     answer = await check_mail(message.from_user.id, message.text)
     print(f"user_id={message.from_user.id}, mail_check = {answer}")
-    if answer == "2":
+    if answer == "true":
         text = "Поздравляю!\nУ вас есть подписка на Авокадо бот 🥂\n\nВот и все!\nС чего хотите начать?"
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -582,7 +582,7 @@ async def process_mail(message, state):
         )
         await message.answer(text, reply_markup=keyboard)
         await state.set_state(UserState.menu)
-    elif answer == "1":
+    elif answer == "false":
         text = "Кажется, у вас еще нет подписки.\n\nКупить бота можно с супер скидкой -20% прямо сейчас"
         buttons = [
         [InlineKeyboardButton(text="Оплатить", url="https://myavocadobot.ru/")],#callback_data="send_purchase_add")], #url="https://nutri-ai.ru/?promo=nutribot&utm_medium=referral&utm_source=telegram&utm_campaign=nutribot"
@@ -593,8 +593,8 @@ async def process_mail(message, state):
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await message.answer(text, reply_markup=keyboard)
-    elif answer == "0":
-        await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод \n/start 💚")
+    # elif answer == "0":
+    #     await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод \n/start 💚")
 
 async def check_mail(id, mail):
     link = f"https://avocado-production.up.railway.app/api/Subscription/ActivateUser?userTgId={id}&userEmail={mail}"
