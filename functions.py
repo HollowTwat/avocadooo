@@ -593,7 +593,7 @@ async def process_mail(message, state):
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         await message.answer(text, reply_markup=keyboard)
-    elif answer == "1":
+    elif answer == "0":
         await message.answer("Пожалуйста, пройдите анкету с самого начала  через ввод \n/start 💚")
 
 async def check_mail(id, mail):
