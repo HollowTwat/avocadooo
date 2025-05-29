@@ -570,7 +570,7 @@ async def log_bot_response(text, user_id):
         
 async def process_mail(message, state):
     answer = await check_mail(message.from_user.id, message.text)
-    print(answer)
+    print(f"user_id={message.from_user.id}, mail_check = {answer}")
     if answer == "2":
         text = "Поздравляю!\nУ вас есть подписка на Авокадо бот 🥂\n\nВот и все!\nС чего хотите начать?"
         keyboard = InlineKeyboardMarkup(
