@@ -604,11 +604,11 @@ async def check_mail(id, mail):
     return response.text
 
 async def check_is_active_state(id, state):
-    state_data = await state.get_data()
-    is_active = state_data.get('isActive', False)
-    if is_active == False:
-        is_active = await fetch_is_active_from_db(id)
-        await state.update_data(isActive=is_active)
+    # state_data = await state.get_data()
+    # is_active = state_data.get('isActive', False) 
+    # if is_active == False:
+    is_active = await fetch_is_active_from_db(id)
+    await state.update_data(isActive=is_active)
     print(f"{id} isActive:{is_active}")
     return is_active
 

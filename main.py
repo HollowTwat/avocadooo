@@ -1358,7 +1358,6 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
 
     # await callback_query.message.answer(f"Сохранено в базе: {response}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await bot.send_message(us_id,"Ура, мы закончили!  \nТеперь я соберу воедино все данные и выведу идеальный бьюти-портрет с персонализированными рекомендациями     \nОсталось немного подождать — результаты скоро будут готовы! 🪴")
-    await state.clear()
     sticker_mssg = await callback_query.message.answer_sticker(sticker=random.choice(STICKERLIST))
     user_data = await state.get_data()
     gpt_response = await no_thread_ass(f"{str(user_data)}, today_date: {datetime.now().date()}", USER_ANAL_ASS)
@@ -1367,9 +1366,7 @@ async def process_styling_tools(callback_query: CallbackQuery, state: FSMContext
     # await bot.send_message(us_id,f"<b>А вот и ваша аналитика от Аvocado Bot:</b>   \n\n👶 Возраст: {user_data['age']} \n⚠️ Аллергены: {user_data['allergy']}   \n\n🍓 <b>Кожа лица {user_data['face_skin_type']}</b>  \т\тВаша цель: {', '.join(map(str, user_data['face_skin_goals']))}  \n\n Рекомендации (минимум 2 средства): тип средства, наличие компонентов, за что отвечают компоненты и как они подходят к цели, частота использования (без марок и брендов)   \n\n<b>🥭 Кожа тела {user_data['body_skin_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['body_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов) \n\n🍊<b>Голова и волос {user_data['hair_scalp_type']}</b>   \n\nВаша цель: {', '.join(map(str, user_data['hair_goals']))}   \n\nРекомендации (минимум 2 средства): тип средства, наличие компонентов, за что от﻿вечают компоненты и как они подходят к цели, частота использования (без марок и брендов)")
     await callback_query.message.answer(gpt_resp)
     await state.set_state(Questionnaire.mail)
-    await callback_query.message.answer(
-        "Какая у вас электронная почта?\nПожалуйста введите ту же почту, что и при оплате — это важно"
-    )
+    await callback_query.message.answer("Какая у вас электронная почта?\nПожалуйста введите ту же почту, что и при оплате — это важно")
 
 
 async def process_about_avocado(callback_query: CallbackQuery, state: FSMContext):
