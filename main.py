@@ -1434,7 +1434,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     #     'hair': "hair",
     # }
     # db_var = db_matrix.get(analysis_type)
-    # user_info_type = await fetch_user_data(us_id, db_var
+    # user_info_type = await fetch_user_data(us_id, db_var)
     us_id = str(message.from_user.id)
     user_info_general = await fetch_user_data(us_id, "general")
     chat_id = message.chat.id
@@ -1873,7 +1873,7 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
         await callback_query.message.answer("У тебя нету подписки или произошла ошибка при получении информации о ней \n\n Если ты не вводил почту, то твоя подписка не привязана к аккаунту", reply_markup=InlineKeyboardMarkup(inline_keyboard=bttns))
         return
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    message = f"Ваш текущий тариф: {subtype}   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
+    message = f"Ваш текущий тариф: {subtype}" #   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить
     # message = "Твой текущий тариф:\n\n"
     # if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
     #     message += "☑️ Подписка на сервис Авокадо навсегда"
