@@ -1864,7 +1864,7 @@ async def process_explain_four(callback_query: CallbackQuery, state: FSMContext)
 async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
     subtype, repayment_time = await get_user_sub_info(callback_query.from_user.id)
     buttons = [
-        [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
+        # [InlineKeyboardButton(text="Продлить подписку", callback_data="re_sub")],
         [InlineKeyboardButton(text="Отменить подписку", callback_data="un_sub")],
         [InlineKeyboardButton(text=arrow_back, callback_data="settings"),InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
@@ -1873,7 +1873,8 @@ async def process_sub_sett(callback_query: CallbackQuery, state: FSMContext):
         await callback_query.message.answer("У тебя нету подписки или произошла ошибка при получении информации о ней \n\n Если ты не вводил почту, то твоя подписка не привязана к аккаунту", reply_markup=InlineKeyboardMarkup(inline_keyboard=bttns))
         return
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    message = f"Ваш текущий тариф: {subtype}" #   \n\nВаша подписка истекает {repayment_time}, не забудьте продлить
+    # message = f"Ваш текущий тариф: {subtype}\n\nВаша подписка истекает {repayment_time}, не забудьте продлить"
+    message = "Хотите отменить продление подписки?"
     # message = "Твой текущий тариф:\n\n"
     # if subtype == "Подписка навсегда" or subtype == "Тариф Навсегда":
     #     message += "☑️ Подписка на сервис Авокадо навсегда"
@@ -1925,7 +1926,9 @@ async def process_un_sub_yes(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
-    await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    text = "1) Зайдите на сайт: https://my.cloudpayments.ru/\n\n2) Введете данные своей карты\n\n3)  Нажмите на кнопку «Найти подписки»\n\nТеперь вы сможете отменить подписку.\n\nСм. инструкцию https://cloudpayments.ru/blog/kak-polzovatsya-servisom-otmeny-podpisok/"
+    # await callback_query.message.edit_text("Подписка отменена. Возвращайтесь скорее 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'un_sub_no')
 async def process_un_sub_no(callback_query: CallbackQuery, state: FSMContext):
