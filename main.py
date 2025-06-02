@@ -2283,6 +2283,16 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
         'hair': "hair",
     }
 
+    
+    buttons = [
+        [InlineKeyboardButton(text="Да, хочу еще", callback_data="analysis")],
+        [InlineKeyboardButton(text="Подробный анализ 🔍", callback_data=f"extra_analysis")],
+        [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
+        [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
+    ]
+    await callback_query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
     analysis_var = analysis_matrix.get(analysis_type)
     db_var = db_matrix.get(analysis_type)
     
