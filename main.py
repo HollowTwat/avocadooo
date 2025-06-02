@@ -2129,17 +2129,18 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     buttons = [
         [InlineKeyboardButton(text="Да, хочу еще", callback_data="analysis")],
         [InlineKeyboardButton(text="Подробный анализ 🔍", callback_data=f"extra_analysis")],
+        [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
         [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
         [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
     ]
-    if callback_query.from_user.id == 464682207:
-        buttons = [
-            [InlineKeyboardButton(text="Да, хочу еще", callback_data="analysis")],
-            [InlineKeyboardButton(text="Подробный анализ 🔍", callback_data=f"extra_analysis")],
-            [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
-            [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
-            [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
-        ]
+    # if callback_query.from_user.id == 464682207:
+    #     buttons = [
+    #         [InlineKeyboardButton(text="Да, хочу еще", callback_data="analysis")],
+    #         [InlineKeyboardButton(text="Подробный анализ 🔍", callback_data=f"extra_analysis")],
+    #         [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
+    #         [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
+    #         [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
+    #     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     analys_mssg = await callback_query.message.answer("Анализирую 🔍")
@@ -2264,12 +2265,12 @@ async def process_analysis_ethics(callback_query: CallbackQuery, state: FSMConte
 
 @router.callback_query(lambda c: c.data.startswith('personal_'))
 async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer()
     await log_user_callback(callback_query)
     parts = callback_query.data.split('_')
     analysis_type = parts[1]
     item_id = parts[2]
     us_id = callback_query.from_user.id
-    chat_id = callback_query.message.chat.id
 
     analysis_matrix = {
         'face': ANALYSIS_P_FACE_ASS,
@@ -2293,13 +2294,13 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     gpt_message = f"Информация о продукте: {db_info}, Информация о пользователе: {user_info_general}, {user_info_type}"
     pers_analysis1 = await no_thread_ass(gpt_message, analysis_var)
     pers_analysis = remove_tags(pers_analysis1)
-    await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)
+    await sticker_message.delete()
     await state.update_data(pers_analysis=pers_analysis)
     await state.update_data(db_info=db_info)
     buttons = [
         [InlineKeyboardButton(text="Проанализировать еще одну баночку", callback_data="analysis")],
         [InlineKeyboardButton(text="Вернуться в меню", callback_data="menu")],
-        [InlineKeyboardButton(text="Задать вопрос Авокадо Bot про эту баночку", callback_data="yapp_with_extra_info")]
+        # [InlineKeyboardButton(text="Задать вопрос Авокадо Bot про эту баночку", callback_data="yapp_with_extra_info")]
     ]
 
     await callback_query.message.answer(pers_analysis, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
