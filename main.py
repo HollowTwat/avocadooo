@@ -2099,6 +2099,7 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
+
     isActive1 = await check_is_active_state(callback_query.from_user.id, state)
     isActive = int(isActive1)
     if isActive < 2:
@@ -2131,6 +2132,14 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
         [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
     ]
+    if callback_query.from_user.id == 464682207:
+        buttons = [
+            [InlineKeyboardButton(text="Да, хочу еще", callback_data="analysis")],
+            [InlineKeyboardButton(text="Подробный анализ 🔍", callback_data=f"extra_analysis")],
+            [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
+            [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
+            [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]
+        ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     analys_mssg = await callback_query.message.answer("Анализирую 🔍")
@@ -2152,6 +2161,17 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     except Exception as e:
         print("cb_timeout")
 
+@router.callback_query(lambda c: c.data.startswith('selecttype_'))
+async def process_pers_type(callback_query: CallbackQuery, state: FSMContext):
+    asyncio.create_task(log_user_callback(callback_query))
+    await callback_query.answer()
+    parts = callback_query.data.split('_')
+    item_id = parts[1]
+    buttons = [
+        [InlineKeyboardButton(text="Для лица 👄", callback_data=f"personal_face_{item_id}")],
+        [InlineKeyboardButton(text="Для волос 💇‍♀️", callback_data=f"personal_hair_{item_id}")],
+        [InlineKeyboardButton(text="Для тела 🧖‍♀️", callback_data=f"personal_body_{item_id}")]]
+    await callback_query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(lambda c: c.data == 'extra_analysis')
 async def process_extra_analysis_menu(callback_query: CallbackQuery, state: FSMContext):
