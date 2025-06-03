@@ -140,7 +140,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     await ensure_user(message)
     await log_user_message(message)
 
-    await state.update_data(full_sequence=False)
+    await state.update_data(full_sequence=True)
     buttons = [[InlineKeyboardButton(text="Пройти опросник", callback_data="all_questionnaires")]]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     step0txt = "Привет, я задам тебе пару вопросов чтобы составить твой профиль"
