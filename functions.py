@@ -385,11 +385,24 @@ async def generate_response(message_body, usr_id, assistant):
 
 
 async def run_with_timeout(bot, us_id, coro, timeout, timeout_message):
+    task = asyncio.create_task(coro)
+    
     try:
-        return await asyncio.wait_for(coro(), timeout=timeout)
-    except asyncio.TimeoutError:
-        await bot.send_message(us_id, timeout_message)
-        return await coro()
+        done, pending = await asyncio.wait(
+            {task},
+            timeout=timeout,
+            return_when=asyncio.FIRST_COMPLETED
+        )
+        
+        if pending:
+            await bot.send_message(us_id, timeout_message)
+            return await task
+            
+        return task.result()
+        
+    except Exception as e:
+        task.cancel()
+        raise e
 
 async def run_assistant(thread, assistant_str):
     try:
