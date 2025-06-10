@@ -2148,7 +2148,15 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     db_info = await fetch_product_details(item_id)
     product_name = db_info["Name"]
     await state.update_data(current_item_name=product_name)
-    analysis_result1 = await no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS)
+    # analysis_result1 = await no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS)
+    analysis_result1 = await run_with_timeout(
+    bot=bot,
+    us_id=us_id,
+    coro=no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS),
+    timeout=30,
+    timeout_message="Извините, немного занят, результат все еще в обработке"
+)
+
     analysis_result = remove_tags(analysis_result1)
     await analys_mssg.delete()
     await bot.delete_message(chat_id=chat_id, message_id=sticker_message.message_id)

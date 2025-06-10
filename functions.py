@@ -384,6 +384,13 @@ async def generate_response(message_body, usr_id, assistant):
     return new_message
 
 
+async def run_with_timeout(bot, us_id, coro, timeout, timeout_message):
+    try:
+        return await asyncio.wait_for(coro, timeout=timeout)
+    except asyncio.TimeoutError:
+        await bot.send_message(us_id, timeout_message)
+        return await coro
+
 async def run_assistant(thread, assistant_str):
     try:
         print("run_assistant hit")
@@ -398,6 +405,10 @@ async def run_assistant(thread, assistant_str):
                 messages = await client.beta.threads.messages.list(thread_id=thread.id)
                 raise Exception(
                     f"Run failed with status: {run.status} and generated {messages.data[0]}")
+            elif run.status == "expired":
+                messages = await client.beta.threads.messages.list(thread_id=thread.id)
+                raise Exception(
+                    f"Run expired with status: {run.status} and generated {messages.data[0]}")
 
             print(run.status)
             await asyncio.sleep(1.5)
