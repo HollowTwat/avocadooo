@@ -2153,7 +2153,7 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     bot=bot,
     us_id=us_id,
     coro=no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS),
-    timeout=15,
+    timeout=30,
     timeout_message="Извините что задерживаюсь, результат все еще в обработке"
 )
 
