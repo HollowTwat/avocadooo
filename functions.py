@@ -386,10 +386,10 @@ async def generate_response(message_body, usr_id, assistant):
 
 async def run_with_timeout(bot, us_id, coro, timeout, timeout_message):
     try:
-        return await asyncio.wait_for(coro, timeout=timeout)
+        return await asyncio.wait_for(coro(), timeout=timeout)
     except asyncio.TimeoutError:
         await bot.send_message(us_id, timeout_message)
-        return await coro
+        return await coro()
 
 async def run_assistant(thread, assistant_str):
     try:
