@@ -2153,8 +2153,8 @@ async def process_item(callback_query: CallbackQuery, state: FSMContext):
     bot=bot,
     us_id=us_id,
     coro=no_thread_ass(str(db_info), GENERAL_ANALYSIS_ASS),
-    timeout=30,
-    timeout_message="Извините, немного занят, результат все еще в обработке"
+    timeout=15,
+    timeout_message="Извините что задерживаюсь, результат все еще в обработке"
 )
 
     analysis_result = remove_tags(analysis_result1)
