@@ -361,7 +361,9 @@ async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/ai_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
     ]
-    await callback_query.message.edit_text(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.answer_media_group(promo_media_gr)
+    # await callback_query.message.edit_text(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await callback_query.message.answer(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 
 
