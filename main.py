@@ -1469,8 +1469,8 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
         caption = message.caption if message.caption else None
-        response1 = generate_response2(caption, message.from_user.id, YAPP_ASS, file_url)
-        response = remove_tags(response1)
+        response = generate_response2(caption, message.from_user.id, YAPP_ASS, file_url)
+        # response = remove_tags(response1)
         await thinking_mssg.delete()
         await sticker_message.delete()
         await message.answer(response)
@@ -1522,8 +1522,8 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         if not caption:
             caption = f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, фото прикреплено"
 
-        response1 = generate_response2(caption, message.from_user.id, YAPP_ASS, file_url)
-        response = remove_tags(response1)
+        response = generate_response2(caption, message.from_user.id, YAPP_ASS, file_url)
+        # response = remove_tags(response1)
         await thinking_mssg.delete()
         await sticker_message.delete()
         await message.answer(response)
