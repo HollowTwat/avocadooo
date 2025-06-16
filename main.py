@@ -1528,7 +1528,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await sticker_message.delete()
         await message.answer(response)
 
-        asyncio.create_task(log_bot_response(response, message.from_user.id))
+        asyncio.create_task(log_bot_response(f"{response}", message.from_user.id))
         await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
         # await message.answer("Введи текст или надиктуй голосом")
