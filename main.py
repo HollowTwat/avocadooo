@@ -9,7 +9,6 @@ import openai
 import asyncio
 import logging
 import sys
-# import datetime
 from datetime import datetime
 from aiogram import Bot, Dispatcher, html, Router, BaseMiddleware, types
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -162,7 +161,6 @@ async def start(message: types.Message):
     
     await message.answer("Выберите опции:", reply_markup=keyboard)
 
-# Обработчик для переключения чекбоксов
 @router.message(Command("mail_input_debug"))
 async def devmenu_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(Questionnaire.mail)
@@ -344,7 +342,6 @@ async def process_avo_promo(callback_query: CallbackQuery, state: FSMContext):
 async def process_avo_box_2(callback_query: CallbackQuery, state: FSMContext):
     text1 = "Весенний выпуск Avocado Box 🌷\n\n16 идеальных продуктов от безопасных брендов со скидкой до -50%"
     text3 = ""
-    # await callback_query.message.edit_text("indev")
     buttons = [
         [InlineKeyboardButton(text="Написать в поддержку 🆘", url="t.me/ai_care")],
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")]
