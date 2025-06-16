@@ -383,6 +383,46 @@ async def generate_response(message_body, usr_id, assistant):
     new_message = await run_assistant(thread, assistant)
     return new_message
 
+async def generate_response2(message_body, usr_id, assistant, image_url=None):
+    thread_id = None
+    print(message_body, thread_id)
+
+    if thread_id is None:
+        print(f"Creating new thread for {usr_id}")
+        thread = await client.beta.threads.create()
+        await store_thread(usr_id, thread.id)
+        thread_id = thread.id
+    else:
+        print(f"Retrieving existing thread {usr_id}")
+        thread = await client.beta.threads.retrieve(thread_id)
+
+    # Prepare the message content
+    message_content = []
+    
+    # Add text if provided
+    if message_body:
+        message_content.append({
+            "type": "text",
+            "text": message_body
+        })
+    
+    # Add image if provided
+    if image_url:
+        message_content.append({
+            "type": "image_url",
+            "image_url": {"url": image_url}
+        })
+
+    message = await client.beta.threads.messages.create(
+        thread_id=thread_id,
+        role="user",
+        content=message_content
+    )
+    print(message)
+
+    new_message = await run_assistant(thread, assistant)
+    return new_message
+
 
 async def run_with_timeout(bot, us_id, coro, timeout, timeout_message):
     task = asyncio.create_task(coro)

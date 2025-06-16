@@ -1468,13 +1468,16 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         file = await bot.get_file(message.photo[-1].file_id)
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
-        url_response_1 = await process_url(file_url, us_id, YAPP_ASS)
-        url_response = remove_tags(url_response_1)
+        caption = message.caption if message.caption else None
+        response1 = generate_response2(caption, message.from_user.id, YAPP_ASS, file_url)
+        response = remove_tags(response1)
         await thinking_mssg.delete()
         await sticker_message.delete()
-        await message.answer(f"{response}")
+        await message.answer(response)
         await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
-        await log_bot_response(f"{response}", message.from_user.id)
+
+        asyncio.create_task(log_bot_response(f"{response}", message.from_user.id))
+
 
 
 @router.message(StateFilter(UserState.yapp_with_xtra))
@@ -1510,7 +1513,25 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
         await log_bot_response(response, message.from_user.id)
     elif message.photo:
-        await message.answer("Введи текст или надиктуй голосом")
+        file = await bot.get_file(message.photo[-1].file_id)
+        file_path = file.file_path
+        file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
+        caption = message.caption if message.caption else None
+        if caption:
+            caption = f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {caption}, фото прикреплено"
+        if not caption:
+            caption = f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, фото прикреплено"
+
+        response1 = generate_response2(caption, message.from_user.id, YAPP_ASS, file_url)
+        response = remove_tags(response1)
+        await thinking_mssg.delete()
+        await sticker_message.delete()
+        await message.answer(response)
+
+        asyncio.create_task(log_bot_response(response, message.from_user.id))
+        await message.answer("Вы можете продолжить общаться со мной или вернуться в меню 💚", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+        # await message.answer("Введи текст или надиктуй голосом")
         # file = await bot.get_file(message.photo[-1].file_id)
         # file_path = file.file_path
         # file_url = f"https://api.telegram.org/file/bot{bot.token}/{file_path}"
