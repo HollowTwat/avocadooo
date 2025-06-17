@@ -1444,7 +1444,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
     ]
     if message.text:
-        response_1 = await generate_response(f"Вопрос пользователя: {message.text}. Информация о пользователе: {user_info_general}", us_id, YAPP_ASS)
+        response_1 = await generate_response_threaded(f"Вопрос пользователя: {message.text}. Информация о пользователе: {user_info_general}", us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await thinking_mssg.delete()
         await sticker_message.delete()
@@ -1454,7 +1454,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
-        response_1 = await generate_response(trainscription, us_id, YAPP_ASS)
+        response_1 = await generate_response_threaded(trainscription, us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await thinking_mssg.delete()
         await sticker_message.delete()
@@ -1492,7 +1492,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
     await remove_thread(us_id)
     if message.text:
-        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {message.text} ", us_id, YAPP_ASS)
+        response_1 = await generate_response_threaded(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {message.text} ", us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await thinking_mssg.delete()
         await sticker_message.delete()
@@ -1502,7 +1502,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     elif message.voice:
         trainscription = await audio_file(message.voice.file_id)
         await message.answer(trainscription)
-        response_1 = await generate_response(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {trainscription}", us_id, YAPP_ASS)
+        response_1 = await generate_response_threaded(f"Прошлый анализ продукта: {pers_analysis}, информация о продукте {db_info}, вопрос пользователя: {trainscription}", us_id, YAPP_ASS)
         response = remove_tags(response_1)
         await thinking_mssg.delete()
         await sticker_message.delete()
