@@ -2129,7 +2129,8 @@ async def remenu_after_thang(callback_query: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
         [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
         [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]]
-    await callback_query.message.answer()
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await callback_query.message.answer("✅ Анализ завершён\n\nХотите проверить еще одно средство?", reply_markup=keyboard)
 
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
@@ -2357,7 +2358,6 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
 
     await callback_query.message.answer(pers_analysis, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await log_bot_response(pers_analysis, callback_query.from_user.id)
-    await callback_query.answer()
 
 
 @router.message(Command("upload_image"))
