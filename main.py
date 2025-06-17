@@ -1439,7 +1439,7 @@ async def yapp_handler(message: Message, state: FSMContext) -> None:
     chat_id = message.chat.id
     thinking_mssg = await message.answer("Анализирую 🔍 ")
     sticker_message = await bot.send_sticker(chat_id=chat_id, sticker=random.choice(STICKERLIST))
-    await remove_thread(us_id)
+    # await remove_thread(us_id)
     buttons = [
         [InlineKeyboardButton(text=arrow_menu, callback_data="menu")],
     ]
