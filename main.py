@@ -2117,6 +2117,20 @@ async def process_all_questionnaires(callback_query: CallbackQuery, state: FSMCo
     await state.update_data(full_sequence=True)
     await process_questionaire2(callback_query, state)
 
+
+@router.callback_query(lambda c: c.data.startswith('remenu_'))
+async def remenu_after_thang(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer()
+    parts = callback_query.data.split('_')
+    item_id = parts[1]
+    buttons = [
+        [InlineKeyboardButton(text="Да, хочу еще", callback_data="analysis")],
+        [InlineKeyboardButton(text="Подробный анализ 🔍", callback_data=f"extra_analysis")],
+        [InlineKeyboardButton(text="Получить оценку 🌟", callback_data=f"selecttype_{item_id}")],
+        [InlineKeyboardButton(text="❌ Ошибка, ввести состав текстом", callback_data="recognition_2_start")],
+        [InlineKeyboardButton(text=arrow_menu, callback_data='menu')]]
+    await callback_query.message.answer()
+
 @router.callback_query(lambda c: c.data.startswith('item_'))
 async def process_item(callback_query: CallbackQuery, state: FSMContext):
 
@@ -2336,8 +2350,8 @@ async def personal_cb(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(pers_analysis=pers_analysis)
     await state.update_data(db_info=db_info)
     buttons = [
-        [InlineKeyboardButton(text="Проанализировать еще одну баночку", callback_data="analysis")],
-        [InlineKeyboardButton(text="Вернуться в меню", callback_data="menu")],
+        [InlineKeyboardButton(text="Назад ⬅️", callback_data=f"remenu_{item_id}")],
+        [InlineKeyboardButton(text="В меню 🔼", callback_data="menu")],
         # [InlineKeyboardButton(text="Задать вопрос Авокадо Bot про эту баночку", callback_data="yapp_with_extra_info")]
     ]
 
