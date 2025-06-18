@@ -362,9 +362,12 @@ async def process_avo_promo_2(callback_query: CallbackQuery, state: FSMContext):
     # await callback_query.message.edit_text(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await callback_query.message.answer(promo_text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
-
-
-
+@router.callback_query(lambda c: c.data.startswith('vote_'))
+async def main_process_votes(callback_query: CallbackQuery, state: FSMContext):
+    vote_num = callback_query.data.split("_")[1]
+    succesfull_count = await get_user_vote(callback_query.from_user.id, vote_num)
+    asyncio.create_task(log_user_callback(callback_query))
+    await callback_query.message.answer("Спасибо за участие в опросе")
 
 
 

@@ -67,6 +67,17 @@ async def get_user_sub_info(id):
                 return type_value, formatted_date_update
         except aiohttp.ClientError as e:
             return False, e
+        
+async def get_user_vote(id, vote):
+    async with aiohttp.ClientSession() as session:
+        url = f"https://avocado-production.up.railway.app/api/TypesCRUD/GetUserVote?UserTgId={id}&vote={vote}"
+        try:
+            async with session.get(url=url) as response:
+                voteok = await response.text()
+                if voteok == "true": return True
+                else: return False
+        except aiohttp.ClientError as e:
+            return True, e
 
 def remove_tags(input_string):
     output = re.sub(r"</?br\s*/?>", "", input_string)
