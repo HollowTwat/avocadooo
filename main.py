@@ -367,7 +367,7 @@ async def main_process_votes(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
     vote_num = callback_query.data.split("_")[1]
     succesfull_count = await get_user_vote(callback_query.from_user.id, vote_num)
-    asyncio.create_task(log_user_callback(callback_query))
+    asyncio.create_task(log_bot_response(f"user voted {vote_num}, successresponse: {succesfull_count}"))
     await callback_query.message.edit_text("Спасибо за участие в опросе", reply_markup=None)
 
 
